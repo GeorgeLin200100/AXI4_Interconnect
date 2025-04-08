@@ -1,0 +1,11 @@
+*.log
+*.fsdb
+*.rc
+*.key
+lxd/TVIP-AXI/sample/work/
+lxd/TVIP-AXI/tue/.project
+lxd/TVIP-AXI/tue/.svproject
+lxd/TVIP-AXI/tue/.settings/
+lxd/TVIP-AXI/sample/work/verdiLog/
+lxd/TVIP-AXI/sample/work/simv.daidir/
+lxd/TVIP-AXI/sample/work/csrc/
