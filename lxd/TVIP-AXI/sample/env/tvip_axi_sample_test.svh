@@ -3,10 +3,10 @@
 class tvip_axi_sample_test extends tue_test #(
   .CONFIGURATION  (tvip_axi_sample_configuration)
 );
-  tvip_axi_master_agent     master_agent;
-  tvip_axi_master_sequencer master_sequencer;
-  tvip_axi_slave_agent      slave_agent;
-  tvip_axi_slave_sequencer  slave_sequencer;
+  tvip_axi_master_agent     master_agents[];
+  tvip_axi_master_sequencer master_sequencers[];
+  tvip_axi_slave_agent      slave_agents[];
+  tvip_axi_slave_sequencer  slave_sequencers[];
 
   function new(string name = "tvip_axi_sample_test", uvm_component parent = null);
     super.new(name, parent);
@@ -17,8 +17,9 @@ class tvip_axi_sample_test extends tue_test #(
 
   function void create_configuration();
     super.create_configuration();
-    void'(uvm_config_db #(tvip_axi_vif)::get(null, "", "vif[0]", configuration.axi_cfg[0].vif));
-    void'(uvm_config_db #(tvip_axi_vif)::get(null, "", "vif[1]", configuration.axi_cfg[1].vif));
+    for (int i = 0; i < 7; i++) begin
+      void'(uvm_config_db #(tvip_axi_vif)::get(null, "", $sformatf("vif[%0d]", i), configuration.axi_cfg[i].vif));
+    end
     if (configuration.randomize()) begin
       `uvm_info(get_name(), $sformatf("configuration...\n%s", configuration.sprint()), UVM_NONE)
     end
@@ -30,27 +31,43 @@ class tvip_axi_sample_test extends tue_test #(
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    master_agent  = tvip_axi_master_agent::type_id::create("master_agent", this);
-    master_agent.set_configuration(configuration.axi_cfg[0]);
+    foreach (configuration.axi_cfg[i]) begin
+      if (i < 3) begin
+        master_agents[i] = tvip_axi_master_agent::type_id::create($sformatf("master_agent[%0d]", i), this);
+        master_agents[i].set_configuration(configuration.axi_cfg[i]);
+      end
+    end
 
-    slave_agent = tvip_axi_slave_agent::type_id::create("slave_agent", this);
-    slave_agent.set_configuration(configuration.axi_cfg[1]);
+    foreach (configuration.axi_cfg[j]) begin
+      if (j >= 3 && j < 7) begin
+        slave_agents[j-3] = tvip_axi_slave_agent::type_id::create($sformatf("slave_agent[%0d]", j-3), this);
+        slave_agents[j-3].set_configuration(configuration.axi_cfg[j]);
+      end
+    end
   endfunction
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    master_sequencer  = master_agent.sequencer;
-    slave_sequencer   = slave_agent.sequencer;
+    foreach (master_agents[i]) begin
+      master_sequencers[i] = master_agents[i].sequencer;
+    end
+    foreach (slave_agents[j]) begin
+      slave_sequencers[j]  = slave_agents[j].sequencer;
+    end
   endfunction
 
   function void end_of_elaboration_phase(uvm_phase phase);
     super.end_of_elaboration_phase(phase);
-    uvm_config_db #(uvm_object_wrapper)::set(
-      master_sequencer, "main_phase", "default_sequence", tvip_axi_sample_write_read_sequence::type_id::get()
-    );
-    uvm_config_db #(uvm_object_wrapper)::set(
-      slave_sequencer, "run_phase", "default_sequence", tvip_axi_slave_default_sequence::type_id::get()
-    );
+    foreach (master_sequencers[i]) begin
+      uvm_config_db #(uvm_object_wrapper)::set(
+        master_sequencers[i], "main_phase", "default_sequence", tvip_axi_sample_write_read_sequence::type_id::get()
+      );
+    end
+    foreach (slave_sequencers[j]) begin
+      uvm_config_db #(uvm_object_wrapper)::set(
+        slave_sequencers[j], "run_phase", "default_sequence", tvip_axi_slave_default_sequence::type_id::get()
+      );
+    end
   endfunction
 
   `uvm_component_utils(tvip_axi_sample_test)
