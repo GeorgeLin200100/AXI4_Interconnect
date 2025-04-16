@@ -1,4 +1,5 @@
-TVIP_AXI_HOME	= $(shell git rev-parse --show-toplevel)
+#TVIP_AXI_HOME	= $(shell git rev-parse --show-toplevel)
+TVIP_AXI_HOME = $(shell git rev-parse --show-toplevel)/lxd/TVIP-AXI
 export TVIP_AXI_HOME
 
 TUE_HOME	?= $(TVIP_AXI_HOME)/tue

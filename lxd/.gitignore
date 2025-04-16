@@ -3,9 +3,11 @@
 *.rc
 *.key
 *.conf
+vc_hdrs.h
 TVIP-AXI/tue/.project
 TVIP-AXI/tue/.svproject
 TVIP-AXI/tue/.settings/
 TVIP-AXI/sample/work/verdiLog/
 TVIP-AXI/sample/work/simv.daidir/
 TVIP-AXI/sample/work/csrc/
+TVIP-AXI/sample/work/simv
