@@ -43,7 +43,7 @@ module top();
   */
 
   // New safety connector instantiation
-  axi4_safety_connector_wrap u_connector (
+  axi4_safety_connector_wrapper u_connector (
     .aclk     (aclk),
     .areset_n (areset_n),
     .s0_axi   (axi_if[0]),

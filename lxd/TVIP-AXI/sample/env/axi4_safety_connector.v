@@ -31,7 +31,7 @@ THE SOFTWARE.
 /*
  * AXI4 3x4 interconnect (wrapper)
  */
-module axi_interconnect_wrapper #
+module axi4_safety_connector #
 (
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 32,
