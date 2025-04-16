@@ -185,7 +185,7 @@ module axi4_safety_connector_wrapper #(
     .m00_axi_bvalid(m0_axi.bvalid),
     .m00_axi_bready(m0_axi.bready),
     .m00_axi_bid(m0_axi.bid),
-    .m00_axi_bresp(m0_axi.bresp),
+    .m00_axi_bresp(tvip_axi_response'(m0_axi.bresp)),
     
     // AR Channel
     .m00_axi_arvalid(m0_axi.arvalid),
@@ -233,7 +233,7 @@ module axi4_safety_connector_wrapper #(
     .m01_axi_bvalid(m1_axi.bvalid),
     .m01_axi_bready(m1_axi.bready),
     .m01_axi_bid(m1_axi.bid),
-    .m01_axi_bresp(m1_axi.bresp),
+    .m01_axi_bresp(tvip_axi_response'(m1_axi.bresp)),
     
     // AR Channel
     .m01_axi_arvalid(m1_axi.arvalid),
@@ -281,7 +281,7 @@ module axi4_safety_connector_wrapper #(
     .m02_axi_bvalid(m2_axi.bvalid),
     .m02_axi_bready(m2_axi.bready),
     .m02_axi_bid(m2_axi.bid),
-    .m02_axi_bresp(m2_axi.bresp),
+    .m02_axi_bresp(tvip_axi_response'(m2_axi.bresp)),
     
     // AR Channel
     .m02_axi_arvalid(m2_axi.arvalid),
@@ -329,7 +329,7 @@ module axi4_safety_connector_wrapper #(
     .m03_axi_bvalid(m3_axi.bvalid),
     .m03_axi_bready(m3_axi.bready),
     .m03_axi_bid(m3_axi.bid),
-    .m03_axi_bresp(m3_axi.bresp),
+    .m03_axi_bresp(tvip_axi_response'(m3_axi.bresp)),
     
     // AR Channel
     .m03_axi_arvalid(m3_axi.arvalid),
