@@ -3,16 +3,19 @@
 
 module axi4_safety_connector_wrapper #(
 )(
-  input logic        aclk,
-  input logic        areset_n,
-  tvip_axi_if.slave  s0_axi,
-  tvip_axi_if.slave  s1_axi,
-  tvip_axi_if.slave  s2_axi,
-  tvip_axi_if.master m0_axi,
-  tvip_axi_if.master m1_axi,
-  tvip_axi_if.master m2_axi,
-  tvip_axi_if.master m3_axi
+  input var        aclk,
+  input var        areset_n,
+  tvip_axi_if  s0_axi,
+  tvip_axi_if  s1_axi,
+  tvip_axi_if  s2_axi,
+  tvip_axi_if m0_axi,
+  tvip_axi_if m1_axi,
+  tvip_axi_if m2_axi,
+  tvip_axi_if m3_axi
 );
+  import  tvip_axi_types_pkg::*;
+  import  tvip_axi_pkg::*;
+
   axi4_safety_connector #(
   ) u_connector (
     .clk(aclk),
@@ -99,7 +102,6 @@ module axi4_safety_connector_wrapper #(
     .s01_axi_arlen(s1_axi.arlen),
     .s01_axi_arsize(s1_axi.arsize),
     .s01_axi_arburst(s1_axi.arburst),
-    .s01_axi_arburst(s1_axi.arburst),
     .s01_axi_arcache(s1_axi.arcache),  
     .s01_axi_arprot(s1_axi.arprot),    
     .s01_axi_arqos(s1_axi.arqos),      
@@ -144,7 +146,6 @@ module axi4_safety_connector_wrapper #(
     .s02_axi_araddr(s2_axi.araddr),
     .s02_axi_arlen(s2_axi.arlen),
     .s02_axi_arsize(s2_axi.arsize),
-    .s02_axi_arburst(s2_axi.arburst),
     .s02_axi_arburst(s2_axi.arburst),
     .s02_axi_arcache(s2_axi.arcache),  
     .s02_axi_arprot(s2_axi.arprot),    
@@ -194,7 +195,6 @@ module axi4_safety_connector_wrapper #(
     .m00_axi_arlen(m0_axi.arlen),
     .m00_axi_arsize(m0_axi.arsize),
     .m00_axi_arburst(m0_axi.arburst),
-    .m00_axi_arburst(m0_axi.arburst),
     .m00_axi_arcache(m0_axi.arcache),  
     .m00_axi_arprot(m0_axi.arprot),    
     .m00_axi_arqos(m0_axi.arqos),      
@@ -242,7 +242,6 @@ module axi4_safety_connector_wrapper #(
     .m01_axi_araddr(m1_axi.araddr),
     .m01_axi_arlen(m1_axi.arlen),
     .m01_axi_arsize(m1_axi.arsize),
-    .m01_axi_arburst(m1_axi.arburst),
     .m01_axi_arburst(m1_axi.arburst),
     .m01_axi_arcache(m1_axi.arcache),  
     .m01_axi_arprot(m1_axi.arprot),    
@@ -292,7 +291,6 @@ module axi4_safety_connector_wrapper #(
     .m02_axi_arlen(m2_axi.arlen),
     .m02_axi_arsize(m2_axi.arsize),
     .m02_axi_arburst(m2_axi.arburst),
-    .m02_axi_arburst(m2_axi.arburst),
     .m02_axi_arcache(m2_axi.arcache),  
     .m02_axi_arprot(m2_axi.arprot),    
     .m02_axi_arqos(m2_axi.arqos),      
@@ -340,7 +338,6 @@ module axi4_safety_connector_wrapper #(
     .m03_axi_araddr(m3_axi.araddr),
     .m03_axi_arlen(m3_axi.arlen),
     .m03_axi_arsize(m3_axi.arsize),
-    .m03_axi_arburst(m3_axi.arburst),
     .m03_axi_arburst(m3_axi.arburst),
     .m03_axi_arcache(m3_axi.arcache),  
     .m03_axi_arprot(m3_axi.arprot),    
