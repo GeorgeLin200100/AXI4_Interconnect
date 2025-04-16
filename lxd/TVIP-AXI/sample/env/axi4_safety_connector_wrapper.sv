@@ -2,9 +2,6 @@
 `define AXI4_SAFETY_CONNECTOR_WRAPPER_SV
 
 module axi4_safety_connector_wrapper #(
-  parameter ID_WIDTH     = `TVIP_AXI_MAX_ID_WIDTH,
-  parameter ADDR_WIDTH   = `TVIP_AXI_MAX_ADDRESS_WIDTH,
-  parameter DATA_WIDTH   = `TVIP_AXI_MAX_DATA_WIDTH
 )(
   input logic        aclk,
   input logic        areset_n,
@@ -17,12 +14,9 @@ module axi4_safety_connector_wrapper #(
   tvip_axi_if.master m3_axi
 );
   axi4_safety_connector #(
-    .ID_WIDTH(ID_WIDTH),
-    .ADDR_WIDTH(ADDR_WIDTH),
-    .DATA_WIDTH(DATA_WIDTH)
   ) u_connector (
-    .aclk(aclk),
-    .areset_n(areset_n),
+    .clk(aclk),
+    .rst(!areset_n),
 
     //--------------------------------------------------
     // Slave 0 Interface
