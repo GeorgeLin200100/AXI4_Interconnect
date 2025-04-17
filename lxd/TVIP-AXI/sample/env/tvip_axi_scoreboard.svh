@@ -41,7 +41,20 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   endfunction
 
   // Write function for master analysis ports
-  function void write_master(int idx, tvip_axi_item t);
+  function void write(tvip_axi_item t);
+    int idx = 0;
+    // Determine which master port this came from
+    foreach (master_imp[i]) begin
+      if (master_imp[i] == this) begin
+        idx = i;
+        break;
+      end
+    end
+    process_master_transaction(idx, t);
+  endfunction
+
+  // Write function for master analysis ports
+  function void process_master_transaction(int idx, tvip_axi_item t);
     tvip_axi_item cloned_t;
     $cast(cloned_t, t.clone());
     expected_transactions.push_back(cloned_t);
@@ -52,42 +65,38 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
   // Write function for master analysis ports
   function void write_master_0(tvip_axi_item t);
-    write_master(0, t);
+    process_master_transaction(0, t);
   endfunction
 
   function void write_master_1(tvip_axi_item t);
-    write_master(1, t);
+    process_master_transaction(1, t);
   endfunction
 
   function void write_master_2(tvip_axi_item t);
-    write_master(2, t);
+    process_master_transaction(2, t);
   endfunction
 
   // Write function for slave analysis ports
-  function void write_slave(int idx, tvip_axi_item t);
+  function void write_slave(tvip_axi_item t);
+    int idx = 0;
+    // Determine which slave port this came from
+    foreach (slave_imp[i]) begin
+      if (slave_imp[i] == this) begin
+        idx = i;
+        break;
+      end
+    end
+    process_slave_transaction(idx, t);
+  endfunction
+
+  // Helper function to process slave transactions
+  function void process_slave_transaction(int idx, tvip_axi_item t);
     tvip_axi_item cloned_t;
     $cast(cloned_t, t.clone());
     actual_transactions.push_back(cloned_t);
     slave_ordered_transactions[idx].push_back(cloned_t);
     check_transaction(cloned_t);
     verify_transaction_ordering(idx, cloned_t);
-  endfunction
-
-  // Write function for slave analysis ports
-  function void write_slave_0(tvip_axi_item t);
-    write_slave(0, t);
-  endfunction
-
-  function void write_slave_1(tvip_axi_item t);
-    write_slave(1, t);
-  endfunction
-
-  function void write_slave_2(tvip_axi_item t);
-    write_slave(2, t);
-  endfunction
-
-  function void write_slave_3(tvip_axi_item t);
-    write_slave(3, t);
   endfunction
 
   // Function to verify address decoding
