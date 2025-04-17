@@ -61,13 +61,13 @@ class tvip_axi_sample_test extends tue_test #(
     // Connect master agents to scoreboard
     foreach (master_agents[i]) begin
       master_sequencers[i] = master_agents[i].sequencer;
-      master_agents[i].monitor.item_ap.connect(scoreboard.master_imp[i]);
+      master_agents[i].item_port.connect(scoreboard.master_imp[i]);
     end
 
     // Connect slave agents to scoreboard
     foreach (slave_agents[j]) begin
       slave_sequencers[j] = slave_agents[j].sequencer;
-      slave_agents[j].monitor.item_ap.connect(scoreboard.slave_imp[j]);
+      slave_agents[j].item_port.connect(scoreboard.slave_imp[j]);
     end
   endfunction
 
