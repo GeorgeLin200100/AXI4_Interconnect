@@ -151,13 +151,13 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     if (request.id != response.id) begin
       `uvm_error("RESPONSE", "Request and response IDs don't match")
       return 0;
-    }
+    end
     
-    if (response.resp_type != TVIP_AXI_OKAY && 
-        response.resp_type != TVIP_AXI_EXOKAY) begin
-      `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.resp_type))
+    if (response.response != TVIP_AXI_OKAY && 
+        response.response != TVIP_AXI_EXOKAY) begin
+      `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.response))
       return 0;
-    }
+        end
     
     return 1;
   endfunction

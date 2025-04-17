@@ -12,8 +12,8 @@ package tvip_axi_sample_pkg;
 
   `include "tvip_axi_sample_configuration.svh"
   `include "tvip_axi_scoreboard.svh"
-  `include "tvip_axi_sample_test.svh"
   `include "tvip_axi_sample_write_read_sequence.svh"
+  `include "tvip_axi_sample_test.svh"
 
 endpackage
 
