@@ -31,10 +31,10 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   } addr_map_entry_t;
   
   addr_map_entry_t addr_map[$] = '{
-    '{64'h0000_0000_0000_0000, 64'h0000_FFFF_FFFF_FFFF, 0},
-    '{64'h0001_0000_0000_0000, 64'h0001_FFFF_FFFF_FFFF, 1},
-    '{64'h0002_0000_0000_0000, 64'h0002_FFFF_FFFF_FFFF, 2},
-    '{64'h0003_0000_0000_0000, 64'h0003_FFFF_FFFF_FFFF, 3}
+    '{`SLAVE_0_BASE_ADDR, `SLAVE_0_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 0},
+    '{`SLAVE_1_BASE_ADDR, `SLAVE_1_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 1},
+    '{`SLAVE_2_BASE_ADDR, `SLAVE_2_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 2},
+    '{`SLAVE_3_BASE_ADDR, `SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 3}
   };
 
   function new(string name = "tvip_axi_scoreboard", uvm_component parent = null);
@@ -81,14 +81,17 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
   // Write function for master analysis ports
   function void write_m0(tvip_axi_item t);
+    `uvm_info("[WRITE_M0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(0, t);
   endfunction
 
   function void write_m1(tvip_axi_item t);
+    `uvm_info("[WRITE_M1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(1, t);
   endfunction
 
   function void write_m2(tvip_axi_item t);
+    `uvm_info("[WRITE_M2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(2, t);
   endfunction
 
@@ -117,24 +120,29 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
     // Write function for slave analysis ports
   function void write_s0(tvip_axi_item t);
+    `uvm_info("[WRITE_S0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_slave_transaction(0, t);
   endfunction
 
   function void write_s1(tvip_axi_item t);
+    `uvm_info("[WRITE_S1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_slave_transaction(1, t);
   endfunction
 
   function void write_s2(tvip_axi_item t);
+    `uvm_info("[WRITE_S2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_slave_transaction(2, t);
   endfunction
 
   function void write_s3(tvip_axi_item t);
+    `uvm_info("[WRITE_S3 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_slave_transaction(3, t);
   endfunction
 
   // Function to verify address decoding
   function bit verify_address_decoding(tvip_axi_item t);
     int expected_slave_idx = -1;
+    `uvm_info("[SENT ADDR]", $sformatf("%0h", t.address), UVM_LOW)
     foreach (addr_map[i]) begin
       if (t.address >= addr_map[i].start_addr && t.address <= addr_map[i].end_addr) begin
         expected_slave_idx = addr_map[i].slave_idx;
@@ -235,11 +243,17 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
   // Function to compare two transactions
   function bit compare_transactions(tvip_axi_item t1, tvip_axi_item t2);
-    if (t1.access_type != t2.access_type) return 0;
+    `uvm_info("ACCESS_TYPE MATCHED", $sformatf("%0d,%0d", t1.access_type, t2.access_type), UVM_LOW) 
+    `uvm_info("ADDRESS MATCHED", $sformatf("%0h,%0h", t1.address, t2.address), UVM_LOW) 
+    `uvm_info("BURST_SIZE MATCHED", $sformatf("%0d,%0d", t1.burst_size, t2.burst_size), UVM_LOW) 
+    `uvm_info("BURST_LENGTH MATCHED", $sformatf("%0d,%0d", t1.burst_length, t2.burst_length), UVM_LOW) 
+    `uvm_info("DATA_SIZE MATCHED", $sformatf("%0d,%0d", t1.data.size(), t2.data.size()), UVM_LOW) 
+    if (t1.access_type != t2.access_type) 
+      return 0;
     if (t1.address != t2.address) return 0;
     if (t1.burst_size != t2.burst_size) return 0;
-    if (t1.burst_length != t2.burst_length) return 0;
-    if (t1.data.size() != t2.data.size()) return 0;
+    if (t1.burst_length != t2.burst_length) return 0; 
+    if (t1.data.size() != t2.data.size()) return 0;  
     for (int i = 0; i < t1.data.size(); i++) begin
       if (t1.data[i] != t2.data[i]) return 0;
     end

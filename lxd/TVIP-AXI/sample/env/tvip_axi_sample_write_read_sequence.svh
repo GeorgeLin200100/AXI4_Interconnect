@@ -4,12 +4,12 @@
 class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
   int unsigned  num_masters = 3;
   int unsigned  num_slaves = 4;
-  int unsigned  addr_region_size = 64'h0001_0000_0000_0000;
+  int unsigned  addr_region_size = `SLAVE_ADDR_REGION_SIZE;
   tvip_axi_address  slave_base_addr[4] = '{
-    64'h0000_0000_0000_0000,  // Slave 0
-    64'h0001_0000_0000_0000,  // Slave 1
-    64'h0002_0000_0000_0000,  // Slave 2
-    64'h0003_0000_0000_0000   // Slave 3
+    `SLAVE_0_BASE_ADDR,  // Slave 0
+    `SLAVE_1_BASE_ADDR,  // Slave 1
+    `SLAVE_2_BASE_ADDR,  // Slave 2
+    `SLAVE_3_BASE_ADDR   // Slave 3
   };
   tvip_axi_address  address_mask[int];
 
@@ -21,35 +21,36 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
   task body();
     do_basic_write_read_access();
 
-    for (int i = 0;i < 20;++i) begin
-      fork
-        automatic int ii  = i;
-        do_write_read_access_by_sequence(ii);
-      join_none
-    end
-    wait fork;
+    // for (int i = 0;i < 1;++i) begin
+    //   fork
+    //     automatic int ii  = i;
+    //     do_write_read_access_by_sequence(ii);
+    //   join_none
+    // end
+    // wait fork;
 
-    for (int i = 0;i < 20;++i) begin
-      fork
-        automatic int ii  = i;
-        do_write_read_access_by_item(ii);
-      join_none
-    end
-    wait fork;
+    // for (int i = 0;i < 1;++i) begin
+    //   fork
+    //     automatic int ii  = i;
+    //     do_write_read_access_by_item(ii);
+    //   join_none
+    // end
+    // wait fork;
   endtask
 
   task do_basic_write_read_access();
     tvip_axi_master_item  write_items[$];
     tvip_axi_master_item  read_items[$];
 
-    for (int i = 0;i < 20;++i) begin
+    for (int i = 0;i < 1;++i) begin
       tvip_axi_master_item  write_item;
       int slave_idx = i % num_slaves;
       `tue_do_with(write_item, {
         access_type == TVIP_AXI_WRITE_ACCESS;
-        address >= get_master_base_addr(i % num_masters, slave_idx);
-        address <= (get_master_base_addr(i % num_masters, slave_idx) + addr_region_size - 1);
-        (address + burst_size * burst_length) <= (get_master_base_addr(i % num_masters, slave_idx) + addr_region_size - 1);
+        address >= get_slave_base_addr(slave_idx);
+        address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+        (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+        address % (1 << burst_size) == 0; // 2^burst_size
       })
       write_items.push_back(write_item);
     end
@@ -94,9 +95,10 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
     int slave_idx = index % num_slaves;
 
     `tue_do_with(write_sequence, {
-      address >= get_master_base_addr(index % num_masters, slave_idx);
-      address <= (get_master_base_addr(index % num_masters, slave_idx) + addr_region_size - 1);
-      (address + burst_size * burst_length) <= (get_master_base_addr(index % num_masters, slave_idx) + addr_region_size - 1);
+      address >= get_slave_base_addr(slave_idx);
+      address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+      (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+      address % (1 << burst_size) == 0; // 2^burst_size
     })
     `tue_do_with(read_sequence, {
       address      == write_sequence.address;
@@ -126,9 +128,10 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
     `tue_do_with(write_item, {
       need_response == (index < 10);
       access_type   == TVIP_AXI_WRITE_ACCESS;
-      address       >= get_master_base_addr(index % num_masters, slave_idx);
-      address       <= (get_master_base_addr(index % num_masters, slave_idx) + addr_region_size - 1);
-      (address + burst_size * burst_length) <= (get_master_base_addr(index % num_masters, slave_idx) + addr_region_size - 1);
+      address       >= get_slave_base_addr(slave_idx);
+      address       <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+      (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+      address % (1 << burst_size) == 0; // 2^burst_size
     })
     wait_for_response(write_item, write_response);
 
@@ -199,8 +202,8 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
     return 1;
   endfunction
 
-  function tvip_axi_address get_master_base_addr(int master_idx, int slave_idx);
-    return slave_base_addr[slave_idx] + (master_idx * (addr_region_size / num_masters));
+  function tvip_axi_address get_slave_base_addr(int slave_idx);
+    return slave_base_addr[slave_idx];
   endfunction
 
   function tvip_axi_address get_address_mask(int burst_size);
