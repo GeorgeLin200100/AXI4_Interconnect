@@ -50,6 +50,19 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     verify_protocol(cloned_t);
   endfunction
 
+  // Write function for master analysis ports
+  function void write_master_0(tvip_axi_item t);
+    write_master(0, t);
+  endfunction
+
+  function void write_master_1(tvip_axi_item t);
+    write_master(1, t);
+  endfunction
+
+  function void write_master_2(tvip_axi_item t);
+    write_master(2, t);
+  endfunction
+
   // Write function for slave analysis ports
   function void write_slave(int idx, tvip_axi_item t);
     tvip_axi_item cloned_t;
@@ -58,6 +71,23 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     slave_ordered_transactions[idx].push_back(cloned_t);
     check_transaction(cloned_t);
     verify_transaction_ordering(idx, cloned_t);
+  endfunction
+
+  // Write function for slave analysis ports
+  function void write_slave_0(tvip_axi_item t);
+    write_slave(0, t);
+  endfunction
+
+  function void write_slave_1(tvip_axi_item t);
+    write_slave(1, t);
+  endfunction
+
+  function void write_slave_2(tvip_axi_item t);
+    write_slave(2, t);
+  endfunction
+
+  function void write_slave_3(tvip_axi_item t);
+    write_slave(3, t);
   endfunction
 
   // Function to verify address decoding
