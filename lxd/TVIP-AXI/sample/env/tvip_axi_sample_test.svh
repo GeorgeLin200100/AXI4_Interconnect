@@ -9,8 +9,15 @@ class tvip_axi_sample_test extends tue_test #(
   tvip_axi_slave_agent      slave_agents[4];
   tvip_axi_slave_sequencer  slave_sequencers[4];
   tvip_axi_scoreboard       scoreboard;
-  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
-  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
+  // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
+  // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
+  uvm_analysis_imp_m0 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m0;
+  uvm_analysis_imp_m1 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m1;
+  uvm_analysis_imp_m2 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m2;
+  uvm_analysis_imp_s0 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s0;
+  uvm_analysis_imp_s1 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s1;
+  uvm_analysis_imp_s2 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s2;
+  uvm_analysis_imp_s3 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s3;
 
   function new(string name = "tvip_axi_sample_test", uvm_component parent = null);
     super.new(name, parent);
@@ -60,14 +67,31 @@ class tvip_axi_sample_test extends tue_test #(
 
     // Connect master agents to scoreboard
     foreach (master_agents[i]) begin
-      master_sequencers[i] = master_agents[i].sequencer;
-      master_agents[i].item_port.connect(scoreboard.master_imp[i]);
+        master_sequencers[i] = master_agents[i].sequencer;
+    //  master_agents[i].item_port.connect($sformatf("scoreboard.master_imp_m%0d", i));
+    end
+
+    foreach (master_agents[i]) begin
+      case (i)
+        0: master_agents[i].item_port.connect(scoreboard.master_imp_m0);
+        1: master_agents[i].item_port.connect(scoreboard.master_imp_m1);
+        2: master_agents[i].item_port.connect(scoreboard.master_imp_m2);
+      endcase
     end
 
     // Connect slave agents to scoreboard
     foreach (slave_agents[j]) begin
       slave_sequencers[j] = slave_agents[j].sequencer;
-      slave_agents[j].item_port.connect(scoreboard.slave_imp[j]);
+      //slave_agents[j].item_port.connect($sformatf("scoreboard.slave_imp_s%0d", j));
+    end
+
+    foreach (slave_agents[i]) begin
+      case (i)
+        0: slave_agents[i].item_port.connect(scoreboard.slave_imp_s0);
+        1: slave_agents[i].item_port.connect(scoreboard.slave_imp_s1);
+        2: slave_agents[i].item_port.connect(scoreboard.slave_imp_s2);
+        3: slave_agents[i].item_port.connect(scoreboard.slave_imp_s3);
+      endcase
     end
   endfunction
 

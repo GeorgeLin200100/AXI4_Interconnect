@@ -5,9 +5,16 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   `uvm_component_utils(tvip_axi_scoreboard)
 
   // Analysis ports for master and slave transactions
-  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
-  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
+  //uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
+  //uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
 
+  uvm_analysis_imp_m0 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m0;
+  uvm_analysis_imp_m1 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m1;
+  uvm_analysis_imp_m2 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m2;
+  uvm_analysis_imp_s0 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s0;
+  uvm_analysis_imp_s1 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s1;
+  uvm_analysis_imp_s2 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s2;
+  uvm_analysis_imp_s3 #(tvip_axi_item, tvip_axi_scoreboard) slave_imp_s3;
   // Queues to store expected and actual transactions
   tvip_axi_item expected_transactions[$];
   tvip_axi_item actual_transactions[$];
@@ -32,27 +39,35 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
   function new(string name = "tvip_axi_scoreboard", uvm_component parent = null);
     super.new(name, parent);
-    for (int i = 0; i < 3; i++) begin
-      master_imp[i] = new($sformatf("master_imp[%0d]", i), this);
-    end
-    for (int i = 0; i < 4; i++) begin
-      slave_imp[i] = new($sformatf("slave_imp[%0d]", i), this);
-    end
+    // for (int i = 0; i < 3; i++) begin
+    //   master_imp[i] = new($sformatf("master_imp[%0d]", i), this);
+    // end
+    // for (int i = 0; i < 4; i++) begin
+    //   slave_imp[i] = new($sformatf("slave_imp[%0d]", i), this);
+    // end
+    master_imp_m0 = new("master_imp_m0", this);
+    master_imp_m1 = new("master_imp_m1", this);
+    master_imp_m2 = new("master_imp_m2", this);
+    slave_imp_s0 = new("slave_imp_s0", this);
+    slave_imp_s1 = new("slave_imp_s1", this);
+    slave_imp_s2 = new("slave_imp_s2", this);
+    slave_imp_s3 = new("slave_imp_s3", this);
+
   endfunction
 
-  // Write function for master analysis ports
-  function void write(tvip_axi_item t);
-    // The write method is called by the analysis port, so we can use the port's index
-    // to determine which master it came from
-    int idx = 0;
-    foreach (master_imp[i]) begin
-      if (master_imp[i] == this.m_imp) begin
-        idx = i;
-        break;
-      end
-    end
-    process_master_transaction(idx, t);
-  endfunction
+  // // Write function for master analysis ports
+  // function void write(tvip_axi_item t);
+  //   // The write method is called by the analysis port, so we can use the port's index
+  //   // to determine which master it came from
+  //   int idx = 0;
+  //   foreach (master_imp[i]) begin
+  //     if (master_imp[i] == this.m_imp) begin
+  //       idx = i;
+  //       break;
+  //     end
+  //   end
+  //   process_master_transaction(idx, t);
+  // endfunction
 
   // Write function for master analysis ports
   function void process_master_transaction(int idx, tvip_axi_item t);
@@ -65,30 +80,30 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   endfunction
 
   // Write function for master analysis ports
-  function void write_master_0(tvip_axi_item t);
+  function void write_m0(tvip_axi_item t);
     process_master_transaction(0, t);
   endfunction
 
-  function void write_master_1(tvip_axi_item t);
+  function void write_m1(tvip_axi_item t);
     process_master_transaction(1, t);
   endfunction
 
-  function void write_master_2(tvip_axi_item t);
+  function void write_m2(tvip_axi_item t);
     process_master_transaction(2, t);
   endfunction
 
-  // Write function for slave analysis ports
-  function void write_slave(tvip_axi_item t);
-    int idx = 0;
-    // Determine which slave port this came from
-    foreach (slave_imp[i]) begin
-      if (slave_imp[i] == this.s_imp) begin
-        idx = i;
-        break;
-      end
-    end
-    process_slave_transaction(idx, t);
-  endfunction
+  // // Write function for slave analysis ports
+  // function void write_slave(tvip_axi_item t);
+  //   int idx = 0;
+  //   // Determine which slave port this came from
+  //   foreach (slave_imp[i]) begin
+  //     if (slave_imp[i] == this.s_imp) begin
+  //       idx = i;
+  //       break;
+  //     end
+  //   end
+  //   process_slave_transaction(idx, t);
+  // endfunction
 
   // Helper function to process slave transactions
   function void process_slave_transaction(int idx, tvip_axi_item t);
@@ -98,6 +113,23 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     slave_ordered_transactions[idx].push_back(cloned_t);
     check_transaction(cloned_t);
     verify_transaction_ordering(idx, cloned_t);
+  endfunction
+
+    // Write function for slave analysis ports
+  function void write_s0(tvip_axi_item t);
+    process_slave_transaction(0, t);
+  endfunction
+
+  function void write_s1(tvip_axi_item t);
+    process_slave_transaction(1, t);
+  endfunction
+
+  function void write_s2(tvip_axi_item t);
+    process_slave_transaction(2, t);
+  endfunction
+
+  function void write_s3(tvip_axi_item t);
+    process_slave_transaction(3, t);
   endfunction
 
   // Function to verify address decoding
@@ -194,7 +226,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     end
     
     if (!(response.response[0] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY})) begin
-      `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.response))
+      `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.response[0]))
       return 0;
         end
     
