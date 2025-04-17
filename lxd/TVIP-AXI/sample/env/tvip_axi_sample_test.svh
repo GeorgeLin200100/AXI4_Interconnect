@@ -1,12 +1,16 @@
 `ifndef TVIP_AXI_SAMPLE_TEST_SVH
 `define TVIP_AXI_SAMPLE_TEST_SVH
+
 class tvip_axi_sample_test extends tue_test #(
   .CONFIGURATION  (tvip_axi_sample_configuration)
 );
-  tvip_axi_master_agent     master_agents[];
-  tvip_axi_master_sequencer master_sequencers[];
-  tvip_axi_slave_agent      slave_agents[];
-  tvip_axi_slave_sequencer  slave_sequencers[];
+  tvip_axi_master_agent     master_agents[3];
+  tvip_axi_master_sequencer master_sequencers[3];
+  tvip_axi_slave_agent      slave_agents[4];
+  tvip_axi_slave_sequencer  slave_sequencers[4];
+  tvip_axi_scoreboard       scoreboard;
+  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
+  uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
 
   function new(string name = "tvip_axi_sample_test", uvm_component parent = null);
     super.new(name, parent);
@@ -31,6 +35,10 @@ class tvip_axi_sample_test extends tue_test #(
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
+    // Create scoreboard
+    scoreboard = tvip_axi_scoreboard::type_id::create("scoreboard", this);
+
+    // Create master agents
     foreach (configuration.axi_cfg[i]) begin
       if (i < 3) begin
         master_agents[i] = tvip_axi_master_agent::type_id::create($sformatf("master_agent[%0d]", i), this);
@@ -38,6 +46,7 @@ class tvip_axi_sample_test extends tue_test #(
       end
     end
 
+    // Create slave agents
     foreach (configuration.axi_cfg[j]) begin
       if (j >= 3 && j < 7) begin
         slave_agents[j-3] = tvip_axi_slave_agent::type_id::create($sformatf("slave_agent[%0d]", j-3), this);
@@ -48,11 +57,17 @@ class tvip_axi_sample_test extends tue_test #(
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
+
+    // Connect master agents to scoreboard
     foreach (master_agents[i]) begin
       master_sequencers[i] = master_agents[i].sequencer;
+      master_agents[i].monitor.item_ap.connect(scoreboard.master_imp[i]);
     end
+
+    // Connect slave agents to scoreboard
     foreach (slave_agents[j]) begin
-      slave_sequencers[j]  = slave_agents[j].sequencer;
+      slave_sequencers[j] = slave_agents[j].sequencer;
+      slave_agents[j].monitor.item_ap.connect(scoreboard.slave_imp[j]);
     end
   endfunction
 
@@ -72,4 +87,5 @@ class tvip_axi_sample_test extends tue_test #(
 
   `uvm_component_utils(tvip_axi_sample_test)
 endclass
+
 `endif

@@ -13,7 +13,7 @@ FILE_LISTS	+= $(TVIP_COMMON_HOME)/compile.f
 FILE_LISTS	+= $(TVIP_AXI_HOME)/compile.f
 FILE_LISTS	+= $(TVIP_AXI_HOME)/sample/env/compile.f
 
-SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/tvip_axi_sample_delay.sv
+#SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/tvip_axi_sample_delay.sv
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/priority_encoder.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/arbiter.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_interconnect.v
