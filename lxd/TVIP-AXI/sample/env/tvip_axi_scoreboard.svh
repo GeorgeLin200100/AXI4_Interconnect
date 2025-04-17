@@ -42,10 +42,11 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
 
   // Write function for master analysis ports
   function void write(tvip_axi_item t);
+    // The write method is called by the analysis port, so we can use the port's index
+    // to determine which master it came from
     int idx = 0;
-    // Determine which master port this came from
     foreach (master_imp[i]) begin
-      if (master_imp[i] == this) begin
+      if (master_imp[i] == this.m_imp) begin
         idx = i;
         break;
       end
@@ -81,7 +82,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     int idx = 0;
     // Determine which slave port this came from
     foreach (slave_imp[i]) begin
-      if (slave_imp[i] == this) begin
+      if (slave_imp[i] == this.s_imp) begin
         idx = i;
         break;
       end
@@ -192,8 +193,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       return 0;
     end
     
-    if (response.response != TVIP_AXI_OKAY && 
-        response.response != TVIP_AXI_EXOKAY) begin
+    if (!(response.response[0] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY})) begin
       `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.response))
       return 0;
         end
