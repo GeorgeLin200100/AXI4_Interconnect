@@ -1,6 +1,85 @@
 `ifndef TVIP_AXI_SCOREBOARD_SVH
 `define TVIP_AXI_SCOREBOARD_SVH
 
+// Coverage collection
+  covergroup axi_transaction_cg with function sample(tvip_axi_item t);
+    // Address coverage
+    address_cp: coverpoint t.address {
+      bins slave0 = {[`SLAVE_0_BASE_ADDR:`SLAVE_0_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave1 = {[`SLAVE_1_BASE_ADDR:`SLAVE_1_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave2 = {[`SLAVE_2_BASE_ADDR:`SLAVE_2_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave3 = {[`SLAVE_3_BASE_ADDR:`SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins invalid = default;
+    }
+    
+    // Burst type coverage
+    burst_type_cp: coverpoint t.burst_type {
+      bins fixed = {TVIP_AXI_FIXED_BURST};
+      bins incr = {TVIP_AXI_INCREMENTING_BURST};
+      bins wrap = {TVIP_AXI_WRAPPING_BURST};
+    }
+    
+    // Burst length coverage
+    burst_length_cp: coverpoint t.burst_length {
+      bins lengths[] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+    }
+    
+    // Response coverage
+    response_cp: coverpoint t.response[0] {
+      bins okay = {TVIP_AXI_OKAY};
+      bins exokay = {TVIP_AXI_EXOKAY};
+      bins slverr = {TVIP_AXI_SLAVE_ERROR};
+      bins decerr = {TVIP_AXI_DECODE_ERROR};
+    }
+    
+    // Access type coverage
+    access_type_cp: coverpoint t.access_type {
+      bins read = {TVIP_AXI_READ_ACCESS};
+      bins write = {TVIP_AXI_WRITE_ACCESS};
+    }
+    
+    // Burst size coverage
+    burst_size_cp: coverpoint t.burst_size {
+      bins size_1 = {TVIP_AXI_BURST_SIZE_1_BYTE};   // 1 byte
+      bins size_2 = {TVIP_AXI_BURST_SIZE_2_BYTES};   // 2 bytes
+      bins size_4 = {TVIP_AXI_BURST_SIZE_4_BYTES};   // 4 bytes
+      bins size_8 = {TVIP_AXI_BURST_SIZE_8_BYTES};   // 8 bytes
+      bins size_16 = {TVIP_AXI_BURST_SIZE_16_BYTES};  // 16 bytes
+      bins size_32 = {TVIP_AXI_BURST_SIZE_32_BYTES};  // 32 bytes
+      bins size_64 = {TVIP_AXI_BURST_SIZE_64_BYTES};  // 64 bytes
+      bins size_128 = {TVIP_AXI_BURST_SIZE_128_BYTES}; // 128 bytes
+    }
+    
+    // Cross coverage between burst type and length
+    burst_type_x_length: cross burst_type_cp, burst_length_cp;
+    
+    // Cross coverage between access type and response
+    access_x_response: cross access_type_cp, response_cp;
+    
+    // Cross coverage between burst size and length
+    size_x_length: cross burst_size_cp, burst_length_cp;
+  endgroup
+
+  
+
+  // Coverage collection for transaction ordering
+  covergroup axi_ordering_cg with function sample(int master_idx, int slave_idx);
+    master_slave_cp: coverpoint master_idx {
+      bins m0 = {0};
+      bins m1 = {1};
+      bins m2 = {2};
+    }
+    
+    slave_cp: coverpoint slave_idx {
+      bins s0 = {0};
+      bins s1 = {1};
+      bins s2 = {2};
+      bins s3 = {3};
+    }
+    
+    master_slave_x: cross master_slave_cp, slave_cp;
+  endgroup
+
 class tvip_axi_scoreboard extends uvm_scoreboard;
   `uvm_component_utils(tvip_axi_scoreboard)
 
@@ -78,89 +157,13 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     '{`SLAVE_3_BASE_ADDR, `SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 3}
   };
 
-  // Coverage collection
-  covergroup axi_transaction_cg with function sample(tvip_axi_item t);
-    // Address coverage
-    address_cp: coverpoint t.address {
-      bins slave0 = {[`SLAVE_0_BASE_ADDR:`SLAVE_0_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
-      bins slave1 = {[`SLAVE_1_BASE_ADDR:`SLAVE_1_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
-      bins slave2 = {[`SLAVE_2_BASE_ADDR:`SLAVE_2_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
-      bins slave3 = {[`SLAVE_3_BASE_ADDR:`SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
-      bins invalid = default;
-    }
-    
-    // Burst type coverage
-    burst_type_cp: coverpoint t.burst_type {
-      bins fixed = {TVIP_AXI_FIXED_BURST};
-      bins incr = {TVIP_AXI_INCREMENTING_BURST};
-      bins wrap = {TVIP_AXI_WRAPPING_BURST};
-    }
-    
-    // Burst length coverage
-    burst_length_cp: coverpoint t.burst_length {
-      bins lengths[] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
-    }
-    
-    // Response coverage
-    response_cp: coverpoint t.response[0] {
-      bins okay = {TVIP_AXI_OKAY};
-      bins exokay = {TVIP_AXI_EXOKAY};
-      bins slverr = {TVIP_AXI_SLAVE_ERROR};
-      bins decerr = {TVIP_AXI_DECODE_ERROR};
-    }
-    
-    // Access type coverage
-    access_type_cp: coverpoint t.access_type {
-      bins read = {TVIP_AXI_READ_ACCESS};
-      bins write = {TVIP_AXI_WRITE_ACCESS};
-    }
-    
-    // Burst size coverage
-    burst_size_cp: coverpoint t.burst_size {
-      bins size_1 = {TVIP_AXI_BURST_SIZE_1_BYTE};   // 1 byte
-      bins size_2 = {TVIP_AXI_BURST_SIZE_2_BYTES};   // 2 bytes
-      bins size_4 = {TVIP_AXI_BURST_SIZE_4_BYTES};   // 4 bytes
-      bins size_8 = {TVIP_AXI_BURST_SIZE_8_BYTES};   // 8 bytes
-      bins size_16 = {TVIP_AXI_BURST_SIZE_16_BYTES};  // 16 bytes
-      bins size_32 = {TVIP_AXI_BURST_SIZE_32_BYTES};  // 32 bytes
-      bins size_64 = {TVIP_AXI_BURST_SIZE_64_BYTES};  // 64 bytes
-      bins size_128 = {TVIP_AXI_BURST_SIZE_128_BYTES}; // 128 bytes
-    }
-    
-    // Cross coverage between burst type and length
-    burst_type_x_length: cross burst_type_cp, burst_length_cp;
-    
-    // Cross coverage between access type and response
-    access_x_response: cross access_type_cp, response_cp;
-    
-    // Cross coverage between burst size and length
-    size_x_length: cross burst_size_cp, burst_length_cp;
-  endgroup
-
-  axi_transaction_cg axi_cg = new();
-
-  // Coverage collection for transaction ordering
-  covergroup axi_ordering_cg with function sample(int master_idx, int slave_idx);
-    master_slave_cp: coverpoint master_idx {
-      bins m0 = {0};
-      bins m1 = {1};
-      bins m2 = {2};
-    }
-    
-    slave_cp: coverpoint slave_idx {
-      bins s0 = {0};
-      bins s1 = {1};
-      bins s2 = {2};
-      bins s3 = {3};
-    }
-    
-    master_slave_x: cross master_slave_cp, slave_cp;
-  endgroup
-
-  axi_ordering_cg ordering_cg = new();
+  protected axi_transaction_cg axi_cg;
+  protected axi_ordering_cg ordering_cg;
 
   function new(string name = "tvip_axi_scoreboard", uvm_component parent = null);
     super.new(name, parent);
+    axi_cg = new();
+    ordering_cg = new();
     // for (int i = 0; i < 3; i++) begin
     //   master_imp[i] = new($sformatf("master_imp[%0d]", i), this);
     // end
