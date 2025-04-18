@@ -24,7 +24,20 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   tvip_axi_item slave_ordered_transactions[4][$];
 
   // Transaction ID tracking
-  bit [31:0] pending_transactions[int];
+  typedef struct {
+    tvip_axi_item transaction;
+    int master_idx;
+  } pending_transaction_t;
+  
+  pending_transaction_t pending_transactions[int][$];
+  
+  // Queue for slave transactions that arrive before their master transactions
+  typedef struct {
+    tvip_axi_item transaction;
+    int slave_idx;
+  } pending_slave_transaction_t;
+  
+  pending_slave_transaction_t pending_slave_transactions[int][$];
   
   // Address map for interconnect
   typedef struct {
@@ -86,19 +99,61 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   function void write_m0(tvip_axi_item t);
     `uvm_info("[WRITE_M0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(0, t);
-    pending_transactions[t.id] = 1;
+    
+    // Add to pending transactions queue
+    pending_transaction_t pending_t;
+    pending_t.transaction = t;
+    pending_t.master_idx = 0;
+    pending_transactions[t.id].push_back(pending_t);
+    
+    // Process any pending slave transactions for this ID
+    if (pending_slave_transactions.exists(t.id)) begin
+      foreach (pending_slave_transactions[t.id][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
+                                pending_slave_transactions[t.id][i].transaction);
+      end
+      pending_slave_transactions.delete(t.id);
+    end
   endfunction
 
   function void write_m1(tvip_axi_item t);
     `uvm_info("[WRITE_M1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(1, t);
-    pending_transactions[t.id] = 1;
+    
+    // Add to pending transactions queue
+    pending_transaction_t pending_t;
+    pending_t.transaction = t;
+    pending_t.master_idx = 1;
+    pending_transactions[t.id].push_back(pending_t);
+    
+    // Process any pending slave transactions for this ID
+    if (pending_slave_transactions.exists(t.id)) begin
+      foreach (pending_slave_transactions[t.id][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
+                                pending_slave_transactions[t.id][i].transaction);
+      end
+      pending_slave_transactions.delete(t.id);
+    end
   endfunction
 
   function void write_m2(tvip_axi_item t);
     `uvm_info("[WRITE_M2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
     process_master_transaction(2, t);
-    pending_transactions[t.id] = 1;
+    
+    // Add to pending transactions queue
+    pending_transaction_t pending_t;
+    pending_t.transaction = t;
+    pending_t.master_idx = 2;
+    pending_transactions[t.id].push_back(pending_t);
+    
+    // Process any pending slave transactions for this ID
+    if (pending_slave_transactions.exists(t.id)) begin
+      foreach (pending_slave_transactions[t.id][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
+                                pending_slave_transactions[t.id][i].transaction);
+      end
+      pending_slave_transactions.delete(t.id);
+    end
   endfunction
 
   // // Write function for slave analysis ports
@@ -127,33 +182,65 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     // Write function for slave analysis ports
   function void write_s0(tvip_axi_item t);
     `uvm_info("[WRITE_S0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    if (pending_transactions.exists(t.id)) begin
+    if (pending_transactions.exists(t.id) && pending_transactions[t.id].size() > 0) begin
+      // Get the oldest pending transaction with this ID
+      pending_transaction_t pending_t = pending_transactions[t.id][0];
       process_slave_transaction(0, t);
-      pending_transactions.delete(t.id);
+      pending_transactions[t.id].pop_front();
+    end else begin
+      // Queue the slave transaction if master hasn't arrived yet
+      pending_slave_transaction_t pending_slave_t;
+      pending_slave_t.transaction = t;
+      pending_slave_t.slave_idx = 0;
+      pending_slave_transactions[t.id].push_back(pending_slave_t);
     end
   endfunction
 
   function void write_s1(tvip_axi_item t);
     `uvm_info("[WRITE_S1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    if (pending_transactions.exists(t.id)) begin
+    if (pending_transactions.exists(t.id) && pending_transactions[t.id].size() > 0) begin
+      // Get the oldest pending transaction with this ID
+      pending_transaction_t pending_t = pending_transactions[t.id][0];
       process_slave_transaction(1, t);
-      pending_transactions.delete(t.id);
+      pending_transactions[t.id].pop_front();
+    end else begin
+      // Queue the slave transaction if master hasn't arrived yet
+      pending_slave_transaction_t pending_slave_t;
+      pending_slave_t.transaction = t;
+      pending_slave_t.slave_idx = 1;
+      pending_slave_transactions[t.id].push_back(pending_slave_t);
     end
   endfunction
 
   function void write_s2(tvip_axi_item t);
     `uvm_info("[WRITE_S2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    if (pending_transactions.exists(t.id)) begin
+    if (pending_transactions.exists(t.id) && pending_transactions[t.id].size() > 0) begin
+      // Get the oldest pending transaction with this ID
+      pending_transaction_t pending_t = pending_transactions[t.id][0];
       process_slave_transaction(2, t);
-      pending_transactions.delete(t.id);
+      pending_transactions[t.id].pop_front();
+    end else begin
+      // Queue the slave transaction if master hasn't arrived yet
+      pending_slave_transaction_t pending_slave_t;
+      pending_slave_t.transaction = t;
+      pending_slave_t.slave_idx = 2;
+      pending_slave_transactions[t.id].push_back(pending_slave_t);
     end
   endfunction
 
   function void write_s3(tvip_axi_item t);
     `uvm_info("[WRITE_S3 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    if (pending_transactions.exists(t.id)) begin
+    if (pending_transactions.exists(t.id) && pending_transactions[t.id].size() > 0) begin
+      // Get the oldest pending transaction with this ID
+      pending_transaction_t pending_t = pending_transactions[t.id][0];
       process_slave_transaction(3, t);
-      pending_transactions.delete(t.id);
+      pending_transactions[t.id].pop_front();
+    end else begin
+      // Queue the slave transaction if master hasn't arrived yet
+      pending_slave_transaction_t pending_slave_t;
+      pending_slave_t.transaction = t;
+      pending_slave_t.slave_idx = 3;
+      pending_slave_transactions[t.id].push_back(pending_slave_t);
     end
   endfunction
 
