@@ -22,6 +22,10 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   // Transaction ordering queues
   tvip_axi_item master_ordered_transactions[3][$];
   tvip_axi_item slave_ordered_transactions[4][$];
+
+  // Transaction ID tracking
+  int transaction_id_counter = 0;
+  bit [31:0] pending_transactions[int];
   
   // Address map for interconnect
   typedef struct {
@@ -82,17 +86,23 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   // Write function for master analysis ports
   function void write_m0(tvip_axi_item t);
     `uvm_info("[WRITE_M0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
+    t.transaction_id = transaction_id_counter++;
     process_master_transaction(0, t);
+    pending_transactions[t.transaction_id] = 1;
   endfunction
 
   function void write_m1(tvip_axi_item t);
     `uvm_info("[WRITE_M1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
+    t.transaction_id = transaction_id_counter++;
     process_master_transaction(1, t);
+    pending_transactions[t.transaction_id] = 1;
   endfunction
 
   function void write_m2(tvip_axi_item t);
     `uvm_info("[WRITE_M2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
+    t.transaction_id = transaction_id_counter++;
     process_master_transaction(2, t);
+    pending_transactions[t.transaction_id] = 1;
   endfunction
 
   // // Write function for slave analysis ports
@@ -121,22 +131,33 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     // Write function for slave analysis ports
   function void write_s0(tvip_axi_item t);
     `uvm_info("[WRITE_S0 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    process_slave_transaction(0, t);
+    if (pending_transactions.exists(t.transaction_id)) begin
+      process_slave_transaction(0, t);
+      pending_transactions.delete(t.transaction_id);
+    end
   endfunction
 
   function void write_s1(tvip_axi_item t);
     `uvm_info("[WRITE_S1 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    process_slave_transaction(1, t);
+    if (pending_transactions.exists(t.transaction_id)) begin
+      process_slave_transaction(1, t);
+      pending_transactions.delete(t.transaction_id);
   endfunction
 
   function void write_s2(tvip_axi_item t);
     `uvm_info("[WRITE_S2 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    process_slave_transaction(2, t);
+    if (pending_transactions.exists(t.transaction_id)) begin
+      process_slave_transaction(2, t);
+      pending_transactions.delete(t.transaction_id);
+    end
   endfunction
 
   function void write_s3(tvip_axi_item t);
     `uvm_info("[WRITE_S3 CALLED]", $sformatf("%0h", t.address), UVM_LOW)
-    process_slave_transaction(3, t);
+    if (pending_transactions.exists(t.transaction_id)) begin
+      process_slave_transaction(3, t);
+      pending_transactions.delete(t.transaction_id);
+    end
   endfunction
 
   // Function to verify address decoding
