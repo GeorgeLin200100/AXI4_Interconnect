@@ -27,6 +27,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   typedef struct {
     tvip_axi_item transaction;
     int master_idx;
+    int source_id;  // Add source tracking
   } pending_transaction_t;
   
   pending_transaction_t pending_transactions[int][$];
@@ -35,6 +36,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   typedef struct {
     tvip_axi_item transaction;
     int slave_idx;
+    int source_id;  // Add source tracking
   } pending_slave_transaction_t;
   
   pending_slave_transaction_t pending_slave_transactions[int][$];
@@ -52,6 +54,26 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     '{`SLAVE_2_BASE_ADDR, `SLAVE_2_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 2},
     '{`SLAVE_3_BASE_ADDR, `SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 3}
   };
+
+  // Coverage collection
+  covergroup axi_transaction_cg with function sample(tvip_axi_item t);
+    address_cp: coverpoint t.address {
+      bins ranges[] = {[0:$]} with (10);  // Cover address ranges
+    }
+    burst_type_cp: coverpoint t.burst_type;
+    burst_length_cp: coverpoint t.burst_length {
+      bins lengths[] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+    }
+    response_cp: coverpoint t.response[0] {
+      bins okay = {TVIP_AXI_OKAY};
+      bins exokay = {TVIP_AXI_EXOKAY};
+      bins error = {TVIP_AXI_SLVERR, TVIP_AXI_DECERR};
+    }
+    access_type_cp: coverpoint t.access_type;
+    burst_size_cp: coverpoint t.burst_size;
+  endgroup
+
+  axi_transaction_cg axi_cg = new();
 
   function new(string name = "tvip_axi_scoreboard", uvm_component parent = null);
     super.new(name, parent);
@@ -299,10 +321,34 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       end
     end
     
+    // Check burst length limits
+    if (t.burst_length > 256) begin
+      `uvm_error("PROTOCOL", $sformatf("Burst length %0d exceeds AXI4 maximum of 256", t.burst_length))
+      return 0;
+    end
+    
+    // Check wrap burst alignment
+    if (t.burst_type == TVIP_AXI_WRAP_BURST) begin
+      int wrap_boundary = t.burst_length * (1 << t.burst_size);
+      if ((t.address % wrap_boundary) != 0) begin
+        `uvm_error("PROTOCOL", $sformatf("Wrap burst address 0x%0h not aligned to wrap boundary %0d", 
+                  t.address, wrap_boundary))
+        return 0;
+      end
+    end
+    
     // Check burst type compatibility
     if (t.burst_type == TVIP_AXI_FIXED_BURST) begin
       if (t.burst_length > 16) begin
         `uvm_error("PROTOCOL", "Fixed burst length exceeds maximum of 16")
+        return 0;
+      end
+    end
+
+    // Check narrow transfers
+    if (t.burst_size < t.data_width) begin
+      if (t.burst_type == TVIP_AXI_WRAP_BURST) begin
+        `uvm_error("PROTOCOL", "Narrow transfers not allowed with wrap burst type")
         return 0;
       end
     end
@@ -340,10 +386,28 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       return 0;
     end
     
-    if (!(response.response[0] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY})) begin
-      `uvm_error("RESPONSE", $sformatf("Unexpected response type: %0d", response.response[0]))
-      return 0;
+    // Check all response beats
+    foreach (response.response[i]) begin
+      if (!(response.response[i] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY})) begin
+        `uvm_error("RESPONSE", $sformatf("Invalid response type at beat %0d: %0d", 
+                  i, response.response[i]))
+        return 0;
+      end
+    end
+    
+    // For write transactions, verify byte strobes
+    if (request.access_type == TVIP_AXI_WRITE_ACCESS) begin
+      if (request.byte_enable.size() != response.byte_enable.size()) begin
+        `uvm_error("RESPONSE", "Byte enable size mismatch between request and response")
+        return 0;
+      end
+      foreach (request.byte_enable[i]) begin
+        if (request.byte_enable[i] != response.byte_enable[i]) begin
+          `uvm_error("RESPONSE", $sformatf("Byte enable mismatch at index %0d", i))
+          return 0;
         end
+      end
+    end
     
     return 1;
   endfunction
@@ -364,15 +428,34 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     for (int i = 0; i < t1.data.size(); i++) begin
       if (t1.data[i] != t2.data[i]) return 0;
     end
+    
+    foreach (t1.byte_enable[i]) begin
+      if (t1.byte_enable[i] != t2.byte_enable[i]) return 0;
+    end
+    
     return 1;
   endfunction
 
   // Check for any remaining expected transactions at the end of simulation
   function void report_phase(uvm_phase phase);
+    super.report_phase(phase);
+    
     if (expected_transactions.size() > 0) begin
       `uvm_error("SCOREBOARD", $sformatf("There are %0d expected transactions that were not received", 
                 expected_transactions.size()))
     end
+
+    // Cleanup pending transactions
+    foreach (pending_transactions[id]) begin
+      pending_transactions[id].delete();
+    end
+    
+    foreach (pending_slave_transactions[id]) begin
+      pending_slave_transactions[id].delete();
+    end
+
+    // Report coverage
+    `uvm_info("COVERAGE", $sformatf("Transaction coverage: %0f%%", axi_cg.get_coverage()), UVM_LOW)
   endfunction
 
 endclass
