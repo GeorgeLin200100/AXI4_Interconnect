@@ -230,7 +230,9 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       if (compare_transactions(actual, expected_transactions[i])) begin
         found = 1;
         verify_response(expected_transactions[i], actual);
+        `uvm_info("EXPECT_TRANSACTION_SIZE", $sformatf("%0d",expected_transactions.size()),UVM_LOW)
         expected_transactions.delete(i);
+        `uvm_info("EXPECT_TRANSACTION_SIZE1", $sformatf("%0d",expected_transactions.size()),UVM_LOW)
         break;
       end
     end
