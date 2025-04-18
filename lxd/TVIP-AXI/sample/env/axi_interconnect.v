@@ -66,7 +66,7 @@ module axi_interconnect #
     // Width of ruser signal
     parameter RUSER_WIDTH = 1,
     // Propagate ID field (enable forwarding of ID field from slave interfaces to master interfaces)
-    parameter FORWARD_ID = 1,
+    parameter FORWARD_ID = 0,
     // Number of regions per master interface
     parameter M_REGIONS = 1,
     // Master interface base addresses

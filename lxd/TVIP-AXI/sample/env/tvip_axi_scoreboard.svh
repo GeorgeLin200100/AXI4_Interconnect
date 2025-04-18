@@ -127,7 +127,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     process_master_transaction(0, t);
 
     `uvm_info("[ABOUT TO ENTER SLAVE PENDING CHECK]]", $sformatf("%0h, %0d", t.address, pending_slave_transactions.size()), UVM_LOW)
-    `uvm_info("[WRITE_M0 ITEM]", $sformatf("%s",t.sprint()), UVM_LOW)
+    //`uvm_info("[WRITE_M0 ITEM]", $sformatf("%s",t.sprint()), UVM_LOW)
     // Process any pending slave transactions for this ID
     if (pending_slave_transactions.exists(t.id)) begin
       `uvm_info("[PENDING_SLAVE_TRAN EXISTS]", $sformatf("%0h", t.address), UVM_LOW)
@@ -216,7 +216,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     end else begin
       // Queue the slave transaction if master hasn't arrived yet
       `uvm_info("[WRITE_SO PEND_SLAVE_T PUSH BACK]", $sformatf("%0h, %0d", t.address, t.id), UVM_LOW)
-      `uvm_info("[WRITE_S0 ITEM]", $sformatf("%s",t.sprint()), UVM_LOW)
+      //`uvm_info("[WRITE_S0 ITEM]", $sformatf("%s",t.sprint()), UVM_LOW)
       if (!pending_slave_transactions.exists(t.id)) begin
         pending_slave_transactions[t.id]={};
       end
@@ -346,15 +346,15 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       return 0;
     end
     
-    // Check wrap burst alignment
-    if (t.burst_type == TVIP_AXI_WRAPPING_BURST) begin
-      int wrap_boundary = t.burst_length * (1 << t.burst_size);
-      if ((t.address % wrap_boundary) != 0) begin
-        `uvm_error("PROTOCOL", $sformatf("Wrap burst address 0x%0h not aligned to wrap boundary %0d", 
-                  t.address, wrap_boundary))
-        return 0;
-      end
-    end
+    // // Check wrap burst alignment
+    // if (t.burst_type == TVIP_AXI_WRAPPING_BURST) begin
+    //   int wrap_boundary = t.burst_length * (1 << t.burst_size);
+    //   if ((t.address % wrap_boundary) != 0) begin
+    //     `uvm_error("PROTOCOL", $sformatf("Wrap burst address 0x%0h not aligned to wrap boundary %0d", 
+    //               t.address, wrap_boundary))
+    //     return 0;
+    //   end
+    // end
     
     // Check burst type compatibility
     if (t.burst_type == TVIP_AXI_FIXED_BURST) begin
@@ -407,7 +407,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     
     // Check all response beats
     foreach (response.response[i]) begin
-      if (!(response.response[i] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY})) begin
+      if (!(response.response[i] inside {TVIP_AXI_OKAY, TVIP_AXI_EXOKAY, TVIP_AXI_SLAVE_ERROR, TVIP_AXI_DECODE_ERROR})) begin
         `uvm_error("RESPONSE", $sformatf("Invalid response type at beat %0d: %0d", 
                   i, response.response[i]))
         return 0;

@@ -47,7 +47,7 @@ module axi4_safety_connector #
     parameter ARUSER_WIDTH = 1,
     parameter RUSER_ENABLE = 0,
     parameter RUSER_WIDTH = 1,
-    parameter FORWARD_ID = 0,
+    parameter FORWARD_ID = 1,
     parameter M_REGIONS = 1,
     parameter M00_BASE_ADDR = 0,
     parameter M00_ADDR_WIDTH = {M_REGIONS{32'd24}},

@@ -21,28 +21,28 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
   task body();
     do_basic_write_read_access();
 
-    // for (int i = 0;i < 1;++i) begin
-    //   fork
-    //     automatic int ii  = i;
-    //     do_write_read_access_by_sequence(ii);
-    //   join_none
-    // end
-    // wait fork;
+    for (int i = 0;i < 20;++i) begin
+      fork
+        automatic int ii  = i;
+        do_write_read_access_by_sequence(ii);
+      join_none
+    end
+    wait fork;
 
-    // for (int i = 0;i < 1;++i) begin
-    //   fork
-    //     automatic int ii  = i;
-    //     do_write_read_access_by_item(ii);
-    //   join_none
-    // end
-    // wait fork;
+    for (int i = 0;i < 20;++i) begin
+      fork
+        automatic int ii  = i;
+        do_write_read_access_by_item(ii);
+      join_none
+    end
+    wait fork;
   endtask
 
   task do_basic_write_read_access();
     tvip_axi_master_item  write_items[$];
     tvip_axi_master_item  read_items[$];
 
-    for (int i = 0;i < 1;++i) begin
+    for (int i = 0;i < 20;++i) begin
       tvip_axi_master_item  write_item;
       int slave_idx = i % num_slaves;
       `tue_do_with(write_item, {

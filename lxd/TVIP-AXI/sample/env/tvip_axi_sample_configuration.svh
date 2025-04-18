@@ -139,9 +139,9 @@ class tvip_axi_sample_configuration extends tue_configuration;
     }
     else {
       foreach (axi_cfg[i]) {
-        if (i >= 3) {  // Only for slave interfaces
+        //if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_ordering == TVIP_AXI_IN_ORDER;
-        }
+        //}
       }
     }
   }
