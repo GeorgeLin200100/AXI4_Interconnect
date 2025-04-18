@@ -10,6 +10,8 @@ virtual class tvip_axi_slave_monitor extends tvip_axi_monitor_base #(
   .BASE (tvip_axi_slave_monitor_base  ),
   .ITEM (tvip_axi_slave_item          )
 );
+// overwrite the default write at end_address/data/response, cause slave monitor call write() earlier than master
+// helps slave decodes the address early and determine if they will respond as soon as the address phase begins
   task begin_address(tvip_axi_item item);
     super.begin_address(item);
     write_request(item);
