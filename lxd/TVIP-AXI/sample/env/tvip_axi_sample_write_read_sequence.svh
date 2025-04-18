@@ -53,6 +53,7 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
         address % (1 << burst_size) == 0; // 2^burst_size
       })
       write_items.push_back(write_item);
+      `uvm_info("[WRITE_ITEM PUSH BACK]", $sformatf("%0h", write_item.address), UVM_LOW)
     end
     write_items[$].wait_for_done();
 
@@ -65,6 +66,7 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
         burst_length == write_items[i].burst_length;
       })
       read_items.push_back(read_item);
+      `uvm_info("[READ_ITEM PUSH BACK]", $sformatf("%0h", read_item.address), UVM_LOW)
     end
 
     foreach (write_items[i]) begin
@@ -75,6 +77,7 @@ class tvip_axi_sample_write_read_sequence extends tvip_axi_master_sequence_base;
       write_item  = write_items[i];
       read_item   = read_items[i];
       wait_for_response(read_item, response_item);
+      `uvm_info("[REPONSE_ITEM BACK]", $sformatf("%0h", read_item.address), UVM_LOW)
 
       for (int j = 0;j < write_item.burst_length;++j) begin
         if (!compare_data(
