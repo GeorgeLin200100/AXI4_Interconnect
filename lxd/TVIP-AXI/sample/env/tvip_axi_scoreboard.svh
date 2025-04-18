@@ -4,6 +4,25 @@
 class tvip_axi_scoreboard extends uvm_scoreboard;
   `uvm_component_utils(tvip_axi_scoreboard)
 
+  // Define coverage group types
+  typedef enum {
+    TVIP_AXI_FIXED,
+    TVIP_AXI_INCR,
+    TVIP_AXI_WRAP
+  } tvip_axi_burst_type_e;
+
+  typedef enum {
+    TVIP_AXI_OKAY,
+    TVIP_AXI_EXOKAY,
+    TVIP_AXI_SLVERR,
+    TVIP_AXI_DECERR
+  } tvip_axi_response_e;
+
+  typedef enum {
+    TVIP_AXI_READ,
+    TVIP_AXI_WRITE
+  } tvip_axi_access_type_e;
+
   // Analysis ports for master and slave transactions
   //uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
   //uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
@@ -59,25 +78,86 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     '{`SLAVE_3_BASE_ADDR, `SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE, 3}
   };
 
-  // // Coverage collection
-  // covergroup axi_transaction_cg with function sample(tvip_axi_item t);
-  //   address_cp: coverpoint t.address {
-  //     bins ranges[] = {[0:$]} with (10);  // Cover address ranges
-  //   }
-  //   burst_type_cp: coverpoint t.burst_type;
-  //   burst_length_cp: coverpoint t.burst_length {
-  //     bins lengths[] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
-  //   }
-  //   response_cp: coverpoint t.response[0] {
-  //     bins okay = {TVIP_AXI_OKAY};
-  //     bins exokay = {TVIP_AXI_EXOKAY};
-  //     bins error = {TVIP_AXI_SLVERR, TVIP_AXI_DECERR};
-  //   }
-  //   access_type_cp: coverpoint t.access_type;
-  //   burst_size_cp: coverpoint t.burst_size;
-  // endgroup
+  // Coverage collection
+  covergroup axi_transaction_cg with function sample(tvip_axi_item t);
+    // Address coverage
+    address_cp: coverpoint t.address {
+      bins slave0 = {[`SLAVE_0_BASE_ADDR:`SLAVE_0_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave1 = {[`SLAVE_1_BASE_ADDR:`SLAVE_1_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave2 = {[`SLAVE_2_BASE_ADDR:`SLAVE_2_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins slave3 = {[`SLAVE_3_BASE_ADDR:`SLAVE_3_BASE_ADDR+`SLAVE_ADDR_REGION_SIZE]};
+      bins invalid = default;
+    }
+    
+    // Burst type coverage
+    burst_type_cp: coverpoint t.burst_type {
+      bins fixed = {TVIP_AXI_FIXED_BURST};
+      bins incr = {TVIP_AXI_INCREMENTING_BURST};
+      bins wrap = {TVIP_AXI_WRAPPING_BURST};
+    }
+    
+    // Burst length coverage
+    burst_length_cp: coverpoint t.burst_length {
+      bins lengths[] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+    }
+    
+    // Response coverage
+    response_cp: coverpoint t.response[0] {
+      bins okay = {TVIP_AXI_OKAY};
+      bins exokay = {TVIP_AXI_EXOKAY};
+      bins slverr = {TVIP_AXI_SLAVE_ERROR};
+      bins decerr = {TVIP_AXI_DECODE_ERROR};
+    }
+    
+    // Access type coverage
+    access_type_cp: coverpoint t.access_type {
+      bins read = {TVIP_AXI_READ_ACCESS};
+      bins write = {TVIP_AXI_WRITE_ACCESS};
+    }
+    
+    // Burst size coverage
+    burst_size_cp: coverpoint t.burst_size {
+      bins size_1 = {TVIP_AXI_BURST_SIZE_1_BYTE};   // 1 byte
+      bins size_2 = {TVIP_AXI_BURST_SIZE_2_BYTES};   // 2 bytes
+      bins size_4 = {TVIP_AXI_BURST_SIZE_4_BYTES};   // 4 bytes
+      bins size_8 = {TVIP_AXI_BURST_SIZE_8_BYTES};   // 8 bytes
+      bins size_16 = {TVIP_AXI_BURST_SIZE_16_BYTES};  // 16 bytes
+      bins size_32 = {TVIP_AXI_BURST_SIZE_32_BYTES};  // 32 bytes
+      bins size_64 = {TVIP_AXI_BURST_SIZE_64_BYTES};  // 64 bytes
+      bins size_128 = {TVIP_AXI_BURST_SIZE_128_BYTES}; // 128 bytes
+    }
+    
+    // Cross coverage between burst type and length
+    burst_type_x_length: cross burst_type_cp, burst_length_cp;
+    
+    // Cross coverage between access type and response
+    access_x_response: cross access_type_cp, response_cp;
+    
+    // Cross coverage between burst size and length
+    size_x_length: cross burst_size_cp, burst_length_cp;
+  endgroup
 
-  // axi_transaction_cg axi_cg = new();
+  axi_transaction_cg axi_cg = new();
+
+  // Coverage collection for transaction ordering
+  covergroup axi_ordering_cg with function sample(int master_idx, int slave_idx);
+    master_slave_cp: coverpoint master_idx {
+      bins m0 = {0};
+      bins m1 = {1};
+      bins m2 = {2};
+    }
+    
+    slave_cp: coverpoint slave_idx {
+      bins s0 = {0};
+      bins s1 = {1};
+      bins s2 = {2};
+      bins s3 = {3};
+    }
+    
+    master_slave_x: cross master_slave_cp, slave_cp;
+  endgroup
+
+  axi_ordering_cg ordering_cg = new();
 
   function new(string name = "tvip_axi_scoreboard", uvm_component parent = null);
     super.new(name, parent);
@@ -119,6 +199,8 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     master_ordered_transactions[idx].push_back(cloned_t);
     verify_address_decoding(cloned_t);
     verify_protocol(cloned_t);
+    // Sample coverage for master transaction
+    axi_cg.sample(cloned_t);
   endfunction
 
   // Write function for master analysis ports
@@ -202,6 +284,10 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     slave_ordered_transactions[idx].push_back(cloned_t);
     check_transaction(cloned_t);
     verify_transaction_ordering(idx, cloned_t);
+    // Sample coverage for slave transaction
+    axi_cg.sample(cloned_t);
+    // Sample ordering coverage
+    ordering_cg.sample(pending_t.master_idx, idx);
   endfunction
 
     // Write function for slave analysis ports
@@ -473,8 +559,9 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       pending_slave_transactions[id].delete();
     end
 
-    // // Report coverage
-    // `uvm_info("COVERAGE", $sformatf("Transaction coverage: %0f%%", axi_cg.get_coverage()), UVM_LOW)
+    `uvm_info("COVERAGE", "Coverage Report:", UVM_LOW)
+    `uvm_info("COVERAGE", $sformatf("Transaction Coverage: %0.2f%%", axi_cg.get_coverage()), UVM_LOW)
+    `uvm_info("COVERAGE", $sformatf("Ordering Coverage: %0.2f%%", ordering_cg.get_coverage()), UVM_LOW)
   endfunction
 
 endclass
