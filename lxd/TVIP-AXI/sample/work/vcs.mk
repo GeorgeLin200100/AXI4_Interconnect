@@ -12,7 +12,7 @@ SIMV_ARGS	+= -l simv.log
 SIMV_ARGS	+= -f test.f
 SIMV_ARGS   += -cm line+cond+fsm+branch+tgl+assert
 SIMV_ARGS   += -cm_name $(TEST)_cm
-SIMV_ARGS   += -cm_dir $(TEST)/cm
+SIMV_ARGS   += -cm_dir ./cm
 
 ifeq ($(strip $(RANDOM_SEED)), auto)
 	SIMV_ARGS	+= +ntb_random_seed_automatic

@@ -563,32 +563,32 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       pending_slave_transactions[id].delete();
     end
 
-    // Detailed coverage report
-    `uvm_info("COVERAGE", "\n=== Detailed Coverage Report ===", UVM_LOW)
+    // // Detailed coverage report
+    // `uvm_info("COVERAGE", "\n=== Detailed Coverage Report ===", UVM_LOW)
     
-    // Transaction Coverage Details
-    `uvm_info("COVERAGE", "\n--- Transaction Coverage ---", UVM_LOW)
-    foreach(axi_cg.address_cp.bins[i]) begin
-        `uvm_info("COVERAGE", $sformatf("Address bin[%0d] hits: %0d", i, 
-                 axi_cg.address_cp.get_coverage(i)), UVM_LOW)
-    end
+    // // Transaction Coverage Details
+    // `uvm_info("COVERAGE", "\n--- Transaction Coverage ---", UVM_LOW)
+    // foreach(axi_cg.address_cp.bins[i]) begin
+    //     `uvm_info("COVERAGE", $sformatf("Address bin[%0d] hits: %0d", i, 
+    //              axi_cg.address_cp.get_coverage(i)), UVM_LOW)
+    // end
     
-    `uvm_info("COVERAGE", "\n--- Burst Type Coverage ---", UVM_LOW)
-    foreach(axi_cg.burst_type_cp.bins[i]) begin
-        `uvm_info("COVERAGE", $sformatf("Burst type bin[%0d] hits: %0d", i, 
-                 axi_cg.burst_type_cp.get_coverage(i)), UVM_LOW)
-    end
+    // `uvm_info("COVERAGE", "\n--- Burst Type Coverage ---", UVM_LOW)
+    // foreach(axi_cg.burst_type_cp.bins[i]) begin
+    //     `uvm_info("COVERAGE", $sformatf("Burst type bin[%0d] hits: %0d", i, 
+    //              axi_cg.burst_type_cp.get_coverage(i)), UVM_LOW)
+    // end
     
-    `uvm_info("COVERAGE", "\n--- Response Coverage ---", UVM_LOW)
-    foreach(axi_cg.response_cp.bins[i]) begin
-        `uvm_info("COVERAGE", $sformatf("Response bin[%0d] hits: %0d", i, 
-                 axi_cg.response_cp.get_coverage(i)), UVM_LOW)
-    end
+    // `uvm_info("COVERAGE", "\n--- Response Coverage ---", UVM_LOW)
+    // foreach(axi_cg.response_cp.bins[i]) begin
+    //     `uvm_info("COVERAGE", $sformatf("Response bin[%0d] hits: %0d", i, 
+    //              axi_cg.response_cp.get_coverage(i)), UVM_LOW)
+    // end
     
-    // Cross Coverage Details
-    `uvm_info("COVERAGE", "\n--- Cross Coverage ---", UVM_LOW)
-    `uvm_info("COVERAGE", $sformatf("Burst Type x Length coverage: %0.2f%%", 
-              axi_cg.burst_type_x_length.get_coverage()), UVM_LOW)
+    // // Cross Coverage Details
+    // `uvm_info("COVERAGE", "\n--- Cross Coverage ---", UVM_LOW)
+    // `uvm_info("COVERAGE", $sformatf("Burst Type x Length coverage: %0.2f%%", 
+    //           axi_cg.burst_type_x_length.get_coverage()), UVM_LOW)
     
     // Overall Coverage
     `uvm_info("COVERAGE", "\n=== Overall Coverage ===", UVM_LOW)
