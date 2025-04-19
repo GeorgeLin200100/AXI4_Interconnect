@@ -204,6 +204,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     verify_protocol(cloned_t);
     // Sample coverage for master transaction
     axi_cg.sample(cloned_t);
+    ordering_cg.sample(idx, pending_slave_t.slave_idx);
   endfunction
 
   // Write function for master analysis ports
