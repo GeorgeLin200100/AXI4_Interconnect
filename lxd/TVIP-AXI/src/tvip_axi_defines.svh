@@ -13,7 +13,7 @@
 
 `ifndef TVIP_AXI_MAX_DATA_WIDTH
   //`define TVIP_AXI_MAX_DATA_WIDTH 1024
-  `define TVIP_AXI_MAX_DATA_WIDTH 32
+  `define TVIP_AXI_MAX_DATA_WIDTH 64
 `endif
 
 `endif
