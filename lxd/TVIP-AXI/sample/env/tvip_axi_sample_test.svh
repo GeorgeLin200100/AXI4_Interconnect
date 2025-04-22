@@ -132,6 +132,10 @@ class tvip_axi_sample_test extends tue_test #(
       uvm_config_db #(tvip_axi_sequence_type_e)::set(
         master_sequencers[i], "", "sequence_type", seq_type
       );
+      // Register the sequence launcher as the default sequence for the run phase
+      uvm_config_db #(uvm_object_wrapper)::set(
+        master_sequencers[i], "run_phase", "default_sequence", launcher.get_type()
+      );
     end
     
     // Set default sequence for slave sequencers
