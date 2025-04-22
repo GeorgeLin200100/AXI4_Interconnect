@@ -26,6 +26,7 @@ RANDOM_SEED	?= auto
 DUMP	?= fsdb
 GUI	?= off
 UVM_VERSION ?= 1.2
+SEQ ?= AABBCCDD
 
 TESTS	+= default
 TESTS	+= request_delay
@@ -45,6 +46,7 @@ $(TESTS):
 CLEAN_TARGET	+= *.log
 CLEAN_ALL_TARGET += *.log
 CLEAN_ALL_TARGET += *.key
+CLEAN_ALL_TARGET += *.vdb
 
 clean:
 	rm -rf $(CLEAN_TARGET)

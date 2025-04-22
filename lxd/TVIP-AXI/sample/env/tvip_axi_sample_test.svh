@@ -10,6 +10,8 @@ class tvip_axi_sample_test extends tue_test #(
   tvip_axi_slave_sequencer  slave_sequencers[4];
   tvip_axi_scoreboard       scoreboard;
   tvip_axi_sequence_launcher launcher;
+  string seq_name;
+  tvip_axi_sequence_type_e seq_type;
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
   uvm_analysis_imp_m0 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m0;
@@ -101,12 +103,34 @@ class tvip_axi_sample_test extends tue_test #(
     
     // Create and configure the sequence launcher
     launcher = tvip_axi_sequence_launcher::type_id::create("launcher");
-    launcher.sequence_type = BASIC_WRITE_READ;  // You can change this to any other sequence type
+
+    if ($value$plusargs("SEQ=%s",seq_name)) begin
+      if (seq_name == "BASIC_WRITE_READ") begin
+      `uvm_info("[CATCH SEQ]", "BASIC_WRITE_READ", UVM_LOW)
+        seq_type = BASIC_WRITE_READ;
+      end else if (seq_name == "SEQUENCE_BY_SEQUENCE") begin
+      `uvm_info("[CATCH SEQ]", "SEQUENCE_BY_SEQUENCE", UVM_LOW)
+        seq_type = SEQUENCE_BY_SEQUENCE;
+      end else if (seq_name == "SEQUENCE_BY_ITEM") begin
+      `uvm_info("[CATCH SEQ]", "SEQUENCE_BY_ITEM", UVM_LOW)
+        seq_type = SEQUENCE_BY_ITEM;
+      end else if (seq_name == "ALL_SEQUENCES") begin
+        seq_type = ALL_SEQUENCES;
+      end else begin
+        `uvm_error("[ARG_MISS]","seq arg not passed!")
+      end
+      `uvm_info("[SEQ_TYPE]",$sformatf("SEQ = %s",seq_name),UVM_LOW)
+    end else begin
+      `uvm_info("[CATCH SEQ]", "No catch!", UVM_LOW)
+    end
+
+    launcher.sequence_type = seq_type;
+    `uvm_info("SEQ_DEBUG", $sformatf("Launcher sequence_type = %s", launcher.sequence_type.name()), UVM_LOW)
     
     // Set the sequence launcher as the default sequence for each master sequencer
     foreach (master_sequencers[i]) begin
-      uvm_config_db #(uvm_object_wrapper)::set(
-        master_sequencers[i], "main_phase", "default_sequence", launcher.get_type()
+      uvm_config_db #(tvip_axi_sequence_type_e)::set(
+        master_sequencers[i], "", "sequence_type", seq_type
       );
     end
     
