@@ -114,6 +114,9 @@ class tvip_axi_sample_test extends tue_test #(
       end else if (seq_name == "SEQUENCE_BY_ITEM") begin
       `uvm_info("[CATCH SEQ]", "SEQUENCE_BY_ITEM", UVM_LOW)
         seq_type = SEQUENCE_BY_ITEM;
+      end else if (seq_name == "OUTSTANDING_WRITE") begin
+      `uvm_info("[CATCH SEQ]", "OUTSTANDING_WRITE", UVM_LOW)
+        seq_type = OUTSTANDING_WRITE;
       end else if (seq_name == "ALL_SEQUENCES") begin
         seq_type = ALL_SEQUENCES;
       end else begin

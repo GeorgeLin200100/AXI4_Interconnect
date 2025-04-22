@@ -5,6 +5,7 @@ typedef enum {
   BASIC_WRITE_READ,
   SEQUENCE_BY_SEQUENCE,
   SEQUENCE_BY_ITEM,
+  OUTSTANDING_WRITE,
   ALL_SEQUENCES
 } tvip_axi_sequence_type_e;
 
@@ -46,19 +47,28 @@ class tvip_axi_sequence_launcher extends tvip_axi_base_sequence;
         `uvm_info("[SEQ CREATED]", "seq_by_item created", UVM_LOW)
         seq.start(m_sequencer);
       end
+      OUTSTANDING_WRITE: begin
+        tvip_axi_outstanding_write_sequence seq;
+        seq = tvip_axi_outstanding_write_sequence::type_id::create("outstanding_write_seq");
+        `uvm_info("[SEQ CREATED]", "outstanding_write_seq created", UVM_LOW)
+        seq.start(m_sequencer);
+      end
       ALL_SEQUENCES: begin
         tvip_axi_basic_write_read_sequence basic_seq;
         tvip_axi_sequence_by_sequence seq_by_seq;
         tvip_axi_sequence_by_item seq_by_item;
+        tvip_axi_outstanding_write_sequence outstanding_write_seq;
 
         basic_seq = tvip_axi_basic_write_read_sequence::type_id::create("basic_seq");
         seq_by_seq = tvip_axi_sequence_by_sequence::type_id::create("seq_by_seq");
         seq_by_item = tvip_axi_sequence_by_item::type_id::create("seq_by_item");
+        outstanding_write_seq = tvip_axi_outstanding_write_sequence::type_id::create("outstanding_write_seq");
         `uvm_info("[SEQ CREATED]", "all_seq created", UVM_LOW)
 
         basic_seq.start(m_sequencer);
         seq_by_seq.start(m_sequencer);
         seq_by_item.start(m_sequencer);
+        outstanding_write_seq.start(m_sequencer);
       end
     endcase
   endtask
