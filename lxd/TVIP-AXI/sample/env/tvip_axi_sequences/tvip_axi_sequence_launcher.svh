@@ -16,11 +16,15 @@ class tvip_axi_sequence_launcher extends tvip_axi_base_sequence;
   endfunction
 
   task body();
+    tvip_axi_sequence_type_e configured_type;
     `uvm_info("SEQ_LAUNCHER", $sformatf("Starting sequence_type=%s", sequence_type.name()), UVM_LOW)
     // Get sequence_type from config_db (override default)
-    if (!uvm_config_db #(tvip_axi_sequence_type_e)::get(
-        m_sequencer, "", "sequence_type", sequence_type
+    if (uvm_config_db #(tvip_axi_sequence_type_e)::get(
+        m_sequencer, "", "sequence_type", configured_type
     )) begin
+        `uvm_info("SEQ_LAUNCHER", $sformatf("Using configured sequence_type=%s",configured_type.name()), UVM_LOW)
+        sequence_type = configured_type;
+    end else begin
         `uvm_info("SEQ_LAUNCHER", "Using default sequence_type", UVM_LOW)
     end
     case (sequence_type)
