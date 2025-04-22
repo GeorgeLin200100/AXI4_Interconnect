@@ -1,9 +1,6 @@
 `ifndef TVIP_AXI_SAMPLE_TEST_SVH
 `define TVIP_AXI_SAMPLE_TEST_SVH
 
-// Add the missing package import
-import tvip_axi_sequences_pkg::*;
-
 class tvip_axi_sample_test extends tue_test #(
   .CONFIGURATION  (tvip_axi_sample_configuration)
 );
@@ -12,6 +9,7 @@ class tvip_axi_sample_test extends tue_test #(
   tvip_axi_slave_agent      slave_agents[4];
   tvip_axi_slave_sequencer  slave_sequencers[4];
   tvip_axi_scoreboard       scoreboard;
+  tvip_axi_sequence_launcher launcher;
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
   uvm_analysis_imp_m0 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m0;
@@ -102,7 +100,6 @@ class tvip_axi_sample_test extends tue_test #(
     super.end_of_elaboration_phase(phase);
     
     // Create and configure the sequence launcher
-    tvip_axi_sequence_launcher launcher;
     launcher = tvip_axi_sequence_launcher::type_id::create("launcher");
     launcher.sequence_type = BASIC_WRITE_READ;  // You can change this to any other sequence type
     

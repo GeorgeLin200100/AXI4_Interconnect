@@ -7,7 +7,6 @@ module top();
   import  tvip_axi_types_pkg::*;
   import  tvip_axi_pkg::*;
   import  tvip_axi_sample_pkg::*;
-  import  tvip_axi_sequences_pkg::*;
 
   bit aclk  = 0;
   initial begin
