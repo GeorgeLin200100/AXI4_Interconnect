@@ -1,6 +1,9 @@
 `ifndef TVIP_AXI_SAMPLE_TEST_SVH
 `define TVIP_AXI_SAMPLE_TEST_SVH
 
+// Add the missing package import
+import tvip_axi_sequences_pkg::*;
+
 class tvip_axi_sample_test extends tue_test #(
   .CONFIGURATION  (tvip_axi_sample_configuration)
 );
