@@ -97,11 +97,20 @@ class tvip_axi_sample_test extends tue_test #(
 
   function void end_of_elaboration_phase(uvm_phase phase);
     super.end_of_elaboration_phase(phase);
+    
+    // Create and configure the sequence launcher
+    tvip_axi_sequence_launcher launcher;
+    launcher = tvip_axi_sequence_launcher::type_id::create("launcher");
+    launcher.sequence_type = BASIC_WRITE_READ;  // You can change this to any other sequence type
+    
+    // Set the sequence launcher as the default sequence for each master sequencer
     foreach (master_sequencers[i]) begin
       uvm_config_db #(uvm_object_wrapper)::set(
-        master_sequencers[i], "main_phase", "default_sequence", tvip_axi_sample_write_read_sequence::type_id::get()
+        master_sequencers[i], "main_phase", "default_sequence", launcher.get_type()
       );
     end
+    
+    // Set default sequence for slave sequencers
     foreach (slave_sequencers[j]) begin
       uvm_config_db #(uvm_object_wrapper)::set(
         slave_sequencers[j], "run_phase", "default_sequence", tvip_axi_slave_default_sequence::type_id::get()

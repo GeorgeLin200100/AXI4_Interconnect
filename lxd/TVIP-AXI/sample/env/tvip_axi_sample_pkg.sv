@@ -6,6 +6,7 @@ package tvip_axi_sample_pkg;
   import tue_pkg::*;
   import tvip_axi_types_pkg::*;
   import tvip_axi_pkg::*;
+  import tvip_axi_sequences_pkg::*;
 
   `include "uvm_macros.svh"
   `include "tue_macros.svh"
@@ -27,7 +28,8 @@ package tvip_axi_sample_pkg;
 
   `include "tvip_axi_sample_configuration.svh"
   `include "tvip_axi_scoreboard.svh"
-  `include "tvip_axi_sample_write_read_sequence.svh"
+  //`include "tvip_axi_sample_write_read_sequence.svh"
+  // `include "tvip_axi_sequences/tvip_axi_sequence_pkg.svh"
   `include "tvip_axi_sample_test.svh"
 
 endpackage
