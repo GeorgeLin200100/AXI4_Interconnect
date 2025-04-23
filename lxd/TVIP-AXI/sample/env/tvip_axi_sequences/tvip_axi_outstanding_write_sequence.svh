@@ -19,34 +19,42 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
 
   task do_outstanding_write_test();
     tvip_axi_master_item write_items[$];
-    tvip_axi_master_item response_items[$];
+    tvip_axi_item response_items[$];
     
     `uvm_info(get_name(), $sformatf("Starting outstanding write test with master[%0d] to slave[%0d]", 
               master_idx, slave_idx), UVM_LOW)
     
     // Generate multiple write requests without waiting for responses
     for (int i = 0; i < num_outstanding_writes; ++i) begin
-      tvip_axi_master_item write_item;
-      
-      `tue_do_with(write_item, {
-        access_type == TVIP_AXI_WRITE_ACCESS;
-        // Target the specific slave
-        address >= get_slave_base_addr(slave_idx);
-        address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
-        (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
-        address % (1 << burst_size) == 0; // 2^burst_size alignment
-        
-        // Add randomized burst configurations
-        burst_length inside {[1:8]};
-        burst_size inside {1, 2, 4, 8};
-      })
-      
-      // Set need_response to 1 to get response objects
-      write_item.need_response = 1;
-      
-      write_items.push_back(write_item);
-      `uvm_info(get_name(), $sformatf("Generated write request %0d to addr 0x%0h", i, write_item.address), UVM_LOW)
+      fork
+        automatic int j = i;
+        begin
+          tvip_axi_master_item write_item;
+          
+          `tue_do_with(write_item, {
+            access_type == TVIP_AXI_WRITE_ACCESS;
+            // Target the specific slave
+            address >= get_slave_base_addr(slave_idx);
+            address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+            (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+            address % (1 << burst_size) == 0; // 2^burst_size alignment
+            
+            // Add randomized burst configurations
+            burst_length inside {[1:8]};
+            burst_size inside {1, 2, 4, 8};
+          })
+          
+          // Set need_response to 1 to get response objects
+          //write_item.need_response = 1;
+          
+          write_items.push_back(write_item);
+          `uvm_info(get_name(), $sformatf("Generated write request %0d to addr 0x%0h", j, write_item.address), UVM_LOW)
+          write_item.wait_for_request_done();
+        end
+      join_none
     end
+    wait fork;
+    //write_items[$].wait_for_request_done();
     
     // Wait for all responses to arrive
     `uvm_info(get_name(), "Waiting for responses from all outstanding writes", UVM_LOW)

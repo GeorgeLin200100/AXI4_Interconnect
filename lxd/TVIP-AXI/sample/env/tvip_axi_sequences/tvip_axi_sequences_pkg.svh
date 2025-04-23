@@ -16,6 +16,7 @@ package tvip_axi_sequences_pkg;
   `include "tvip_axi_basic_write_read_sequence.svh"
   `include "tvip_axi_sequence_by_sequence.svh"
   `include "tvip_axi_sequence_by_item.svh"
+  `include "tvip_axi_outstanding_write_sequence.svh"
   `include "tvip_axi_sequence_launcher.svh"
 endpackage
 
