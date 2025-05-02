@@ -34,13 +34,13 @@ THE SOFTWARE.
 module axi4_safety_connector #
 (
     // Width of data bus in bits
-    parameter DATA_WIDTH = 32,
+    parameter DATA_WIDTH = 64,
     // Width of address bus in bits
     parameter ADDR_WIDTH = 32,
     // Width of wstrb (width of data bus in words)
     parameter STRB_WIDTH = (DATA_WIDTH/8),
     // Input ID field width (from AXI masters)
-    parameter S_ID_WIDTH = 8,
+    parameter S_ID_WIDTH = 2,
     // Output ID field width (towards AXI slaves)
     // Additional bits required for response routing
     parameter M_ID_WIDTH = S_ID_WIDTH+$clog2(3),
@@ -80,52 +80,52 @@ module axi4_safety_connector #
     parameter M_REGIONS = 1,
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
-    parameter M00_BASE_ADDR = 0,
+    parameter M00_BASE_ADDR = 0, // enable default mapping
     // Master interface address widths
     // M_REGIONS concatenated fields of 32 bits
     parameter M00_ADDR_WIDTH = {M_REGIONS{32'd24}},
     // Read connections between interfaces
     // S_COUNT bits
-    parameter M00_CONNECT_READ = 3'b111,
+    parameter M00_CONNECT_READ = 3'b100,  // Slave 0 only connect to Master 2
     // Write connections between interfaces
     // S_COUNT bits
-    parameter M00_CONNECT_WRITE = 3'b111,
+    parameter M00_CONNECT_WRITE = 3'b100, // Slave 0 only connect to Master 2
     // Number of concurrent operations for each master interface
     parameter M00_ISSUE = 4,
     // Secure master (fail operations based on awprot/arprot)
-    parameter M00_SECURE = 0,
+    parameter M00_SECURE = 1, //Slave 0 is secure
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
-    parameter M01_BASE_ADDR = 0,
+    parameter M01_BASE_ADDR = 0, // enable default mapping
     // Master interface address widths
     // M_REGIONS concatenated fields of 32 bits
     parameter M01_ADDR_WIDTH = {M_REGIONS{32'd24}},
     // Read connections between interfaces
     // S_COUNT bits
-    parameter M01_CONNECT_READ = 3'b111,
+    parameter M01_CONNECT_READ = 3'b011, // Slave 1 only connect to Master 0,1
     // Write connections between interfaces
     // S_COUNT bits
-    parameter M01_CONNECT_WRITE = 3'b111,
+    parameter M01_CONNECT_WRITE = 3'b011, // Slave 1 only connect to Master 0,1
     // Number of concurrent operations for each master interface
     parameter M01_ISSUE = 4,
     // Secure master (fail operations based on awprot/arprot)
-    parameter M01_SECURE = 0,
+    parameter M01_SECURE = 0, // Slave 1 is unsecure
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
-    parameter M02_BASE_ADDR = 0,
+    parameter M02_BASE_ADDR = 0, // enable default mapping
     // Master interface address widths
     // M_REGIONS concatenated fields of 32 bits
     parameter M02_ADDR_WIDTH = {M_REGIONS{32'd24}},
     // Read connections between interfaces
     // S_COUNT bits
-    parameter M02_CONNECT_READ = 3'b111,
+    parameter M02_CONNECT_READ = 3'b100, // Slave 2 only connect to Master 2
     // Write connections between interfaces
     // S_COUNT bits
-    parameter M02_CONNECT_WRITE = 3'b111,
+    parameter M02_CONNECT_WRITE = 3'b100, // Slave 2 only connect to Master 2
     // Number of concurrent operations for each master interface
     parameter M02_ISSUE = 4,
     // Secure master (fail operations based on awprot/arprot)
-    parameter M02_SECURE = 0,
+    parameter M02_SECURE = 1,
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
     parameter M03_BASE_ADDR = 0,
@@ -134,10 +134,10 @@ module axi4_safety_connector #
     parameter M03_ADDR_WIDTH = {M_REGIONS{32'd24}},
     // Read connections between interfaces
     // S_COUNT bits
-    parameter M03_CONNECT_READ = 3'b111,
+    parameter M03_CONNECT_READ = 3'b011,
     // Write connections between interfaces
     // S_COUNT bits
-    parameter M03_CONNECT_WRITE = 3'b111,
+    parameter M03_CONNECT_WRITE = 3'b011,
     // Number of concurrent operations for each master interface
     parameter M03_ISSUE = 4,
     // Secure master (fail operations based on awprot/arprot)
