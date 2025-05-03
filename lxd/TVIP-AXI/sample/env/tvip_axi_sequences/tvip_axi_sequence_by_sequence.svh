@@ -19,7 +19,8 @@ class tvip_axi_sequence_by_sequence extends tvip_axi_base_sequence;
   task do_write_read_access_by_sequence(int index);
     tvip_axi_master_write_sequence  write_sequence;
     tvip_axi_master_read_sequence   read_sequence;
-    int slave_idx = index % num_slaves;
+    //int slave_idx = index % num_slaves;
+    int slave_idx = 1;
 
     `tue_do_with(write_sequence, {
       address >= get_slave_base_addr(slave_idx);

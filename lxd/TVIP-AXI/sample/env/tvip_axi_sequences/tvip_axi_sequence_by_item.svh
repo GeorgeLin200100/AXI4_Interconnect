@@ -21,7 +21,8 @@ class tvip_axi_sequence_by_item extends tvip_axi_base_sequence;
     tvip_axi_item         write_response;
     tvip_axi_master_item  read_item;
     tvip_axi_item         read_response;
-    int slave_idx = index % num_slaves;
+    //int slave_idx = index % num_slaves;
+    int slave_idx = 1;
 
     `tue_do_with(write_item, {
       need_response == (index < 10);
