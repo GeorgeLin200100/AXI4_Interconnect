@@ -13,12 +13,21 @@ class tvip_axi_sample_configuration extends tue_configuration;
 
   constraint c_axi_basic {
     foreach (axi_cfg[i]) {
-      axi_cfg[i].id_width         == 8;
-      axi_cfg[i].address_width    == 32;
-      axi_cfg[i].max_burst_length == 16;
-      axi_cfg[i].data_width       == 64;
-      axi_cfg[i].qos_range[0]     != -1;
-      axi_cfg[i].qos_range[1]     != -1;
+      if ( i < 3 ) {
+        axi_cfg[i].id_width         == 8;
+        axi_cfg[i].address_width    == 32;
+        axi_cfg[i].max_burst_length == 16;
+        axi_cfg[i].data_width       == 64;
+        axi_cfg[i].qos_range[0]     != -1;
+        axi_cfg[i].qos_range[1]     != -1;
+      } else {
+        axi_cfg[i].id_width         == 10;
+        axi_cfg[i].address_width    == 32;
+        axi_cfg[i].max_burst_length == 16;
+        axi_cfg[i].data_width       == 64;
+        axi_cfg[i].qos_range[0]     != -1;
+        axi_cfg[i].qos_range[1]     != -1;
+      }
     }
   }
 

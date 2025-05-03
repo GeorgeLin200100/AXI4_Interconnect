@@ -3,7 +3,7 @@
 
 `ifndef TVIP_AXI_MAX_ID_WIDTH
   //`define TVIP_AXI_MAX_ID_WIDTH 32
-  `define TVIP_AXI_MAX_ID_WIDTH 8
+  `define TVIP_AXI_MAX_ID_WIDTH 10
 `endif
 
 `ifndef TVIP_AXI_MAX_ADDRESS_WIDTH

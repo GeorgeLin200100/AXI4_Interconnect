@@ -40,7 +40,7 @@ module axi4_safety_connector #
     // Width of wstrb (width of data bus in words)
     parameter STRB_WIDTH = (DATA_WIDTH/8),
     // Input ID field width (from AXI masters)
-    parameter S_ID_WIDTH = 2,
+    parameter S_ID_WIDTH = 8,
     // Output ID field width (towards AXI slaves)
     // Additional bits required for response routing
     parameter M_ID_WIDTH = S_ID_WIDTH+$clog2(3),
