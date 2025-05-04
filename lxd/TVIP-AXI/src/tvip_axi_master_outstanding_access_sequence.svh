@@ -8,7 +8,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
 
   function new(string name = "tvip_axi_master_outstanding_access_sequence");
     super.new(name);
-    outstanding_lock = new(4);
+    //outstanding_lock = new(10);
   endfunction
 
   virtual task body();
@@ -21,7 +21,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
     for (int i = 0; i < 10; i++) begin
       //fork
         automatic int ii = i;
-        outstanding_lock.get();
+        //outstanding_lock.get();
         requests[ii] = tvip_axi_master_item::type_id::create($sformatf("requests[%0d]",ii));
         start_item(requests[ii]);
         // if(!requests[ii].randomize()) begin
@@ -32,7 +32,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
         //`uvm_send(requests[ii])
         ids[ii]=requests[ii].get_transaction_id();
         `uvm_info("OUTSTANDING",$sformatf("Sent request ID %0d", ids[ii]), UVM_LOW)
-        outstanding_lock.put();
+        //outstanding_lock.put();
       //join_none
     end
     //wait fork;
@@ -42,7 +42,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
       automatic int ii = i;
       automatic int id;
       automatic tvip_axi_master_item rsp;
-      get_response(rsp, ii);
+      get_response(rsp);
       id = rsp.get_transaction_id();
       responses[id] = rsp;
       `uvm_info("RESPONSE",$sformatf("Received response for ID %0d", id), UVM_LOW)
