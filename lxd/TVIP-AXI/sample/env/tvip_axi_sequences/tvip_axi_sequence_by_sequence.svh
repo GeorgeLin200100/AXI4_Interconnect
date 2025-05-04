@@ -21,19 +21,21 @@ class tvip_axi_sequence_by_sequence extends tvip_axi_base_sequence;
     tvip_axi_master_read_sequence   read_sequence;
     //int slave_idx = index % num_slaves;
     int slave_idx = 1;
-
+    `uvm_info("[OUSTANDING DEBUG]","write_sequence defined", UVM_LOW)
+    `uvm_info("[OUSTANDING DEBUG]","read_sequence defined", UVM_LOW)
     `tue_do_with(write_sequence, {
       address >= get_slave_base_addr(slave_idx);
       address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
       (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
       address % (1 << burst_size) == 0; // 2^burst_size
     })
+    `uvm_info("[OUSTANDING DEBUG]","write_sequence randomized", UVM_LOW)
     `tue_do_with(read_sequence, {
       address      == write_sequence.address;
       burst_size   == write_sequence.burst_size;
       burst_length >= write_sequence.burst_length;
     })
-
+    `uvm_info("[OUSTANDING DEBUG]","read_sequence randomized", UVM_LOW)
     for (int i = 0;i < write_sequence.burst_length;++i) begin
       if (!compare_data(
         i,
