@@ -26,20 +26,27 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
     int slave_idx = 1;
     //for (int i = 0; i < num_outstanding_writes; i++) begin
       automatic tvip_axi_master_outstanding_access_sequence  write_sequence;
-      automatic tvip_axi_master_read_sequence   read_sequence;
+      //automatic tvip_axi_master_read_sequence   read_sequence;
+      automatic tvip_axi_master_outstanding_access_sequence  read_sequence;
       automatic tvip_axi_master_outstanding_access_sequence cloned_t;
       `uvm_info("[OUSTANDING DEBUG]","write_sequence defined", UVM_LOW)
       `uvm_info("[OUSTANDING DEBUG]","read_sequence defined", UVM_LOW)
       `tue_do_with(write_sequence, {
         address >= get_slave_base_addr(slave_idx);
-        address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+        address >= get_slave_base_addr(slave_idx);
         (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
         address % (1 << burst_size) == 0; // 2^burst_size
         access_type == TVIP_AXI_WRITE_ACCESS;
+        foreach (addr_new[i]) {
+          addr_new[i] >= get_slave_base_addr(slave_idx);
+          addr_new[i] >= get_slave_base_addr(slave_idx);
+          (addr_new[i] + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+          addr_new[i] % (1 << burst_size) == 0; // 2^burst_size
+        }
       })
-      $cast(cloned_t, write_sequence.clone());
-      write_sequences.push_back(cloned_t);
-      `uvm_info("[OUSTANDING DEBUG]","write_sequence randomized", UVM_LOW)
+      // $cast(cloned_t, write_sequence.clone());
+      // write_sequences.push_back(cloned_t);
+      // `uvm_info("[OUSTANDING DEBUG]","write_sequence randomized", UVM_LOW)
     //end
     // foreach (write_sequences[i]) begin
     //     write_sequences[i].wait_for_response();
@@ -50,19 +57,24 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
         // address      == write_sequences[i].address;
         // burst_size   == write_sequences[i].burst_size;
         // burst_length >= write_sequences[i].burst_length;
-        address      == write_sequence.address;
+        foreach (addr_new[i]) {
+          addr_new[i] == write_sequence.addr_new[i];
+        }
+        //address      == write_sequence.address;
         burst_size   == write_sequence.burst_size;
         burst_length >= write_sequence.burst_length;
       })
       `uvm_info("[OUSTANDING DEBUG]","read_sequence randomized", UVM_LOW)
       for (int i = 0;i < write_sequence.burst_length;++i) begin
-        if (!compare_data(
-          i,
-          write_sequence.address, write_sequence.burst_size,
-          write_sequence.strobe, write_sequence.data,
-          read_sequence.data
-        )) begin
-          `uvm_error("CMPDATA", "write and read data are mismatched !!")
+        foreach(write_sequence.addr_new[j]) begin
+          if (!compare_data(
+            i,
+            write_sequence.addr_new[j], write_sequence.burst_size,
+            write_sequence.strobe, write_sequence.data_new[j],
+            read_sequence.data_new[j]
+          )) begin
+            `uvm_error("CMPDATA", "write and read data are mismatched !!")
+          end
         end
       end
     //end

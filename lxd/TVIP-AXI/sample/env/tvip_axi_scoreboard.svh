@@ -337,7 +337,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
       pending_transactions[real_id].pop_front();
     end else begin
       // Queue the slave transaction if master hasn't arrived yet
-      `uvm_info("[WRITE_S1 PEND_SLAVE_T PUSH BACK]", $sformatf("%0h, %0d", t.address, t.id), UVM_LOW)
+      `uvm_info("[WRITE_S1 PEND_SLAVE_T PUSH BACK]", $sformatf("%0h, %0d", t.address, t.id[7:0]), UVM_LOW)
       if (!pending_slave_transactions.exists(real_id)) begin
         pending_slave_transactions[real_id]={};
       end

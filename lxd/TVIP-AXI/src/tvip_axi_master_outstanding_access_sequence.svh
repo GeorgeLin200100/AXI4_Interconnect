@@ -5,6 +5,22 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
   tvip_axi_master_item requests[10];
   tvip_axi_master_item responses[int];
   int ids[10];
+  rand tvip_axi_address addr_new[10];
+  rand      tvip_axi_data         data_new[][];
+  //rand tvip_axi_id id_new[10];
+
+  constraint c_valid_data_new {
+    solve access_type  before data_new;
+    solve burst_length before data_new;
+    data_new.size() == 10;
+    foreach(data_new[j]) {
+      (access_type == TVIP_AXI_WRITE_ACCESS) -> data_new[j].size() == burst_length;
+      (access_type == TVIP_AXI_READ_ACCESS ) -> data_new[j].size() == 0;
+      foreach (data_new[j][i]) {
+        (data_new[j][i] >> this.configuration.data_width) == 0;
+      }
+    }
+  }
 
   function new(string name = "tvip_axi_master_outstanding_access_sequence");
     super.new(name);
@@ -53,7 +69,9 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
   function void copy_outstanding_request_info(int i);
     requests[i].access_type          = access_type;
     requests[i].id                   = id;
-    requests[i].address              = address;
+    //requests[i].id                   = id_new[i];
+    //requests[i].address              = address;
+    requests[i].address              = addr_new[i];
     requests[i].burst_length         = burst_length;
     requests[i].burst_size           = burst_size;
     requests[i].burst_type           = burst_type;
@@ -64,7 +82,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
     requests[i].response_ready_delay = new[response_ready_delay.size()](response_ready_delay);
     requests[i].need_response        = 1;
     if (requests[i].is_write()) begin
-      requests[i].data             = new[data.size()](data);
+      requests[i].data             = new[data_new[i].size()](data_new[i]);
       requests[i].strobe           = new[strobe.size()](strobe);
       requests[i].write_data_delay = new[write_data_delay.size()](write_data_delay);
     end
