@@ -149,16 +149,21 @@ class tvip_axi_master_access_sequence extends tvip_axi_master_sequence_base;
   endfunction
 
   task body();
+    `uvm_info("[OUSTANDING DEBUG]","enter body", UVM_LOW)
     transmit_request();
+    `uvm_info("[OUSTANDING DEBUG]","request item sent", UVM_LOW)
     wait_for_response();
+    `uvm_info("[OUSTANDING DEBUG]","response item back", UVM_LOW)
   endtask
 
-  local task transmit_request();
+  //local task transmit_request();
+  task transmit_request();
     copy_request_info();
     `uvm_send(request_item)
   endtask
 
-  local function void copy_request_info();
+  //local function void copy_request_info();
+  function void copy_request_info();
     request_item.access_type          = access_type;
     request_item.id                   = id;
     request_item.address              = address;
@@ -178,13 +183,15 @@ class tvip_axi_master_access_sequence extends tvip_axi_master_sequence_base;
     end
   endfunction
 
-  local task wait_for_response();
+  //local task wait_for_response();
+  task wait_for_response();
     int id  = request_item.get_transaction_id();
     get_response(response_item, id);
     copy_response_info();
   endtask
 
-  local function void copy_response_info();
+  //local function void copy_response_info();
+  function void copy_response_info();
     response  = new[response_item.response.size()](response_item.response);
     if (response_item.is_read()) begin
       data  = new[response_item.data.size()](response_item.data);

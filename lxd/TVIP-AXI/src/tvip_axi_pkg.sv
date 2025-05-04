@@ -34,6 +34,7 @@ package tvip_axi_pkg;
   `include  "tvip_axi_master_agent.svh"
   `include  "tvip_axi_master_sequence_base.svh"
   `include  "tvip_axi_master_access_sequence.svh"
+  `include  "tvip_axi_master_outstanding_access_sequence.svh"
   `include  "tvip_axi_master_write_sequence.svh"
   `include  "tvip_axi_master_read_sequence.svh"
   `include  "tvip_axi_slave_monitor.svh"

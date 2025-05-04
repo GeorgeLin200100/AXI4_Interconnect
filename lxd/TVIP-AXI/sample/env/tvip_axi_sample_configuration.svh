@@ -13,12 +13,21 @@ class tvip_axi_sample_configuration extends tue_configuration;
 
   constraint c_axi_basic {
     foreach (axi_cfg[i]) {
-      axi_cfg[i].id_width         == 8;
-      axi_cfg[i].address_width    == 32;
-      axi_cfg[i].max_burst_length == 16;
-      axi_cfg[i].data_width       == 32;
-      axi_cfg[i].qos_range[0]     != -1;
-      axi_cfg[i].qos_range[1]     != -1;
+      if ( i < 3 ) {
+        axi_cfg[i].id_width         == 8;
+        axi_cfg[i].address_width    == 32;
+        axi_cfg[i].max_burst_length == 16;
+        axi_cfg[i].data_width       == 64;
+        axi_cfg[i].qos_range[0]     != -1;
+        axi_cfg[i].qos_range[1]     != -1;
+      } else {
+        axi_cfg[i].id_width         == 10;
+        axi_cfg[i].address_width    == 32;
+        axi_cfg[i].max_burst_length == 16;
+        axi_cfg[i].data_width       == 64;
+        axi_cfg[i].qos_range[0]     != -1;
+        axi_cfg[i].qos_range[1]     != -1;
+      }
     }
   }
 
@@ -66,10 +75,13 @@ class tvip_axi_sample_configuration extends tue_configuration;
       foreach (axi_cfg[i]) {
         if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_start_delay.min_delay          == 0;
-          axi_cfg[i].response_start_delay.max_delay          == 10;
-          axi_cfg[i].response_start_delay.weight_zero_delay  == 6;
-          axi_cfg[i].response_start_delay.weight_short_delay == 3;
-          axi_cfg[i].response_start_delay.weight_long_delay  == 1;
+          axi_cfg[i].response_start_delay.max_delay          == 40;
+          // axi_cfg[i].response_start_delay.weight_zero_delay  == 6;
+          // axi_cfg[i].response_start_delay.weight_short_delay == 3;
+          // axi_cfg[i].response_start_delay.weight_long_delay  == 1;
+          axi_cfg[i].response_start_delay.weight_zero_delay  == 0;
+          axi_cfg[i].response_start_delay.weight_short_delay == 1;
+          axi_cfg[i].response_start_delay.weight_long_delay  == 9;
         }
       }
     }
@@ -80,10 +92,13 @@ class tvip_axi_sample_configuration extends tue_configuration;
       foreach (axi_cfg[i]) {
         if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_delay.min_delay          == 0;
-          axi_cfg[i].response_delay.max_delay          == 10;
-          axi_cfg[i].response_delay.weight_zero_delay  == 6;
-          axi_cfg[i].response_delay.weight_short_delay == 3;
-          axi_cfg[i].response_delay.weight_long_delay  == 1;
+          axi_cfg[i].response_delay.max_delay          == 40;
+          // axi_cfg[i].response_delay.weight_zero_delay  == 6;
+          // axi_cfg[i].response_delay.weight_short_delay == 3;
+          // axi_cfg[i].response_delay.weight_long_delay  == 1;
+          axi_cfg[i].response_delay.weight_zero_delay  == 0;
+          axi_cfg[i].response_delay.weight_short_delay == 1;
+          axi_cfg[i].response_delay.weight_long_delay  == 9;
         }
       }
     }
@@ -133,7 +148,8 @@ class tvip_axi_sample_configuration extends tue_configuration;
       foreach (axi_cfg[i]) {
         if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_ordering == TVIP_AXI_OUT_OF_ORDER;
-          axi_cfg[i].outstanding_responses inside {[2:5]};
+          //axi_cfg[i].outstanding_responses inside {[2:5]};
+          axi_cfg[i].outstanding_responses inside {[10:20]};
         }
       }
     }

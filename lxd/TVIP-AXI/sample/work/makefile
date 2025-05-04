@@ -16,7 +16,13 @@ FILE_LISTS	+= $(TVIP_AXI_HOME)/sample/env/compile.f
 #SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/tvip_axi_sample_delay.sv
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/priority_encoder.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/arbiter.v
-SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_interconnect.v
+#SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_interconnect.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_addr.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_register_wr.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_register_rd.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_wr.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_rd.v
+SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_crossbar.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi4_safety_connector.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi4_safety_connector_wrapper.sv
 SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/top.sv
@@ -26,6 +32,7 @@ RANDOM_SEED	?= auto
 DUMP	?= fsdb
 GUI	?= off
 UVM_VERSION ?= 1.2
+SEQ ?= AABBCCDD
 
 TESTS	+= default
 TESTS	+= request_delay
@@ -45,6 +52,7 @@ $(TESTS):
 CLEAN_TARGET	+= *.log
 CLEAN_ALL_TARGET += *.log
 CLEAN_ALL_TARGET += *.key
+CLEAN_ALL_TARGET += *.vdb
 
 clean:
 	rm -rf $(CLEAN_TARGET)
