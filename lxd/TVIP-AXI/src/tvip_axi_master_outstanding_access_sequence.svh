@@ -23,13 +23,13 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
         automatic int ii = i;
         outstanding_lock.get();
         requests[ii] = tvip_axi_master_item::type_id::create($sformatf("requests[%0d]",ii));
-        //start_item(requests[ii]);
+        start_item(requests[ii]);
         // if(!requests[ii].randomize()) begin
         //   `uvm_fatal("BODY", "Randomize failed")
         // end
         copy_outstanding_request_info(ii);
-        //finish_item(requests[ii]);
-        `uvm_send(requests[ii])
+        finish_item(requests[ii]);
+        //`uvm_send(requests[ii])
         ids[ii]=requests[ii].get_transaction_id();
         `uvm_info("OUTSTANDING",$sformatf("Sent request ID %0d", ids[ii]), UVM_LOW)
         outstanding_lock.put();

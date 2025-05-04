@@ -12,12 +12,12 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
 
   task body();
     for (int i = 0;i < 5;++i) begin
-      fork
+      //fork
         automatic int ii = i;
         do_outstanding_write_read_access_by_sequence(ii);
-      join_none
+      //join_none
     end
-    wait fork;
+    //wait fork;
   endtask
 
   task do_outstanding_write_read_access_by_sequence(int index);
@@ -34,6 +34,7 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
         address <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
         (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
         address % (1 << burst_size) == 0; // 2^burst_size
+        access_type == TVIP_AXI_WRITE_ACCESS;
       })
       $cast(cloned_t, write_sequence.clone());
       write_sequences.push_back(cloned_t);
