@@ -72,6 +72,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
     //requests[i].id                   = id_new[i];
     //requests[i].address              = address;
     requests[i].address              = addr_new[i];
+    `uvm_info("[ADDRESS_DEBUG]", $sformatf("requests[%0d].address=%0h, addr_new[%0d]=%0h",i, requests[i].address, i, addr_new[i]), UVM_LOW)
     requests[i].burst_length         = burst_length;
     requests[i].burst_size           = burst_size;
     requests[i].burst_type           = burst_type;

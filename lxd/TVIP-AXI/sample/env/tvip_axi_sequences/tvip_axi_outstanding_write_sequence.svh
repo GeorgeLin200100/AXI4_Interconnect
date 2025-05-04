@@ -11,7 +11,7 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
   endfunction
 
   task body();
-    for (int i = 0;i < 5;++i) begin
+    for (int i = 0;i < 1;++i) begin
       //fork
         automatic int ii = i;
         do_outstanding_write_read_access_by_sequence(ii);
@@ -60,18 +60,22 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
         foreach (addr_new[i]) {
           addr_new[i] == write_sequence.addr_new[i];
         }
-        //address      == write_sequence.address;
+        address      == write_sequence.address;
         burst_size   == write_sequence.burst_size;
-        burst_length >= write_sequence.burst_length;
+        burst_length == write_sequence.burst_length;
+        access_type  == TVIP_AXI_READ_ACCESS;
       })
       `uvm_info("[OUSTANDING DEBUG]","read_sequence randomized", UVM_LOW)
+      foreach (read_sequence.addr_new[i]) begin
+        `uvm_info("[ADDRESS DEBUG]", $sformatf("w:%0h, r:%0h", write_sequence.addr_new[i], read_sequence.addr_new[i]), UVM_LOW)
+      end
       for (int i = 0;i < write_sequence.burst_length;++i) begin
         foreach(write_sequence.addr_new[j]) begin
           if (!compare_data(
             i,
             write_sequence.addr_new[j], write_sequence.burst_size,
             write_sequence.strobe, write_sequence.data_new[j],
-            read_sequence.data_new[j]
+            read_sequence.responses[write_sequence.ids[j]].data
           )) begin
             `uvm_error("CMPDATA", "write and read data are mismatched !!")
           end

@@ -60,6 +60,8 @@ class tvip_axi_base_sequence extends tvip_axi_master_sequence_base;
       if (write_byte != read_byte) begin
           `uvm_info("[MISMATCHED DATA]", $sformatf("write_data:%0h, read_data:%0h",write_data[index], read_data[index]), UVM_LOW)
         return 0;
+      end else begin
+          `uvm_info("MATCHED DATA",$sformatf("write_data:%0h, read_data:%0h",write_data[index], read_data[index]), UVM_LOW)
       end
     end
 
