@@ -65,15 +65,15 @@ module axi4_safety_connector #
     // Width of ruser signal
     parameter RUSER_WIDTH = 1,
     // Number of concurrent unique IDs
-    parameter S00_THREADS = 2,
+    parameter S00_THREADS = 8,
     // Number of concurrent operations
     parameter S00_ACCEPT = 16,
     // Number of concurrent unique IDs
-    parameter S01_THREADS = 2,
+    parameter S01_THREADS = 8,
     // Number of concurrent operations
     parameter S01_ACCEPT = 16,
     // Number of concurrent unique IDs
-    parameter S02_THREADS = 2,
+    parameter S02_THREADS = 8,
     // Number of concurrent operations
     parameter S02_ACCEPT = 16,
     // Number of regions per master interface
@@ -91,7 +91,7 @@ module axi4_safety_connector #
     // S_COUNT bits
     parameter M00_CONNECT_WRITE = 3'b100, // Slave 0 only connect to Master 2
     // Number of concurrent operations for each master interface
-    parameter M00_ISSUE = 4,
+    parameter M00_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
     parameter M00_SECURE = 1, //Slave 0 is secure
     // Master interface base addresses
@@ -107,7 +107,7 @@ module axi4_safety_connector #
     // S_COUNT bits
     parameter M01_CONNECT_WRITE = 3'b011, // Slave 1 only connect to Master 0,1
     // Number of concurrent operations for each master interface
-    parameter M01_ISSUE = 4,
+    parameter M01_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
     parameter M01_SECURE = 0, // Slave 1 is unsecure
     // Master interface base addresses
@@ -123,7 +123,7 @@ module axi4_safety_connector #
     // S_COUNT bits
     parameter M02_CONNECT_WRITE = 3'b100, // Slave 2 only connect to Master 2
     // Number of concurrent operations for each master interface
-    parameter M02_ISSUE = 4,
+    parameter M02_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
     parameter M02_SECURE = 1,
     // Master interface base addresses
@@ -139,7 +139,7 @@ module axi4_safety_connector #
     // S_COUNT bits
     parameter M03_CONNECT_WRITE = 3'b011,
     // Number of concurrent operations for each master interface
-    parameter M03_ISSUE = 4,
+    parameter M03_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
     parameter M03_SECURE = 0,
     // Slave interface AW channel register type (input)

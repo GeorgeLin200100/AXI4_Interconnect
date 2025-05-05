@@ -4,6 +4,7 @@ virtual class tvip_axi_component_base #(
   type  BASE  = uvm_component
 ) extends BASE;
   protected bit           write_component;
+  protected bit           id_extend;
   protected tvip_axi_vif  vif;
 
   function void build_phase(uvm_phase phase);
@@ -17,6 +18,10 @@ virtual class tvip_axi_component_base #(
 
   protected function bit is_read_component();
     return !write_component;
+  endfunction
+
+  protected function bit is_id_extend();
+    return id_extend;
   endfunction
 
   virtual task begin_address(tvip_axi_item item);
