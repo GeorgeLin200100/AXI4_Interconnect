@@ -128,7 +128,13 @@ virtual class tvip_axi_monitor_base #(
     item.qos          = get_qos();
 
     begin_address(item);
-    response_stores[item.id].push_back(store);
+    if (is_id_extend()) begin
+      response_stores[item.id].push_back(store);
+      `uvm_info("[ID DEBUG]", $sformatf("repsonse_stores[%0h] push back with address %0h",item.id, item.address), UVM_LOW)
+    end else begin
+      response_stores[item.id[7:0]].push_back(store);
+      `uvm_info("[ID DEBUG]", $sformatf("repsonse_stores[%0h] push back with address %0h",item.id[7:0], item.address), UVM_LOW)
+    end
   endtask
 
   protected function tvip_axi_id get_address_id();

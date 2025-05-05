@@ -48,8 +48,9 @@ class tvip_axi_master_sub_driver extends tvip_axi_component_base #(
       write_data_queue.put(request);
     end
 
-    response_stores[request.id]
+    response_stores[request.id[7:0]]
       .push_back(tvip_axi_payload_store::create(request));
+    `uvm_info("[ID DEBUG]", $sformatf("repsonse_stores[%0h] push back with address %0h",request.id, request.address), UVM_LOW)
   endtask
 
   protected virtual task do_reset();

@@ -7,7 +7,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
   int ids[10];
   rand tvip_axi_address addr_new[10];
   rand      tvip_axi_data         data_new[][];
-  //rand tvip_axi_id id_new[10];
+  rand tvip_axi_id id_new[10];
 
   constraint c_valid_data_new {
     solve access_type  before data_new;
@@ -68,8 +68,8 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
     //local function void copy_outstanding_request_info();
   function void copy_outstanding_request_info(int i);
     requests[i].access_type          = access_type;
-    requests[i].id                   = id;
-    //requests[i].id                   = id_new[i];
+    //requests[i].id                   = id;
+    requests[i].id                   = id_new[i];
     //requests[i].address              = address;
     requests[i].address              = addr_new[i];
     `uvm_info("[ADDRESS_DEBUG]", $sformatf("requests[%0d].address=%0h, addr_new[%0d]=%0h",i, requests[i].address, i, addr_new[i]), UVM_LOW)
