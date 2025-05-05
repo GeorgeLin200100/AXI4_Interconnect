@@ -76,12 +76,12 @@ class tvip_axi_sample_configuration extends tue_configuration;
         if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_start_delay.min_delay          == 0;
           axi_cfg[i].response_start_delay.max_delay          == 40;
-          // axi_cfg[i].response_start_delay.weight_zero_delay  == 6;
-          // axi_cfg[i].response_start_delay.weight_short_delay == 3;
-          // axi_cfg[i].response_start_delay.weight_long_delay  == 1;
-          axi_cfg[i].response_start_delay.weight_zero_delay  == 0;
-          axi_cfg[i].response_start_delay.weight_short_delay == 1;
-          axi_cfg[i].response_start_delay.weight_long_delay  == 9;
+          axi_cfg[i].response_start_delay.weight_zero_delay  == 6;
+          axi_cfg[i].response_start_delay.weight_short_delay == 3;
+          axi_cfg[i].response_start_delay.weight_long_delay  == 1;
+          // axi_cfg[i].response_start_delay.weight_zero_delay  == 0;
+          // axi_cfg[i].response_start_delay.weight_short_delay == 1;
+          // axi_cfg[i].response_start_delay.weight_long_delay  == 9;
         }
       }
     }
@@ -93,12 +93,12 @@ class tvip_axi_sample_configuration extends tue_configuration;
         if (i >= 3) {  // Only for slave interfaces
           axi_cfg[i].response_delay.min_delay          == 0;
           axi_cfg[i].response_delay.max_delay          == 40;
-          // axi_cfg[i].response_delay.weight_zero_delay  == 6;
-          // axi_cfg[i].response_delay.weight_short_delay == 3;
-          // axi_cfg[i].response_delay.weight_long_delay  == 1;
-          axi_cfg[i].response_delay.weight_zero_delay  == 0;
-          axi_cfg[i].response_delay.weight_short_delay == 1;
-          axi_cfg[i].response_delay.weight_long_delay  == 9;
+          axi_cfg[i].response_delay.weight_zero_delay  == 6;
+          axi_cfg[i].response_delay.weight_short_delay == 3;
+          axi_cfg[i].response_delay.weight_long_delay  == 1;
+          // axi_cfg[i].response_delay.weight_zero_delay  == 0;
+          // axi_cfg[i].response_delay.weight_short_delay == 1;
+          // axi_cfg[i].response_delay.weight_long_delay  == 9;
         }
       }
     }

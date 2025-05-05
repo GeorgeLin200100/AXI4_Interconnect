@@ -199,6 +199,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     tvip_axi_item cloned_t;
     $cast(cloned_t, t.clone());
     expected_transactions.push_back(cloned_t);
+    `uvm_info("[TRANSACTION DEBUG]",$sformatf("expected transaction with addr:%0h, id:%0h push back", cloned_t.address, cloned_t.id), UVM_LOW)
     master_ordered_transactions[idx].push_back(cloned_t);
     verify_address_decoding(cloned_t);
     verify_protocol(cloned_t);
@@ -215,36 +216,36 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     `uvm_info("[ABOUT TO ENTER SLAVE PENDING CHECK]]", $sformatf("%0h, %0d", t.address, pending_slave_transactions.size()), UVM_LOW)
     //`uvm_info("[WRITE_M0 ITEM]", $sformatf("%s",t.sprint()), UVM_LOW)
     // Process any pending slave transactions for this ID
-    if (pending_slave_transactions.exists(t.id)) begin
+    if (pending_slave_transactions.exists(t.id[7:0])) begin
       `uvm_info("[PENDING_SLAVE_TRAN EXISTS]", $sformatf("%0h", t.address), UVM_LOW)
-      foreach (pending_slave_transactions[t.id][i]) begin
-        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
-                                pending_slave_transactions[t.id][i].transaction);
+      foreach (pending_slave_transactions[t.id[7:0]][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id[7:0]][i].slave_idx, 
+                                pending_slave_transactions[t.id[7:0]][i].transaction);
       end
-      pending_slave_transactions.delete(t.id);
+      pending_slave_transactions.delete(t.id[7:0]);
     end else begin
       pending_t.transaction = t;
       pending_t.master_idx = 0;
-      pending_transactions[t.id].push_back(pending_t);
+      pending_transactions[t.id[7:0]].push_back(pending_t);
     end
   endfunction
 
   function void write_m1(tvip_axi_item t);
-    `uvm_info("[WRITE_M1 CALLED]", $sformatf("%0h, %0d", t.address, t.id), UVM_LOW)
+    `uvm_info("[WRITE_M1 CALLED]", $sformatf("%0h, %0h", t.address, t.id), UVM_LOW)
     process_master_transaction(1, t);
     
     // Process any pending slave transactions for this ID
-    if (pending_slave_transactions.exists(t.id)) begin
-      `uvm_info("[PENDING_SLAVE_TRAN EXISTS]", $sformatf("%0h", t.address), UVM_LOW)
-      foreach (pending_slave_transactions[t.id][i]) begin
-        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
-                                pending_slave_transactions[t.id][i].transaction);
+    if (pending_slave_transactions.exists(t.id[7:0])) begin
+      `uvm_info("[PENDING_SLAVE_TRAN EXISTS]", $sformatf("address:%0h, id:%0h", t.address, t.id[7:0]), UVM_LOW)
+      foreach (pending_slave_transactions[t.id[7:0]][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id[7:0]][i].slave_idx, 
+                                pending_slave_transactions[t.id[7:0]][i].transaction);
       end
-      pending_slave_transactions.delete(t.id);
+      pending_slave_transactions.delete(t.id[7:0]);
     end else begin
       pending_t.transaction = t;
       pending_t.master_idx = 1;
-      pending_transactions[t.id].push_back(pending_t);
+      pending_transactions[t.id[7:0]].push_back(pending_t);
     end
   endfunction
 
@@ -255,16 +256,16 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     
     
     // Process any pending slave transactions for this ID
-    if (pending_slave_transactions.exists(t.id)) begin
-      foreach (pending_slave_transactions[t.id][i]) begin
-        process_slave_transaction(pending_slave_transactions[t.id][i].slave_idx, 
-                                pending_slave_transactions[t.id][i].transaction);
+    if (pending_slave_transactions.exists(t.id[7:0])) begin
+      foreach (pending_slave_transactions[t.id[7:0]][i]) begin
+        process_slave_transaction(pending_slave_transactions[t.id[7:0]][i].slave_idx, 
+                                pending_slave_transactions[t.id[7:0]][i].transaction);
       end
-      pending_slave_transactions.delete(t.id);
+      pending_slave_transactions.delete(t.id[7:0]);
     end else begin
       pending_t.transaction = t;
       pending_t.master_idx = 2;
-      pending_transactions[t.id].push_back(pending_t);
+      pending_transactions[t.id[7:0]].push_back(pending_t);
     end
   endfunction
 
@@ -488,6 +489,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
         found = 1;
         verify_response(expected_transactions[i], actual);
         `uvm_info("EXPECT_TRANSACTION_SIZE", $sformatf("%0d",expected_transactions.size()),UVM_LOW)
+        `uvm_info("[TRANSACTION DEBUG]",$sformatf("expected transaction with addr:%0h, id:%0h deleted", expected_transactions[i].address, expected_transactions[i].id), UVM_LOW)
         expected_transactions.delete(i);
         `uvm_info("EXPECT_TRANSACTION_SIZE1", $sformatf("%0d",expected_transactions.size()),UVM_LOW)
         break;
@@ -543,7 +545,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     `uvm_info("BURST_SIZE MATCHED", $sformatf("%0d,%0d", t1.burst_size, t2.burst_size), UVM_LOW) 
     `uvm_info("BURST_LENGTH MATCHED", $sformatf("%0d,%0d", t1.burst_length, t2.burst_length), UVM_LOW) 
     `uvm_info("DATA_SIZE MATCHED", $sformatf("%0d,%0d", t1.data.size(), t2.data.size()), UVM_LOW) 
-    `uvm_info("ID MATCHED", $sformatf("%0d,%0d", (t1.id[7:0]), t2.id), UVM_LOW)
+    `uvm_info("ID MATCHED", $sformatf("%0h,%0h", (t1.id[7:0]), t2.id), UVM_LOW)
     if (t1.access_type != t2.access_type) 
       return 0;
     if (t1.address != t2.address) return 0;

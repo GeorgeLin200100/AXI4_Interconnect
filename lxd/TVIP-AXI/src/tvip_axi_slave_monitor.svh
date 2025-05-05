@@ -28,6 +28,7 @@ class tvip_axi_slave_write_monitor extends tvip_axi_slave_monitor;
   function new(string name = "tvip_axi_slave_write_monitor", uvm_component parent = null);
     super.new(name, parent);
     write_component = 1;
+    id_extend = 1;
   endfunction
   `uvm_component_utils(tvip_axi_slave_write_monitor)
 endclass
@@ -36,6 +37,7 @@ class tvip_axi_slave_read_monitor extends tvip_axi_slave_monitor;
   function new(string name = "tvip_axi_slave_read_monitor", uvm_component parent = null);
     super.new(name, parent);
     write_component = 0;
+    id_extend = 1;
   endfunction
   `uvm_component_utils(tvip_axi_slave_read_monitor)
 endclass
