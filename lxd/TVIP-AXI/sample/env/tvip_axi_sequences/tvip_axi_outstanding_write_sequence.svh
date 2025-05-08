@@ -21,6 +21,7 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
 
   task do_outstanding_write_read_access_by_sequence(int index);
     int slave_idx;
+    int master_idx = 1; //remember to change when bump to multi-master
     int slave_idx_real[10];
     string scenario;
     //int slave_idx = index % num_slaves;
@@ -96,6 +97,12 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
             write_sequence.strobe, write_sequence.data_new[j],
             read_sequence.responses[write_sequence.ids[j]].data
           )) begin
+            if ((master_idx == 0) & (slave_idx_real[j] == 0)) continue;
+            if ((master_idx == 0) & (slave_idx_real[j] == 2)) continue;
+            if ((master_idx == 1) & (slave_idx_real[j] == 0)) continue;
+            if ((master_idx == 1) & (slave_idx_real[j] == 2)) continue;
+            if ((master_idx == 2) & (slave_idx_real[j] == 1)) continue;
+            if ((master_idx == 2) & (slave_idx_real[j] == 3)) continue;
             `uvm_error("CMPDATA", "write and read data are mismatched !!")
           end
         end

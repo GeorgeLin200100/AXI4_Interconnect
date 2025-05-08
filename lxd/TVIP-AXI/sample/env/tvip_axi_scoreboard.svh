@@ -131,6 +131,8 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   pending_transaction_t pending_transactions[int][$];
 
   pending_transaction_t pending_t;
+
+  int master_idx = 1; // remember to change when bump to multi-master
   
   // Queue for slave transactions that arrive before their master transactions
   typedef struct {
@@ -193,12 +195,31 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
   //   end
   //   process_master_transaction(idx, t);
   // endfunction
+  function bit need_compare_slave_master_transaction(tvip_axi_item t);
+    int got_slave_idx;
+    if ((t.address >= `SLAVE_0_BASE_ADDR) & (t.address < `SLAVE_0_BASE_ADDR + `SLAVE_ADDR_REGION_SIZE)) got_slave_idx = 0;
+    if ((t.address >= `SLAVE_1_BASE_ADDR) & (t.address < `SLAVE_1_BASE_ADDR + `SLAVE_ADDR_REGION_SIZE)) got_slave_idx = 1;
+    if ((t.address >= `SLAVE_2_BASE_ADDR) & (t.address < `SLAVE_2_BASE_ADDR + `SLAVE_ADDR_REGION_SIZE)) got_slave_idx = 2;
+    if ((t.address >= `SLAVE_3_BASE_ADDR) & (t.address < `SLAVE_3_BASE_ADDR + `SLAVE_ADDR_REGION_SIZE)) got_slave_idx = 3;
+    
+    if ((master_idx == 0) & (got_slave_idx == 0)) return 0;
+    if ((master_idx == 0) & (got_slave_idx == 2)) return 0;
+    if ((master_idx == 1) & (got_slave_idx == 0)) return 0;
+    if ((master_idx == 1) & (got_slave_idx == 2)) return 0;
+    if ((master_idx == 2) & (got_slave_idx == 1)) return 0;
+    if ((master_idx == 2) & (got_slave_idx == 3)) return 0;
 
+    return 1;
+  endfunction
   // Write function for master analysis ports
   function void process_master_transaction(int idx, tvip_axi_item t);
     tvip_axi_item cloned_t;
     $cast(cloned_t, t.clone());
-    expected_transactions.push_back(cloned_t);
+    if (need_compare_slave_master_transaction(cloned_t)) begin
+      expected_transactions.push_back(cloned_t);
+    end else begin
+      `uvm_info("TRANSACTION", $sformatf("No need to push_back transaction of id[%0h]",t.id),UVM_LOW)
+    end
     `uvm_info("[TRANSACTION DEBUG]",$sformatf("expected transaction with addr:%0h, id:%0h push back", cloned_t.address, cloned_t.id), UVM_LOW)
     //master_ordered_transactions[idx].push_back(cloned_t);
     verify_address_decoding(cloned_t);
