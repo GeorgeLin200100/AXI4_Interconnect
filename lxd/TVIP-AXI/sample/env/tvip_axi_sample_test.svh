@@ -145,11 +145,11 @@ class tvip_axi_sample_test extends tue_test #(
     
     // Set default sequence for slave sequencers
     foreach (slave_sequencers[j]) begin
-      if (j == 1) begin
+      //if (j == 1) begin
         uvm_config_db #(uvm_object_wrapper)::set(
           slave_sequencers[j], "run_phase", "default_sequence", tvip_axi_slave_default_sequence::type_id::get()
         );
-      end
+      //end
     end
   endfunction
 

@@ -33,6 +33,7 @@ DUMP	?= fsdb
 GUI	?= off
 UVM_VERSION ?= 1.2
 SEQ ?= AABBCCDD
+SCENARIO ?= 1M1S
 
 TESTS	+= default
 TESTS	+= request_delay
