@@ -182,6 +182,7 @@ class tvip_axi_slave_sub_driver extends tvip_axi_component_base #(
 
     if (!response_queue.exists(queue_id)) begin
       response_queue[queue_id]  = new("response_queue", 0);
+      `uvm_info("QUEUE",$sformatf("response_queue[%0h] created", queue_id),UVM_LOW)
     end
 
     accept_tr(request);
@@ -353,6 +354,7 @@ class tvip_axi_slave_sub_driver extends tvip_axi_component_base #(
     tvip_axi_slave_driver_response_item new_item;
 
     if (no_response()) begin
+      `uvm_info("NO RESPONSE","NO RESPONSE", UVM_LOW)
       start_delay_consumer.wait_for_active_response();
       if (!vif.at_slave_cb_edge.triggered) begin
         @(vif.at_slave_cb_edge);
@@ -361,12 +363,14 @@ class tvip_axi_slave_sub_driver extends tvip_axi_component_base #(
 
     foreach (response_queue[id]) begin
       if (response_queue[id].used() == 0) begin
+        `uvm_info("QUEUE",$sformatf("response_queue[%0h].used()==0",id),UVM_LOW)
         continue;
       end
       if (!is_acceptable_response(id)) begin
+        `uvm_info("QUEUE",$sformatf("Not acceptable response of id[%0h]",id),UVM_LOW)
         continue;
       end
-
+      `uvm_info("QUEUE",$sformatf("consuming response_queue[%0h]",id),UVM_LOW)
       response_queue[id].get(axi_item);
       new_item  = new(axi_item);
       active_responses.push_back(new_item);
