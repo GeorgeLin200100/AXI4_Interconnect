@@ -40,11 +40,11 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
       end else if (scenario == "1MnS") begin
         `uvm_info("SCENARIO", "IS 1MnS", UVM_LOW)
         foreach (slave_idx_real[i]) begin
-          //slave_idx_real[i] = $urandom_range(3, 0); // slave 0,1,2,3
-          randcase 
-            50: slave_idx_real[i] = 1;
-            50: slave_idx_real[i] = 3;
-          endcase
+          slave_idx_real[i] = $urandom_range(3, 0); // slave 0,1,2,3
+          // randcase 
+          //   50: slave_idx_real[i] = 0;
+          //   50: slave_idx_real[i] = 3;
+          // endcase
           `uvm_info("SCENARIO", $sformatf("slave_idx_real[%0d]=%0d", i, slave_idx_real[i]), UVM_LOW)
         end
         slave_idx = 1; // dont care

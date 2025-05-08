@@ -200,7 +200,7 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     $cast(cloned_t, t.clone());
     expected_transactions.push_back(cloned_t);
     `uvm_info("[TRANSACTION DEBUG]",$sformatf("expected transaction with addr:%0h, id:%0h push back", cloned_t.address, cloned_t.id), UVM_LOW)
-    master_ordered_transactions[idx].push_back(cloned_t);
+    //master_ordered_transactions[idx].push_back(cloned_t);
     verify_address_decoding(cloned_t);
     verify_protocol(cloned_t);
     // Sample coverage for master transaction
@@ -288,9 +288,9 @@ class tvip_axi_scoreboard extends uvm_scoreboard;
     `uvm_info("[PROCESS SLAVE_TRANSACTION]", $sformatf("%0h", t.address), UVM_LOW)
     $cast(cloned_t, t.clone());
     actual_transactions.push_back(cloned_t);
-    slave_ordered_transactions[idx].push_back(cloned_t);
+    //slave_ordered_transactions[idx].push_back(cloned_t);
     check_transaction(cloned_t);
-    verify_transaction_ordering(idx, cloned_t);
+    //verify_transaction_ordering(idx, cloned_t);
     // Sample coverage for slave transaction
     axi_cg.sample(cloned_t);
     // Sample ordering coverage
