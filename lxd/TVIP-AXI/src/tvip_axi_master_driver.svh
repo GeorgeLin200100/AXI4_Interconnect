@@ -42,8 +42,9 @@ class tvip_axi_master_sub_driver extends tvip_axi_component_base #(
 
   task put_request(tvip_axi_item request);
     accept_tr(request);
-
+    `uvm_info("QUEUE",$sformatf("address_queue size = %0d", address_queue.used()), UVM_LOW)
     address_queue.put(request);
+    `uvm_info("QUEUE",$sformatf("address_queue size = %0d", address_queue.used()), UVM_LOW)
     if (write_data_queue != null) begin
       write_data_queue.put(request);
     end
@@ -99,6 +100,7 @@ class tvip_axi_master_sub_driver extends tvip_axi_component_base #(
 
     forever begin
       get_item_from_queue(address_queue, item);
+      `uvm_info("QUEUE",$sformatf("address_queue size = %0d", address_queue.used()), UVM_LOW)
       consume_delay(item.start_delay);
       begin_address(item);
       drive_address(1, item);
@@ -182,6 +184,7 @@ class tvip_axi_master_sub_driver extends tvip_axi_component_base #(
         if (is_valid_response(id)) begin
           busy        = 1;
           current_id  = id;
+          `uvm_info("RESPONSE",$sformatf("found is_valid_response(%0h)", current_id), UVM_LOW)
           if (!response_stores[current_id][0].item.response_began()) begin
             begin_response(response_stores[current_id][0].item);
           end

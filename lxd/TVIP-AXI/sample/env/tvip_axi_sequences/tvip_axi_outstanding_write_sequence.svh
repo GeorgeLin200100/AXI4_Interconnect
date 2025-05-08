@@ -2,7 +2,6 @@
 `define TVIP_AXI_OUTSTANDING_WRITE_SEQUENCE_SVH
 
 class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
-  int unsigned num_outstanding_writes = 4;
   tvip_axi_master_outstanding_access_sequence  write_sequences[$];
   tvip_axi_master_read_sequence   read_sequences[$];
   
@@ -21,26 +20,46 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
   endtask
 
   task do_outstanding_write_read_access_by_sequence(int index);
-    
+    int slave_idx;
+    int slave_idx_real[10];
+    string scenario;
     //int slave_idx = index % num_slaves;
-    int slave_idx = 1;
-    //for (int i = 0; i < num_outstanding_writes; i++) begin
       automatic tvip_axi_master_outstanding_access_sequence  write_sequence;
       //automatic tvip_axi_master_read_sequence   read_sequence;
       automatic tvip_axi_master_outstanding_access_sequence  read_sequence;
       automatic tvip_axi_master_outstanding_access_sequence cloned_t;
       `uvm_info("[OUSTANDING DEBUG]","write_sequence defined", UVM_LOW)
       `uvm_info("[OUSTANDING DEBUG]","read_sequence defined", UVM_LOW)
+    if ($value$plusargs("SCENARIO=%s",scenario)) begin
+      if (scenario == "1M1S") begin
+        `uvm_info("SCENARIO", "IS 1M1S", UVM_LOW)
+        foreach (slave_idx_real[i]) begin
+          slave_idx_real[i] = 1;
+        end
+        slave_idx = 1; // dont care
+      end else if (scenario == "1MnS") begin
+        `uvm_info("SCENARIO", "IS 1MnS", UVM_LOW)
+        foreach (slave_idx_real[i]) begin
+          //slave_idx_real[i] = $urandom_range(3, 0); // slave 0,1,2,3
+          randcase 
+            50: slave_idx_real[i] = 1;
+            50: slave_idx_real[i] = 3;
+          endcase
+          `uvm_info("SCENARIO", $sformatf("slave_idx_real[%0d]=%0d", i, slave_idx_real[i]), UVM_LOW)
+        end
+        slave_idx = 1; // dont care
+      end
+    end
       `tue_do_with(write_sequence, {
-        address >= get_slave_base_addr(slave_idx);
-        address >= get_slave_base_addr(slave_idx);
+        address >= get_slave_base_addr(slave_idx); // don't care
+        address >= get_slave_base_addr(slave_idx); // don't care
         (address + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
         address % (1 << burst_size) == 0; // 2^burst_size
         access_type == TVIP_AXI_WRITE_ACCESS;
         foreach (addr_new[i]) {
-          addr_new[i] >= get_slave_base_addr(slave_idx);
-          addr_new[i] >= get_slave_base_addr(slave_idx);
-          (addr_new[i] + burst_size * burst_length) <= (get_slave_base_addr(slave_idx) + addr_region_size - 1);
+          addr_new[i] >= get_slave_base_addr(slave_idx_real[i]);
+          addr_new[i] >= get_slave_base_addr(slave_idx_real[i]);
+          (addr_new[i] + burst_size * burst_length) <= (get_slave_base_addr(slave_idx_real[i]) + addr_region_size - 1);
           addr_new[i] % (1 << burst_size) == 0; // 2^burst_size
         }
       })

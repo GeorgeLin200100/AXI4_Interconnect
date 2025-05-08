@@ -55,13 +55,17 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
 
     
     for (int i = 0; i < 10; i++) begin
-      automatic int ii = i;
-      automatic int id;
-      automatic tvip_axi_master_item rsp;
-      get_response(rsp);
-      id = rsp.get_transaction_id();
-      responses[id] = rsp;
-      `uvm_info("RESPONSE",$sformatf("Received response for ID %0d", id), UVM_LOW)
+      fork
+        automatic int ii = i;
+        automatic int id;
+        automatic tvip_axi_master_item rsp;
+        automatic int id  = requests[ii].get_transaction_id();
+        //get_response(rsp);
+        get_response(rsp, id);
+        //id = rsp.get_transaction_id();
+        responses[id] = rsp;
+        `uvm_info("RESPONSE",$sformatf("Received response for ID %0d", id), UVM_LOW)
+      join
     end
   endtask
 
