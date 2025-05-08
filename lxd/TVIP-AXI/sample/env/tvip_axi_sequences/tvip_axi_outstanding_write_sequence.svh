@@ -86,6 +86,7 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
         address      == write_sequence.address;
         burst_size   == write_sequence.burst_size;
         burst_length == write_sequence.burst_length;
+        burst_type == write_sequence.burst_type;
         access_type  == TVIP_AXI_READ_ACCESS;
         foreach (id_new[i]) {
           (id_new[i] >> 6) == slave_idx_real[i];
