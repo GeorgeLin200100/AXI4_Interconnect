@@ -63,6 +63,9 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
           (addr_new[i] + burst_size * burst_length) <= (get_slave_base_addr(slave_idx_real[i]) + addr_region_size - 1);
           addr_new[i] % (1 << burst_size) == 0; // 2^burst_size
         }
+        foreach (id_new[i]) {
+          (id_new[i] >> 6) == slave_idx_real[i];
+        }
       })
       // $cast(cloned_t, write_sequence.clone());
       // write_sequences.push_back(cloned_t);
@@ -84,6 +87,9 @@ class tvip_axi_outstanding_write_sequence extends tvip_axi_base_sequence;
         burst_size   == write_sequence.burst_size;
         burst_length == write_sequence.burst_length;
         access_type  == TVIP_AXI_READ_ACCESS;
+        foreach (id_new[i]) {
+          (id_new[i] >> 6) == slave_idx_real[i];
+        }
       })
       `uvm_info("[OUSTANDING DEBUG]","read_sequence randomized", UVM_LOW)
       foreach (read_sequence.addr_new[i]) begin
