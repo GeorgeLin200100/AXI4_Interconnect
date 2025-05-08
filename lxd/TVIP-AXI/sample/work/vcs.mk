@@ -5,6 +5,7 @@ VCS_ARGS	+= -l compile.log
 VCS_ARGS	+= -timescale=1ns/1ps
 VCS_ARGS	+= -ntb_opts uvm-$(UVM_VERSION)
 VCS_ARGS	+= +define+UVM_NO_DEPRECATED+UVM_OBJECT_MUST_HAVE_CONSTRUCTO
+VCS_ARGS	+= +define+UVM_VERDI_COMPWAVE
 VCS_ARGS    += +lint=TFIPC-L
 VCS_ARGS	+= -top top
 
@@ -13,7 +14,10 @@ SIMV_ARGS	+= -f test.f
 SIMV_ARGS   += -cm line+cond+fsm+branch+tgl+assert
 SIMV_ARGS   += -cm_name $(TEST)_cm
 SIMV_ARGS   += -cm_dir ./cm
+SIMV_ARGS   += +UVM_TR_RECORD
+SIMV_ARGS   += +UVM_VERDI_TRACE="UVM_AWARE+RAL+HIER+COMPWAVE"
 SIMV_ARGS   += +SEQ=$(SEQ)
+SIMV_ARGS	+= +SCENARIO=$(SCENARIO)
 
 ifeq ($(strip $(RANDOM_SEED)), auto)
 	SIMV_ARGS	+= +ntb_random_seed_automatic
