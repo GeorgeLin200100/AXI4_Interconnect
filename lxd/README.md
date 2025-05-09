@@ -2,7 +2,8 @@
 ### Capability
  - Read/Write Burst
  - Outstanding Write/Read
- - Out-of-order Slave Response
+ - Out-of-order Single-Slave Response
+ - Out-of-order Multi-Slave Response
  
 ## Get Started
 ```
@@ -14,11 +15,12 @@ make compile_vcs
 # Usage:
 # TEST = default/out_of_order_response/outstanding_access/read_interleave/ready_delay/request_delay/response_delay/wvalid_preceding_awvalid
 # SEQ = BASIC_WRITE_READ/SEQUENCE_BY_SEQUENCE/SEQUENCE_BY_ITEM/OUTSTANDING_WRITE/ALL_SEQUENCES
-
+# SCENARIO = 1MnS/1M1S
 # to test outstanding access behavior
 export TEST=outstanding_access
 export SEQ=OUSTANDING_WRITE
-make sim_vcs TEST=$(TEST) SEQ=$(SEQ)
+export SCENARIO=1MnS
+make sim_vcs TEST=$(TEST) SEQ=$(SEQ) SCENARIO=$(SCENARIO)
 
 # to view simv.log
 cat $(TEST)/simv.log

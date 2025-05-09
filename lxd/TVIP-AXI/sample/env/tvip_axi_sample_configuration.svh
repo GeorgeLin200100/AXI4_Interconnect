@@ -51,8 +51,8 @@ class tvip_axi_sample_configuration extends tue_configuration;
         if (i < 3) {  // Only for master interfaces
           axi_cfg[i].write_data_delay.min_delay          == 0;
           axi_cfg[i].write_data_delay.max_delay          == 10;
-          axi_cfg[i].write_data_delay.weight_zero_delay  == 6;
-          axi_cfg[i].write_data_delay.weight_short_delay == 3;
+          axi_cfg[i].write_data_delay.weight_zero_delay  == 0;
+          axi_cfg[i].write_data_delay.weight_short_delay == 9;
           axi_cfg[i].write_data_delay.weight_long_delay  == 1;
         }
       }
@@ -62,10 +62,10 @@ class tvip_axi_sample_configuration extends tue_configuration;
   constraint c_response_weight {
     foreach (axi_cfg[i]) {
       if (i >= 3) {  // Only for slave interfaces
-        axi_cfg[i].response_weight_okay         == 6;
+        axi_cfg[i].response_weight_okay         == 8;
         axi_cfg[i].response_weight_exokay       == 2;
-        axi_cfg[i].response_weight_slave_error  == 1;
-        axi_cfg[i].response_weight_decode_error == 1;
+        axi_cfg[i].response_weight_slave_error  == 0;
+        axi_cfg[i].response_weight_decode_error == 0;
       }
     }
   }
