@@ -1,5 +1,5 @@
-#TVIP_AXI_HOME	= $(shell git rev-parse --show-toplevel)
-TVIP_AXI_HOME = $(shell git rev-parse --show-toplevel)/lxd/TVIP-AXI
+#TVIP_AXI_HOME	= $(shell git rev-parse --show-toplevel)/lxd/TVIP-AXI
+TVIP_AXI_HOME = /home/ICer/ic_prjs/AXI4_Interconnect_linuxtest/lxd/TVIP-AXI
 export TVIP_AXI_HOME
 
 TUE_HOME	?= $(TVIP_AXI_HOME)/tue
@@ -26,6 +26,13 @@ SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi_crossbar.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi4_safety_connector.v
 SOURCE_FILES    += $(TVIP_AXI_HOME)/sample/env/axi4_safety_connector_wrapper.sv
 SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/top.sv
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_safety_connector.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_ds_1m3s.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_ds.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_unit.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us_3m1s.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us.v
+
 
 SIMULATOR	?= vcs
 RANDOM_SEED	?= auto

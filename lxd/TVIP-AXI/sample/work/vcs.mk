@@ -8,6 +8,12 @@ VCS_ARGS	+= +define+UVM_NO_DEPRECATED+UVM_OBJECT_MUST_HAVE_CONSTRUCTO
 VCS_ARGS	+= +define+UVM_VERDI_COMPWAVE
 VCS_ARGS    += +lint=TFIPC-L
 VCS_ARGS	+= -top top
+VCS_ARGS	+= -debug_acc+all -debug_region+cell+encrypt
+#VCS_ARGS	+= -debug_all 
+#VCS_ARGS	+= +acc +vpi 
+#VCS_ARGS	+= -debug_access+all
+#VCS_ARGS	+= -debug_access+r+w+nomemcbk -debug_region+cell
+
 
 SIMV_ARGS	+= -l simv.log
 SIMV_ARGS	+= -f test.f
@@ -64,6 +70,10 @@ CLEAN_ALL_TARGET += DVEfiles
 CLEAN_ALL_TARGET += verdiLog
 CLEAN_ALL_TARGET += .inter.vpd.uvm
 
+SIGNAL_NAME ?= $(shell head -n 1 $(SIGNAL_LIST) | awk '{print $$1}')
+FORCE_VALUE ?= 1
+FAULT_TYPE ?= 1
+
 .PHONY: sim_vcs compile_vcs
 
 sim_vcs:
@@ -72,3 +82,14 @@ sim_vcs:
 
 compile_vcs:
 	vcs $(VCS_ARGS) $(addprefix -f , $(FILE_LISTS)) $(SOURCE_FILES)
+
+#fault_sim_* signal_name=[ ] +force_value=[0/1] fault_type=[1/2]
+fault_sim_%:
+	cd fault_test; ../simv $(SIMV_ARGS) +FAULT_EN +SIGNAL_NAME=$(SIGNAL_NAME) +FORCE_VALUE=$(FORCE_VALUE) +FAULT_TYPE=$(FAULT_TYPE) 
+
+#make sim_get_signal TEST=outstanding_access
+sim_get_signal:
+	cd $(TEST); ../simv $(SIMV_ARGS) -ucli -do ../get_all_signal.tcl 
+
+verdi:
+	verdi -ssf "${DIR_NAME}/dump.fsdb" -f compile.f
