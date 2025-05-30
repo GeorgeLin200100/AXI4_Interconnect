@@ -1303,8 +1303,8 @@ always@(*) begin
     end 
 end
 
-always@(posedge clk, negedge rst) begin
-    if (!rst) begin
+always@(posedge clk, posedge rst) begin
+    if (rst) begin
         err_signal <= 0;
         err_bit_index <= 0;
         err_axi_connector <= 0;

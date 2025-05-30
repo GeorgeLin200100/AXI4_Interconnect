@@ -1,4 +1,3 @@
-Port:
 top.u_connector.u_connector.clk
 top.u_connector.u_connector.rst
 top.u_connector.u_connector.s00_axi_awid
@@ -15555,16 +15554,6 @@ top.u_connector.u_connector.u_axi_tmr_voter_ds.u_axi_tmr_voter_ds_1m3s_inst3.gen
 top.u_connector.u_connector.u_axi_tmr_voter_ds.u_axi_tmr_voter_ds_1m3s_inst3.genblk23[0].u_aruser.err_d0
 top.u_connector.u_connector.u_axi_tmr_voter_ds.u_axi_tmr_voter_ds_1m3s_inst3.genblk23[0].u_aruser.err_d1
 top.u_connector.u_connector.u_axi_tmr_voter_ds.u_axi_tmr_voter_ds_1m3s_inst3.genblk23[0].u_aruser.err_d2
-.aclk
-.areset_n
-.s0_axi
-.s1_axi
-.s2_axi
-.m0_axi
-.m1_axi
-.m2_axi
-.m3_axi
-signal:
 top.u_connector.u_connector.m00_vu0_axi_awid
 top.u_connector.u_connector.m00_vu0_axi_awaddr
 top.u_connector.u_connector.m00_vu0_axi_awlen

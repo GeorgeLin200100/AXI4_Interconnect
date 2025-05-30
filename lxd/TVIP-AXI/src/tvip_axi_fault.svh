@@ -25,43 +25,44 @@ class fault_injector extends uvm_component;
         end else begin
             fault_en = 1'b1; 
             `uvm_info("FAULT_EN", $sformatf("Fault enable: %d", fault_en), UVM_LOW)
-        end
-        
-        if (!$value$plusargs("SIGNAL_NAME=%s", signal_name)) begin
-            `uvm_error("PARAM_ERROR", "signal_name missing")
-            is_config_valid = is_config_valid && 0;
-        end else begin
-            `uvm_info("SIGNAL_NAME", $sformatf("Signal name: %s", signal_name), UVM_LOW)
-        end
 
-        if ($value$plusargs("FORCE_VALUE=%s", force_value_str)) begin
-            force_value = force_value_str.atoi(); // 将字符串转换为 logic
-            `uvm_info("FORCE_VALUE", $sformatf("Force value: %b", force_value), UVM_LOW)
-        end else begin
-            `uvm_error("PARAM_ERROR", "force_value missing")
-            is_config_valid = is_config_valid && 0;
-        end
+            // 解析参数
+            if (!$value$plusargs("SIGNAL_NAME=%s", signal_name)) begin
+                `uvm_error("PARAM_ERROR", "signal_name missing")
+                is_config_valid = is_config_valid && 0;
+            end else begin
+                `uvm_info("SIGNAL_NAME", $sformatf("Signal name: %s", signal_name), UVM_LOW)
+            end
 
-        if (!$value$plusargs("FAULT_TYPE=%d", fault_type)) begin
-            `uvm_error("PARAM_ERROR", "fault_type missing")
-            is_config_valid = is_config_valid && 0;
-        end else begin
-            `uvm_info("FAULT_TYPE", $sformatf("Fault type: %d", fault_type), UVM_LOW)
-        end
+            if ($value$plusargs("FORCE_VALUE=%s", force_value_str)) begin
+                force_value = force_value_str.atoi(); // 将字符串转换为 logic
+                `uvm_info("FORCE_VALUE", $sformatf("Force value: %b", force_value), UVM_LOW)
+            end else begin
+                `uvm_error("PARAM_ERROR", "force_value missing")
+                is_config_valid = is_config_valid && 0;
+            end
 
-        if (!$value$plusargs("T_FAULT_START=%d", t_fault_start)) begin
-            //随机化
-            t_fault_start = $urandom_range(22, 50);
-            `uvm_info("RANDOM_T_FAULT_START", $sformatf("Randomized t_fault_start: %d", t_fault_start), UVM_LOW)
-        end
+            if (!$value$plusargs("FAULT_TYPE=%d", fault_type)) begin
+                `uvm_error("PARAM_ERROR", "fault_type missing")
+                is_config_valid = is_config_valid && 0;
+            end else begin
+                `uvm_info("FAULT_TYPE", $sformatf("Fault type: %d", fault_type), UVM_LOW)
+            end
 
-        if (!$value$plusargs("T_FAULT_DURATION=%d", t_fault_duration)) begin
+            if (!$value$plusargs("T_FAULT_START=%d", t_fault_start)) begin
+                //随机化
+                t_fault_start = $urandom_range(22, 50);
+                `uvm_info("RANDOM_T_FAULT_START", $sformatf("Randomized t_fault_start: %d", t_fault_start), UVM_LOW)
+            end
+
+            if (!$value$plusargs("T_FAULT_DURATION=%d", t_fault_duration)) begin
+                
+            end
             
-        end
-        
-        if (!uvm_hdl_check_path(signal_name)) begin
-            `uvm_error("PATH_INVALID", $sformatf("Invalid signal path: %s", signal_name))
-            is_config_valid = is_config_valid && 0; // 标记参数无效
+            if ( !uvm_hdl_check_path(signal_name)) begin
+                `uvm_error("PATH_INVALID", $sformatf("Invalid signal path: %s", signal_name))
+                is_config_valid = is_config_valid && 0; // 标记参数无效
+            end
         end
     endfunction
 
