@@ -8,6 +8,8 @@ VCS_ARGS	+= +define+UVM_NO_DEPRECATED+UVM_OBJECT_MUST_HAVE_CONSTRUCTO
 VCS_ARGS	+= +define+UVM_VERDI_COMPWAVE
 VCS_ARGS    += +lint=TFIPC-L
 VCS_ARGS	+= -top top
+VCS_ARGS	+= -debug_acc+all -debug_region+cell+encrypt
+
 
 SIMV_ARGS	+= -l simv.log
 SIMV_ARGS	+= -f test.f
@@ -64,6 +66,12 @@ CLEAN_ALL_TARGET += DVEfiles
 CLEAN_ALL_TARGET += verdiLog
 CLEAN_ALL_TARGET += .inter.vpd.uvm
 
+SIGNAL_FILE ?= all_signal.txt
+SIGNAL_LIST := $(shell cat $(SIGNAL_FILE))
+SIGNAL_NAME ?= $(shell head -n 1 $(SIGNAL_LIST) | awk '{print $$1}')
+FORCE_VALUE ?= 1
+FAULT_TYPE ?= 1
+
 .PHONY: sim_vcs compile_vcs
 
 sim_vcs:
@@ -72,3 +80,25 @@ sim_vcs:
 
 compile_vcs:
 	vcs $(VCS_ARGS) $(addprefix -f , $(FILE_LISTS)) $(SOURCE_FILES)
+
+.PHONY: batch_fault_sim fault_sim fault_sim_% sim_get_signal verdi
+#batch tests
+batch_fault_sim:$(addprefix fault_sim_, $(SIGNAL_LIST))
+
+fault_sim_%:
+	@echo "$@ TEST=$(TEST) SEQ=$(SEQ) SCENARIO=$(SCENARIO) SIGNAL_NAME=$* FORCE_VALUE=$(FORCE_VALUE) FAULT_TYPE=$(FAULT_TYPE)";
+	mkdir -p fault_test/sim_$*; \
+	cp -f $(TEST)/test.f fault_test/sim_$*/test.f; \
+	cd fault_test/sim_$*; \
+	../../simv $(SIMV_ARGS) +FAULT_EN +SIGNAL_NAME=$* +FORCE_VALUE=$(FORCE_VALUE) +FAULT_TYPE=$(FAULT_TYPE) 
+
+#single test
+fault_sim:
+	cp -f $(TEST)/test.f fault_test/test.f; cd fault_test; ../simv $(SIMV_ARGS) +FAULT_EN +SIGNAL_NAME=$(SIGNAL_NAME) +FORCE_VALUE=$(FORCE_VALUE) +FAULT_TYPE=$(FAULT_TYPE) 
+
+#make sim_get_signal TEST=outstanding_access
+sim_get_signal:
+	cd $(TEST); ../simv $(SIMV_ARGS) -ucli -do ../get_all_signal.tcl 
+
+verdi:
+	verdi -ssf "${DIR_NAME}/dump.fsdb" -f compile.f

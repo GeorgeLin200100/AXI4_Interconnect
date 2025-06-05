@@ -16,7 +16,15 @@ module axi4_safety_connector_wrapper #(
   import  tvip_axi_types_pkg::*;
   import  tvip_axi_pkg::*;
 
-  axi4_safety_connector #(
+//basic:axi4_safety_connector 
+//tmr:axi_tmr_safety_connector
+  `ifdef BASIC_CONNECTOR
+    axi4_safety_connector #(
+  `elsif TMR_CONNECTOR
+    axi_tmr_safety_connector #(
+  `else
+    axi_tmr_safety_connector #(
+  `endif
   ) u_connector (
     .clk(aclk),
     .rst(!areset_n),
