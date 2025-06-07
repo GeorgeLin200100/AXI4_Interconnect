@@ -18,6 +18,7 @@ SIMV_ARGS   += -cm_name $(TEST)_cm
 SIMV_ARGS   += -cm_dir ./cm
 SIMV_ARGS   += +UVM_TR_RECORD
 SIMV_ARGS   += +UVM_VERDI_TRACE="UVM_AWARE+RAL+HIER+COMPWAVE"
+SIMV_ARGS   += +UVM_TIMEOUT="10000ns, YES"
 SIMV_ARGS   += +SEQ=$(SEQ)
 SIMV_ARGS	+= +SCENARIO=$(SCENARIO)
 
@@ -94,6 +95,7 @@ fault_sim_%:
 
 #single test
 fault_sim:
+	mkdir -p fault_test/
 	cp -f $(TEST)/test.f fault_test/test.f; cd fault_test; ../simv $(SIMV_ARGS) +FAULT_EN +SIGNAL_NAME=$(SIGNAL_NAME) +FORCE_VALUE=$(FORCE_VALUE) +FAULT_TYPE=$(FAULT_TYPE) 
 
 #make sim_get_signal TEST=outstanding_access
