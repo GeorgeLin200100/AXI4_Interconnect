@@ -31,7 +31,7 @@ THE SOFTWARE.
 /*
  * AXI4 crossbar address decode and admission control
  */
-module axi_crossbar_addr #
+module axi_sft_crossbar_addr #
 (
     // Slave interface index
     parameter S = 0,

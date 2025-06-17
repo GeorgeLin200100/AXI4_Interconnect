@@ -31,7 +31,7 @@ THE SOFTWARE.
 /*
  * AXI4 register (read)
  */
-module axi_register_rd #
+module axi_sft_register_rd #
 (
     // Width of data bus in bits
     parameter DATA_WIDTH = 32,
@@ -109,421 +109,383 @@ module axi_register_rd #
     output wire                     m_axi_rready
 );
 
-generate
+    wire [ID_WIDTH-1:0]      s_axi_arid_tmr0;
+    wire [ADDR_WIDTH-1:0]    s_axi_araddr_tmr0;
+    wire [7:0]               s_axi_arlen_tmr0;
+    wire [2:0]               s_axi_arsize_tmr0;
+    wire [1:0]               s_axi_arburst_tmr0;
+    wire                     s_axi_arlock_tmr0;
+    wire [3:0]               s_axi_arcache_tmr0;
+    wire [2:0]               s_axi_arprot_tmr0;
+    wire [3:0]               s_axi_arqos_tmr0;
+    wire [3:0]               s_axi_arregion_tmr0;
+    wire [ARUSER_WIDTH-1:0]  s_axi_aruser_tmr0;
+    wire                     s_axi_arvalid_tmr0;
+    wire                     s_axi_arready_tmr0;
+    wire [ID_WIDTH-1:0]      s_axi_rid_tmr0;
+    wire [DATA_WIDTH-1:0]    s_axi_rdata_tmr0;
+    wire [1:0]               s_axi_rresp_tmr0;
+    wire                     s_axi_rlast_tmr0;
+    wire [RUSER_WIDTH-1:0]   s_axi_ruser_tmr0;
+    wire                     s_axi_rvalid_tmr0;
+    wire                     s_axi_rready_tmr0;
 
-// AR channel
+    wire [ID_WIDTH-1:0]      s_axi_arid_tmr1;
+    wire [ADDR_WIDTH-1:0]    s_axi_araddr_tmr1;
+    wire [7:0]               s_axi_arlen_tmr1;
+    wire [2:0]               s_axi_arsize_tmr1;
+    wire [1:0]               s_axi_arburst_tmr1;
+    wire                     s_axi_arlock_tmr1;
+    wire [3:0]               s_axi_arcache_tmr1;
+    wire [2:0]               s_axi_arprot_tmr1;
+    wire [3:0]               s_axi_arqos_tmr1;
+    wire [3:0]               s_axi_arregion_tmr1;
+    wire [ARUSER_WIDTH-1:0]  s_axi_aruser_tmr1;
+    wire                     s_axi_arvalid_tmr1;
+    wire                     s_axi_arready_tmr1;
+    wire [ID_WIDTH-1:0]      s_axi_rid_tmr1;
+    wire [DATA_WIDTH-1:0]    s_axi_rdata_tmr1;
+    wire [1:0]               s_axi_rresp_tmr1;
+    wire                     s_axi_rlast_tmr1;
+    wire [RUSER_WIDTH-1:0]   s_axi_ruser_tmr1;
+    wire                     s_axi_rvalid_tmr1;
+    wire                     s_axi_rready_tmr1;
 
-if (AR_REG_TYPE > 1) begin
-// skid buffer, no bubble cycles
+    wire [ID_WIDTH-1:0]      s_axi_arid_tmr2;
+    wire [ADDR_WIDTH-1:0]    s_axi_araddr_tmr2;
+    wire [7:0]               s_axi_arlen_tmr2;
+    wire [2:0]               s_axi_arsize_tmr2;
+    wire [1:0]               s_axi_arburst_tmr2;
+    wire                     s_axi_arlock_tmr2;
+    wire [3:0]               s_axi_arcache_tmr2;
+    wire [2:0]               s_axi_arprot_tmr2;
+    wire [3:0]               s_axi_arqos_tmr2;
+    wire [3:0]               s_axi_arregion_tmr2;
+    wire [ARUSER_WIDTH-1:0]  s_axi_aruser_tmr2;
+    wire                     s_axi_arvalid_tmr2;
+    wire                     s_axi_arready_tmr2;
+    wire [ID_WIDTH-1:0]      s_axi_rid_tmr2;
+    wire [DATA_WIDTH-1:0]    s_axi_rdata_tmr2;
+    wire [1:0]               s_axi_rresp_tmr2;
+    wire                     s_axi_rlast_tmr2;
+    wire [RUSER_WIDTH-1:0]   s_axi_ruser_tmr2;
+    wire                     s_axi_rvalid_tmr2;
+    wire                     s_axi_rready_tmr2;
 
-// datapath registers
-reg                    s_axi_arready_reg = 1'b0;
+    wire [ID_WIDTH-1:0]      m_axi_arid_tmr0;
+    wire [ADDR_WIDTH-1:0]    m_axi_araddr_tmr0;
+    wire [7:0]               m_axi_arlen_tmr0;
+    wire [2:0]               m_axi_arsize_tmr0;
+    wire [1:0]               m_axi_arburst_tmr0;
+    wire                     m_axi_arlock_tmr0;
+    wire [3:0]               m_axi_arcache_tmr0;
+    wire [2:0]               m_axi_arprot_tmr0;
+    wire [3:0]               m_axi_arqos_tmr0;
+    wire [3:0]               m_axi_arregion_tmr0;
+    wire [ARUSER_WIDTH-1:0]  m_axi_aruser_tmr0;
+    wire                     m_axi_arvalid_tmr0;
+    wire                     m_axi_arready_tmr0;
+    wire [ID_WIDTH-1:0]      m_axi_rid_tmr0;
+    wire [DATA_WIDTH-1:0]    m_axi_rdata_tmr0;
+    wire [1:0]               m_axi_rresp_tmr0;
+    wire                     m_axi_rlast_tmr0;
+    wire [RUSER_WIDTH-1:0]   m_axi_ruser_tmr0;
+    wire                     m_axi_rvalid_tmr0;
+    wire                     m_axi_rready_tmr0;
 
-reg [ID_WIDTH-1:0]     m_axi_arid_reg     = {ID_WIDTH{1'b0}};
-reg [ADDR_WIDTH-1:0]   m_axi_araddr_reg   = {ADDR_WIDTH{1'b0}};
-reg [7:0]              m_axi_arlen_reg    = 8'd0;
-reg [2:0]              m_axi_arsize_reg   = 3'd0;
-reg [1:0]              m_axi_arburst_reg  = 2'd0;
-reg                    m_axi_arlock_reg   = 1'b0;
-reg [3:0]              m_axi_arcache_reg  = 4'd0;
-reg [2:0]              m_axi_arprot_reg   = 3'd0;
-reg [3:0]              m_axi_arqos_reg    = 4'd0;
-reg [3:0]              m_axi_arregion_reg = 4'd0;
-reg [ARUSER_WIDTH-1:0] m_axi_aruser_reg   = {ARUSER_WIDTH{1'b0}};
-reg                    m_axi_arvalid_reg  = 1'b0, m_axi_arvalid_next;
+    wire [ID_WIDTH-1:0]      m_axi_arid_tmr1;
+    wire [ADDR_WIDTH-1:0]    m_axi_araddr_tmr1;
+    wire [7:0]               m_axi_arlen_tmr1;
+    wire [2:0]               m_axi_arsize_tmr1;
+    wire [1:0]               m_axi_arburst_tmr1;
+    wire                     m_axi_arlock_tmr1;
+    wire [3:0]               m_axi_arcache_tmr1;
+    wire [2:0]               m_axi_arprot_tmr1;
+    wire [3:0]               m_axi_arqos_tmr1;
+    wire [3:0]               m_axi_arregion_tmr1;
+    wire [ARUSER_WIDTH-1:0]  m_axi_aruser_tmr1;
+    wire                     m_axi_arvalid_tmr1;
+    wire                     m_axi_arready_tmr1;
+    wire [ID_WIDTH-1:0]      m_axi_rid_tmr1;
+    wire [DATA_WIDTH-1:0]    m_axi_rdata_tmr1;
+    wire [1:0]               m_axi_rresp_tmr1;
+    wire                     m_axi_rlast_tmr1;
+    wire [RUSER_WIDTH-1:0]   m_axi_ruser_tmr1;
+    wire                     m_axi_rvalid_tmr1;
+    wire                     m_axi_rready_tmr1;
 
-reg [ID_WIDTH-1:0]     temp_m_axi_arid_reg     = {ID_WIDTH{1'b0}};
-reg [ADDR_WIDTH-1:0]   temp_m_axi_araddr_reg   = {ADDR_WIDTH{1'b0}};
-reg [7:0]              temp_m_axi_arlen_reg    = 8'd0;
-reg [2:0]              temp_m_axi_arsize_reg   = 3'd0;
-reg [1:0]              temp_m_axi_arburst_reg  = 2'd0;
-reg                    temp_m_axi_arlock_reg   = 1'b0;
-reg [3:0]              temp_m_axi_arcache_reg  = 4'd0;
-reg [2:0]              temp_m_axi_arprot_reg   = 3'd0;
-reg [3:0]              temp_m_axi_arqos_reg    = 4'd0;
-reg [3:0]              temp_m_axi_arregion_reg = 4'd0;
-reg [ARUSER_WIDTH-1:0] temp_m_axi_aruser_reg   = {ARUSER_WIDTH{1'b0}};
-reg                    temp_m_axi_arvalid_reg  = 1'b0, temp_m_axi_arvalid_next;
+    wire [ID_WIDTH-1:0]      m_axi_arid_tmr2;
+    wire [ADDR_WIDTH-1:0]    m_axi_araddr_tmr2;
+    wire [7:0]               m_axi_arlen_tmr2;
+    wire [2:0]               m_axi_arsize_tmr2;
+    wire [1:0]               m_axi_arburst_tmr2;
+    wire                     m_axi_arlock_tmr2;
+    wire [3:0]               m_axi_arcache_tmr2;
+    wire [2:0]               m_axi_arprot_tmr2;
+    wire [3:0]               m_axi_arqos_tmr2;
+    wire [3:0]               m_axi_arregion_tmr2;
+    wire [ARUSER_WIDTH-1:0]  m_axi_aruser_tmr2;
+    wire                     m_axi_arvalid_tmr2;
+    wire                     m_axi_arready_tmr2;
+    wire [ID_WIDTH-1:0]      m_axi_rid_tmr2;
+    wire [DATA_WIDTH-1:0]    m_axi_rdata_tmr2;
+    wire [1:0]               m_axi_rresp_tmr2;
+    wire                     m_axi_rlast_tmr2;
+    wire [RUSER_WIDTH-1:0]   m_axi_ruser_tmr2;
+    wire                     m_axi_rvalid_tmr2;
+    wire                     m_axi_rready_tmr2;
 
-// datapath control
-reg store_axi_ar_input_to_output;
-reg store_axi_ar_input_to_temp;
-reg store_axi_ar_temp_to_output;
+    assign s_axi_arid_tmr0 = s_axi_arid;
+    assign s_axi_arid_tmr1 = s_axi_arid;
+    assign s_axi_arid_tmr2 = s_axi_arid;
+    assign s_axi_araddr_tmr0 = s_axi_araddr;
+    assign s_axi_araddr_tmr1 = s_axi_araddr;
+    assign s_axi_araddr_tmr2 = s_axi_araddr;
+    assign s_axi_arlen_tmr0 = s_axi_arlen;
+    assign s_axi_arlen_tmr1 = s_axi_arlen;
+    assign s_axi_arlen_tmr2 = s_axi_arlen;
+    assign s_axi_arsize_tmr0 = s_axi_arsize;
+    assign s_axi_arsize_tmr1 = s_axi_arsize;
+    assign s_axi_arsize_tmr2 = s_axi_arsize;
+    assign s_axi_arburst_tmr0 = s_axi_arburst;
+    assign s_axi_arburst_tmr1 = s_axi_arburst;
+    assign s_axi_arburst_tmr2 = s_axi_arburst;
+    assign s_axi_arlock_tmr0 = s_axi_arlock;
+    assign s_axi_arlock_tmr1 = s_axi_arlock;
+    assign s_axi_arlock_tmr2 = s_axi_arlock;
+    assign s_axi_arcache_tmr0 = s_axi_arcache;
+    assign s_axi_arcache_tmr1 = s_axi_arcache;
+    assign s_axi_arcache_tmr2 = s_axi_arcache;
+    assign s_axi_arprot_tmr0 = s_axi_arprot;
+    assign s_axi_arprot_tmr1 = s_axi_arprot;
+    assign s_axi_arprot_tmr2 = s_axi_arprot;
+    assign s_axi_arqos_tmr0 = s_axi_arqos;
+    assign s_axi_arqos_tmr1 = s_axi_arqos;
+    assign s_axi_arqos_tmr2 = s_axi_arqos;
+    assign s_axi_arregion_tmr0 = s_axi_arregion;
+    assign s_axi_arregion_tmr1 = s_axi_arregion;
+    assign s_axi_arregion_tmr2 = s_axi_arregion;
+    assign s_axi_aruser_tmr0 = s_axi_aruser;
+    assign s_axi_aruser_tmr1 = s_axi_aruser;
+    assign s_axi_aruser_tmr2 = s_axi_aruser;
+    assign s_axi_arvalid_tmr0 = s_axi_arvalid;
+    assign s_axi_arvalid_tmr1 = s_axi_arvalid;
+    assign s_axi_arvalid_tmr2 = s_axi_arvalid;
+    axi_tmr_simple_voter #(1) (.d0(s_axi_arready_tmr0),.d1(s_axi_arready_tmr1),.d2(s_axi_arready_tmr2),.q(s_axi_arready));
 
-assign s_axi_arready  = s_axi_arready_reg;
+    axi_tmr_simple_voter #(ID_WIDTH) (.d0(s_axi_rid_tmr0),.d1(s_axi_rid_tmr1),.d2(s_axi_rid_tmr2),.q(s_axi_rid));
+    axi_tmr_simple_voter #(DATA_WIDTH) (.d0(s_axi_rdata_tmr0),.d1(s_axi_rdata_tmr1),.d2(s_axi_rdata_tmr2),.q(s_axi_rdata));
+    axi_tmr_simple_voter #(2) (.d0(s_axi_rresp_tmr0),.d1(s_axi_rresp_tmr1),.d2(s_axi_rresp_tmr2),.q(s_axi_rresp));
+    axi_tmr_simple_voter #(1) (.d0(s_axi_rlast_tmr0),.d1(s_axi_rlast_tmr1),.d2(s_axi_rlast_tmr2),.q(s_axi_rlast));
+    axi_tmr_simple_voter #(RUSER_WIDTH) (.d0(s_axi_ruser_tmr0),.d1(s_axi_ruser_tmr1),.d2(s_axi_ruser_tmr2),.q(s_axi_ruser));
+    axi_tmr_simple_voter #(1) (.d0(s_axi_rvalid_tmr0),.d1(s_axi_rvalid_tmr1),.d2(s_axi_rvalid_tmr2),.q(s_axi_rvalid));
+    assign s_axi_rready_tmr0 = s_axi_rready;
+    assign s_axi_rready_tmr1 = s_axi_rready;
+    assign s_axi_rready_tmr2 = s_axi_rready;
 
-assign m_axi_arid     = m_axi_arid_reg;
-assign m_axi_araddr   = m_axi_araddr_reg;
-assign m_axi_arlen    = m_axi_arlen_reg;
-assign m_axi_arsize   = m_axi_arsize_reg;
-assign m_axi_arburst  = m_axi_arburst_reg;
-assign m_axi_arlock   = m_axi_arlock_reg;
-assign m_axi_arcache  = m_axi_arcache_reg;
-assign m_axi_arprot   = m_axi_arprot_reg;
-assign m_axi_arqos    = m_axi_arqos_reg;
-assign m_axi_arregion = m_axi_arregion_reg;
-assign m_axi_aruser   = ARUSER_ENABLE ? m_axi_aruser_reg : {ARUSER_WIDTH{1'b0}};
-assign m_axi_arvalid  = m_axi_arvalid_reg;
+    axi_tmr_simple_voter #(ID_WIDTH) (.d0(m_axi_arid_tmr0),.d1(m_axi_arid_tmr1),.d2(m_axi_arid_tmr2),.q(m_axi_arid));
+    axi_tmr_simple_voter #(ADDR_WIDTH) (.d0(m_axi_araddr_tmr0),.d1(m_axi_araddr_tmr1),.d2(m_axi_araddr_tmr2),.q(m_axi_araddr));
+    axi_tmr_simple_voter #(8) (.d0(m_axi_arlen_tmr0),.d1(m_axi_arlen_tmr1),.d2(m_axi_arlen_tmr2),.q(m_axi_arlen));
+    axi_tmr_simple_voter #(3) (.d0(m_axi_arsize_tmr0),.d1(m_axi_arsize_tmr1),.d2(m_axi_arsize_tmr2),.q(m_axi_arsize));
+    axi_tmr_simple_voter #(2) (.d0(m_axi_arburst_tmr0),.d1(m_axi_arburst_tmr1),.d2(m_axi_arburst_tmr2),.q(m_axi_arburst));
+    axi_tmr_simple_voter #(1) (.d0(m_axi_arlock_tmr0),.d1(m_axi_arlock_tmr1),.d2(m_axi_arlock_tmr2),.q(m_axi_arlock));
+    axi_tmr_simple_voter #(4) (.d0(m_axi_arcache_tmr0),.d1(m_axi_arcache_tmr1),.d2(m_axi_arcache_tmr2),.q(m_axi_arcache));
+    axi_tmr_simple_voter #(3) (.d0(m_axi_arprot_tmr0),.d1(m_axi_arprot_tmr1),.d2(m_axi_arprot_tmr2),.q(m_axi_arprot));
+    axi_tmr_simple_voter #(4) (.d0(m_axi_arqos_tmr0),.d1(m_axi_arqos_tmr1),.d2(m_axi_arqos_tmr2),.q(m_axi_arqos));
+    axi_tmr_simple_voter #(4) (.d0(m_axi_arregion_tmr0),.d1(m_axi_arregion_tmr1),.d2(m_axi_arregion_tmr2),.q(m_axi_arregion));
+    axi_tmr_simple_voter #(ARUSER_WIDTH) (.d0(m_axi_aruser_tmr0),.d1(m_axi_aruser_tmr1),.d2(m_axi_aruser_tmr2),.q(m_axi_aruser));
+    axi_tmr_simple_voter #(1) (.d0(m_axi_arvalid_tmr0),.d1(m_axi_arvalid_tmr1),.d2(m_axi_arvalid_tmr2),.q(m_axi_arvalid));
+    assign m_axi_arready_tmr0 = m_axi_arready;
+    assign m_axi_arready_tmr1 = m_axi_arready;
+    assign m_axi_arready_tmr2 = m_axi_arready;
 
-// enable ready input next cycle if output is ready or the temp reg will not be filled on the next cycle (output reg empty or no input)
-wire s_axi_arready_early = m_axi_arready | (~temp_m_axi_arvalid_reg & (~m_axi_arvalid_reg | ~s_axi_arvalid));
+    assign m_axi_rid_tmr0 = m_axi_rid;
+    assign m_axi_rid_tmr1 = m_axi_rid;
+    assign m_axi_rid_tmr2 = m_axi_rid;
+    assign m_axi_rdata_tmr0 = m_axi_rdata;
+    assign m_axi_rdata_tmr1 = m_axi_rdata;
+    assign m_axi_rdata_tmr2 = m_axi_rdata;
+    assign m_axi_rresp_tmr0 = m_axi_rresp;
+    assign m_axi_rresp_tmr1 = m_axi_rresp;
+    assign m_axi_rresp_tmr2 = m_axi_rresp;
+    assign m_axi_rlast_tmr0 = m_axi_rlast;
+    assign m_axi_rlast_tmr1 = m_axi_rlast;
+    assign m_axi_rlast_tmr2 = m_axi_rlast;
+    assign m_axi_ruser_tmr0 = m_axi_ruser;
+    assign m_axi_ruser_tmr1 = m_axi_ruser;
+    assign m_axi_ruser_tmr2 = m_axi_ruser;
+    assign m_axi_rvalid_tmr0 = m_axi_rvalid;
+    assign m_axi_rvalid_tmr1 = m_axi_rvalid;
+    assign m_axi_rvalid_tmr2 = m_axi_rvalid;
+    axi_tmr_simple_voter #(1) (.d0(m_axi_rready_tmr0),.d1(m_axi_rready_tmr1),.d2(m_axi_rready_tmr2),.q(m_axi_rready));
 
-always @* begin
-    // transfer sink ready state to source
-    m_axi_arvalid_next = m_axi_arvalid_reg;
-    temp_m_axi_arvalid_next = temp_m_axi_arvalid_reg;
+axi_register_rd#(
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .ARUSER_ENABLE                              ( ARUSER_ENABLE ),
+    .ARUSER_WIDTH                               ( ARUSER_WIDTH ),
+    .RUSER_ENABLE                               ( RUSER_ENABLE ),
+    .RUSER_WIDTH                                ( RUSER_WIDTH ),
+    .AR_REG_TYPE                                ( AR_REG_TYPE ),
+    .R_REG_TYPE                                 ( R_REG_TYPE )
+)u_axi_register_rd_tmr0(
+    .clk                                        ( clk ),
+    .rst                                        ( rst ),
+    .s_axi_arid                                 ( s_axi_arid_tmr0 ),
+    .s_axi_araddr                               ( s_axi_araddr_tmr0 ),
+    .s_axi_arlen                                ( s_axi_arlen_tmr0 ),
+    .s_axi_arsize                               ( s_axi_arsize_tmr0 ),
+    .s_axi_arburst                              ( s_axi_arburst_tmr0 ),
+    .s_axi_arlock                               ( s_axi_arlock_tmr0 ),
+    .s_axi_arcache                              ( s_axi_arcache_tmr0 ),
+    .s_axi_arprot                               ( s_axi_arprot_tmr0 ),
+    .s_axi_arqos                                ( s_axi_arqos_tmr0 ),
+    .s_axi_arregion                             ( s_axi_arregion_tmr0 ),
+    .s_axi_aruser                               ( s_axi_aruser_tmr0 ),
+    .s_axi_arvalid                              ( s_axi_arvalid_tmr0 ),
+    .s_axi_arready                              ( s_axi_arready_tmr0 ),
+    .s_axi_rid                                  ( s_axi_rid_tmr0 ),
+    .s_axi_rdata                                ( s_axi_rdata_tmr0 ),
+    .s_axi_rresp                                ( s_axi_rresp_tmr0 ),
+    .s_axi_rlast                                ( s_axi_rlast_tmr0 ),
+    .s_axi_ruser                                ( s_axi_ruser_tmr0 ),
+    .s_axi_rvalid                               ( s_axi_rvalid_tmr0 ),
+    .s_axi_rready                               ( s_axi_rready_tmr0 ),
+    .m_axi_arid                                 ( m_axi_arid_tmr0 ),
+    .m_axi_araddr                               ( m_axi_araddr_tmr0 ),
+    .m_axi_arlen                                ( m_axi_arlen_tmr0 ),
+    .m_axi_arsize                               ( m_axi_arsize_tmr0 ),
+    .m_axi_arburst                              ( m_axi_arburst_tmr0 ),
+    .m_axi_arlock                               ( m_axi_arlock_tmr0 ),
+    .m_axi_arcache                              ( m_axi_arcache_tmr0 ),
+    .m_axi_arprot                               ( m_axi_arprot_tmr0 ),
+    .m_axi_arqos                                ( m_axi_arqos_tmr0 ),
+    .m_axi_arregion                             ( m_axi_arregion_tmr0 ),
+    .m_axi_aruser                               ( m_axi_aruser_tmr0 ),
+    .m_axi_arvalid                              ( m_axi_arvalid_tmr0 ),
+    .m_axi_arready                              ( m_axi_arready_tmr0 ),
+    .m_axi_rid                                  ( m_axi_rid_tmr0 ),
+    .m_axi_rdata                                ( m_axi_rdata_tmr0 ),
+    .m_axi_rresp                                ( m_axi_rresp_tmr0 ),
+    .m_axi_rlast                                ( m_axi_rlast_tmr0 ),
+    .m_axi_ruser                                ( m_axi_ruser_tmr0 ),
+    .m_axi_rvalid                               ( m_axi_rvalid_tmr0 ),
+    .m_axi_rready                               ( m_axi_rready_tmr0 )
+);
 
-    store_axi_ar_input_to_output = 1'b0;
-    store_axi_ar_input_to_temp = 1'b0;
-    store_axi_ar_temp_to_output = 1'b0;
+axi_register_rd#(
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .ARUSER_ENABLE                              ( ARUSER_ENABLE ),
+    .ARUSER_WIDTH                               ( ARUSER_WIDTH ),
+    .RUSER_ENABLE                               ( RUSER_ENABLE ),
+    .RUSER_WIDTH                                ( RUSER_WIDTH ),
+    .AR_REG_TYPE                                ( AR_REG_TYPE ),
+    .R_REG_TYPE                                 ( R_REG_TYPE )
+)u_axi_register_rd_tmr1(
+    .clk                                        ( clk ),
+    .rst                                        ( rst ),
+    .s_axi_arid                                 ( s_axi_arid_tmr1 ),
+    .s_axi_araddr                               ( s_axi_araddr_tmr1 ),
+    .s_axi_arlen                                ( s_axi_arlen_tmr1 ),
+    .s_axi_arsize                               ( s_axi_arsize_tmr1 ),
+    .s_axi_arburst                              ( s_axi_arburst_tmr1 ),
+    .s_axi_arlock                               ( s_axi_arlock_tmr1 ),
+    .s_axi_arcache                              ( s_axi_arcache_tmr1 ),
+    .s_axi_arprot                               ( s_axi_arprot_tmr1 ),
+    .s_axi_arqos                                ( s_axi_arqos_tmr1 ),
+    .s_axi_arregion                             ( s_axi_arregion_tmr1 ),
+    .s_axi_aruser                               ( s_axi_aruser_tmr1 ),
+    .s_axi_arvalid                              ( s_axi_arvalid_tmr1 ),
+    .s_axi_arready                              ( s_axi_arready_tmr1 ),
+    .s_axi_rid                                  ( s_axi_rid_tmr1 ),
+    .s_axi_rdata                                ( s_axi_rdata_tmr1 ),
+    .s_axi_rresp                                ( s_axi_rresp_tmr1 ),
+    .s_axi_rlast                                ( s_axi_rlast_tmr1 ),
+    .s_axi_ruser                                ( s_axi_ruser_tmr1 ),
+    .s_axi_rvalid                               ( s_axi_rvalid_tmr1 ),
+    .s_axi_rready                               ( s_axi_rready_tmr1 ),
+    .m_axi_arid                                 ( m_axi_arid_tmr1 ),
+    .m_axi_araddr                               ( m_axi_araddr_tmr1 ),
+    .m_axi_arlen                                ( m_axi_arlen_tmr1 ),
+    .m_axi_arsize                               ( m_axi_arsize_tmr1 ),
+    .m_axi_arburst                              ( m_axi_arburst_tmr1 ),
+    .m_axi_arlock                               ( m_axi_arlock_tmr1 ),
+    .m_axi_arcache                              ( m_axi_arcache_tmr1 ),
+    .m_axi_arprot                               ( m_axi_arprot_tmr1 ),
+    .m_axi_arqos                                ( m_axi_arqos_tmr1 ),
+    .m_axi_arregion                             ( m_axi_arregion_tmr1 ),
+    .m_axi_aruser                               ( m_axi_aruser_tmr1 ),
+    .m_axi_arvalid                              ( m_axi_arvalid_tmr1 ),
+    .m_axi_arready                              ( m_axi_arready_tmr1 ),
+    .m_axi_rid                                  ( m_axi_rid_tmr1 ),
+    .m_axi_rdata                                ( m_axi_rdata_tmr1 ),
+    .m_axi_rresp                                ( m_axi_rresp_tmr1 ),
+    .m_axi_rlast                                ( m_axi_rlast_tmr1 ),
+    .m_axi_ruser                                ( m_axi_ruser_tmr1 ),
+    .m_axi_rvalid                               ( m_axi_rvalid_tmr1 ),
+    .m_axi_rready                               ( m_axi_rready_tmr1 )
+);
 
-    if (s_axi_arready_reg) begin
-        // input is ready
-        if (m_axi_arready | ~m_axi_arvalid_reg) begin
-            // output is ready or currently not valid, transfer data to output
-            m_axi_arvalid_next = s_axi_arvalid;
-            store_axi_ar_input_to_output = 1'b1;
-        end else begin
-            // output is not ready, store input in temp
-            temp_m_axi_arvalid_next = s_axi_arvalid;
-            store_axi_ar_input_to_temp = 1'b1;
-        end
-    end else if (m_axi_arready) begin
-        // input is not ready, but output is ready
-        m_axi_arvalid_next = temp_m_axi_arvalid_reg;
-        temp_m_axi_arvalid_next = 1'b0;
-        store_axi_ar_temp_to_output = 1'b1;
-    end
-end
-
-always @(posedge clk) begin
-    if (rst) begin
-        s_axi_arready_reg <= 1'b0;
-        m_axi_arvalid_reg <= 1'b0;
-        temp_m_axi_arvalid_reg <= 1'b0;
-    end else begin
-        s_axi_arready_reg <= s_axi_arready_early;
-        m_axi_arvalid_reg <= m_axi_arvalid_next;
-        temp_m_axi_arvalid_reg <= temp_m_axi_arvalid_next;
-    end
-
-    // datapath
-    if (store_axi_ar_input_to_output) begin
-        m_axi_arid_reg <= s_axi_arid;
-        m_axi_araddr_reg <= s_axi_araddr;
-        m_axi_arlen_reg <= s_axi_arlen;
-        m_axi_arsize_reg <= s_axi_arsize;
-        m_axi_arburst_reg <= s_axi_arburst;
-        m_axi_arlock_reg <= s_axi_arlock;
-        m_axi_arcache_reg <= s_axi_arcache;
-        m_axi_arprot_reg <= s_axi_arprot;
-        m_axi_arqos_reg <= s_axi_arqos;
-        m_axi_arregion_reg <= s_axi_arregion;
-        m_axi_aruser_reg <= s_axi_aruser;
-    end else if (store_axi_ar_temp_to_output) begin
-        m_axi_arid_reg <= temp_m_axi_arid_reg;
-        m_axi_araddr_reg <= temp_m_axi_araddr_reg;
-        m_axi_arlen_reg <= temp_m_axi_arlen_reg;
-        m_axi_arsize_reg <= temp_m_axi_arsize_reg;
-        m_axi_arburst_reg <= temp_m_axi_arburst_reg;
-        m_axi_arlock_reg <= temp_m_axi_arlock_reg;
-        m_axi_arcache_reg <= temp_m_axi_arcache_reg;
-        m_axi_arprot_reg <= temp_m_axi_arprot_reg;
-        m_axi_arqos_reg <= temp_m_axi_arqos_reg;
-        m_axi_arregion_reg <= temp_m_axi_arregion_reg;
-        m_axi_aruser_reg <= temp_m_axi_aruser_reg;
-    end
-
-    if (store_axi_ar_input_to_temp) begin
-        temp_m_axi_arid_reg <= s_axi_arid;
-        temp_m_axi_araddr_reg <= s_axi_araddr;
-        temp_m_axi_arlen_reg <= s_axi_arlen;
-        temp_m_axi_arsize_reg <= s_axi_arsize;
-        temp_m_axi_arburst_reg <= s_axi_arburst;
-        temp_m_axi_arlock_reg <= s_axi_arlock;
-        temp_m_axi_arcache_reg <= s_axi_arcache;
-        temp_m_axi_arprot_reg <= s_axi_arprot;
-        temp_m_axi_arqos_reg <= s_axi_arqos;
-        temp_m_axi_arregion_reg <= s_axi_arregion;
-        temp_m_axi_aruser_reg <= s_axi_aruser;
-    end
-end
-
-end else if (AR_REG_TYPE == 1) begin
-// simple register, inserts bubble cycles
-
-// datapath registers
-reg                    s_axi_arready_reg = 1'b0;
-
-reg [ID_WIDTH-1:0]     m_axi_arid_reg     = {ID_WIDTH{1'b0}};
-reg [ADDR_WIDTH-1:0]   m_axi_araddr_reg   = {ADDR_WIDTH{1'b0}};
-reg [7:0]              m_axi_arlen_reg    = 8'd0;
-reg [2:0]              m_axi_arsize_reg   = 3'd0;
-reg [1:0]              m_axi_arburst_reg  = 2'd0;
-reg                    m_axi_arlock_reg   = 1'b0;
-reg [3:0]              m_axi_arcache_reg  = 4'd0;
-reg [2:0]              m_axi_arprot_reg   = 3'd0;
-reg [3:0]              m_axi_arqos_reg    = 4'd0;
-reg [3:0]              m_axi_arregion_reg = 4'd0;
-reg [ARUSER_WIDTH-1:0] m_axi_aruser_reg   = {ARUSER_WIDTH{1'b0}};
-reg                    m_axi_arvalid_reg  = 1'b0, m_axi_arvalid_next;
-
-// datapath control
-reg store_axi_ar_input_to_output;
-
-assign s_axi_arready  = s_axi_arready_reg;
-
-assign m_axi_arid     = m_axi_arid_reg;
-assign m_axi_araddr   = m_axi_araddr_reg;
-assign m_axi_arlen    = m_axi_arlen_reg;
-assign m_axi_arsize   = m_axi_arsize_reg;
-assign m_axi_arburst  = m_axi_arburst_reg;
-assign m_axi_arlock   = m_axi_arlock_reg;
-assign m_axi_arcache  = m_axi_arcache_reg;
-assign m_axi_arprot   = m_axi_arprot_reg;
-assign m_axi_arqos    = m_axi_arqos_reg;
-assign m_axi_arregion = m_axi_arregion_reg;
-assign m_axi_aruser   = ARUSER_ENABLE ? m_axi_aruser_reg : {ARUSER_WIDTH{1'b0}};
-assign m_axi_arvalid  = m_axi_arvalid_reg;
-
-// enable ready input next cycle if output buffer will be empty
-wire s_axi_arready_early = !m_axi_arvalid_next;
-
-always @* begin
-    // transfer sink ready state to source
-    m_axi_arvalid_next = m_axi_arvalid_reg;
-
-    store_axi_ar_input_to_output = 1'b0;
-
-    if (s_axi_arready_reg) begin
-        m_axi_arvalid_next = s_axi_arvalid;
-        store_axi_ar_input_to_output = 1'b1;
-    end else if (m_axi_arready) begin
-        m_axi_arvalid_next = 1'b0;
-    end
-end
-
-always @(posedge clk) begin
-    if (rst) begin
-        s_axi_arready_reg <= 1'b0;
-        m_axi_arvalid_reg <= 1'b0;
-    end else begin
-        s_axi_arready_reg <= s_axi_arready_early;
-        m_axi_arvalid_reg <= m_axi_arvalid_next;
-    end
-
-    // datapath
-    if (store_axi_ar_input_to_output) begin
-        m_axi_arid_reg <= s_axi_arid;
-        m_axi_araddr_reg <= s_axi_araddr;
-        m_axi_arlen_reg <= s_axi_arlen;
-        m_axi_arsize_reg <= s_axi_arsize;
-        m_axi_arburst_reg <= s_axi_arburst;
-        m_axi_arlock_reg <= s_axi_arlock;
-        m_axi_arcache_reg <= s_axi_arcache;
-        m_axi_arprot_reg <= s_axi_arprot;
-        m_axi_arqos_reg <= s_axi_arqos;
-        m_axi_arregion_reg <= s_axi_arregion;
-        m_axi_aruser_reg <= s_axi_aruser;
-    end
-end
-
-end else begin
-
-    // bypass AR channel
-    assign m_axi_arid = s_axi_arid;
-    assign m_axi_araddr = s_axi_araddr;
-    assign m_axi_arlen = s_axi_arlen;
-    assign m_axi_arsize = s_axi_arsize;
-    assign m_axi_arburst = s_axi_arburst;
-    assign m_axi_arlock = s_axi_arlock;
-    assign m_axi_arcache = s_axi_arcache;
-    assign m_axi_arprot = s_axi_arprot;
-    assign m_axi_arqos = s_axi_arqos;
-    assign m_axi_arregion = s_axi_arregion;
-    assign m_axi_aruser = ARUSER_ENABLE ? s_axi_aruser : {ARUSER_WIDTH{1'b0}};
-    assign m_axi_arvalid = s_axi_arvalid;
-    assign s_axi_arready = m_axi_arready;
-
-end
-
-// R channel
-
-if (R_REG_TYPE > 1) begin
-// skid buffer, no bubble cycles
-
-// datapath registers
-reg                   m_axi_rready_reg = 1'b0;
-
-reg [ID_WIDTH-1:0]    s_axi_rid_reg    = {ID_WIDTH{1'b0}};
-reg [DATA_WIDTH-1:0]  s_axi_rdata_reg  = {DATA_WIDTH{1'b0}};
-reg [1:0]             s_axi_rresp_reg  = 2'b0;
-reg                   s_axi_rlast_reg  = 1'b0;
-reg [RUSER_WIDTH-1:0] s_axi_ruser_reg  = {RUSER_WIDTH{1'b0}};
-reg                   s_axi_rvalid_reg = 1'b0, s_axi_rvalid_next;
-
-reg [ID_WIDTH-1:0]    temp_s_axi_rid_reg    = {ID_WIDTH{1'b0}};
-reg [DATA_WIDTH-1:0]  temp_s_axi_rdata_reg  = {DATA_WIDTH{1'b0}};
-reg [1:0]             temp_s_axi_rresp_reg  = 2'b0;
-reg                   temp_s_axi_rlast_reg  = 1'b0;
-reg [RUSER_WIDTH-1:0] temp_s_axi_ruser_reg  = {RUSER_WIDTH{1'b0}};
-reg                   temp_s_axi_rvalid_reg = 1'b0, temp_s_axi_rvalid_next;
-
-// datapath control
-reg store_axi_r_input_to_output;
-reg store_axi_r_input_to_temp;
-reg store_axi_r_temp_to_output;
-
-assign m_axi_rready = m_axi_rready_reg;
-
-assign s_axi_rid    = s_axi_rid_reg;
-assign s_axi_rdata  = s_axi_rdata_reg;
-assign s_axi_rresp  = s_axi_rresp_reg;
-assign s_axi_rlast  = s_axi_rlast_reg;
-assign s_axi_ruser  = RUSER_ENABLE ? s_axi_ruser_reg : {RUSER_WIDTH{1'b0}};
-assign s_axi_rvalid = s_axi_rvalid_reg;
-
-// enable ready input next cycle if output is ready or the temp reg will not be filled on the next cycle (output reg empty or no input)
-wire m_axi_rready_early = s_axi_rready | (~temp_s_axi_rvalid_reg & (~s_axi_rvalid_reg | ~m_axi_rvalid));
-
-always @* begin
-    // transfer sink ready state to source
-    s_axi_rvalid_next = s_axi_rvalid_reg;
-    temp_s_axi_rvalid_next = temp_s_axi_rvalid_reg;
-
-    store_axi_r_input_to_output = 1'b0;
-    store_axi_r_input_to_temp = 1'b0;
-    store_axi_r_temp_to_output = 1'b0;
-
-    if (m_axi_rready_reg) begin
-        // input is ready
-        if (s_axi_rready | ~s_axi_rvalid_reg) begin
-            // output is ready or currently not valid, transfer data to output
-            s_axi_rvalid_next = m_axi_rvalid;
-            store_axi_r_input_to_output = 1'b1;
-        end else begin
-            // output is not ready, store input in temp
-            temp_s_axi_rvalid_next = m_axi_rvalid;
-            store_axi_r_input_to_temp = 1'b1;
-        end
-    end else if (s_axi_rready) begin
-        // input is not ready, but output is ready
-        s_axi_rvalid_next = temp_s_axi_rvalid_reg;
-        temp_s_axi_rvalid_next = 1'b0;
-        store_axi_r_temp_to_output = 1'b1;
-    end
-end
-
-always @(posedge clk) begin
-    if (rst) begin
-        m_axi_rready_reg <= 1'b0;
-        s_axi_rvalid_reg <= 1'b0;
-        temp_s_axi_rvalid_reg <= 1'b0;
-    end else begin
-        m_axi_rready_reg <= m_axi_rready_early;
-        s_axi_rvalid_reg <= s_axi_rvalid_next;
-        temp_s_axi_rvalid_reg <= temp_s_axi_rvalid_next;
-    end
-
-    // datapath
-    if (store_axi_r_input_to_output) begin
-        s_axi_rid_reg   <= m_axi_rid;
-        s_axi_rdata_reg <= m_axi_rdata;
-        s_axi_rresp_reg <= m_axi_rresp;
-        s_axi_rlast_reg <= m_axi_rlast;
-        s_axi_ruser_reg <= m_axi_ruser;
-    end else if (store_axi_r_temp_to_output) begin
-        s_axi_rid_reg   <= temp_s_axi_rid_reg;
-        s_axi_rdata_reg <= temp_s_axi_rdata_reg;
-        s_axi_rresp_reg <= temp_s_axi_rresp_reg;
-        s_axi_rlast_reg <= temp_s_axi_rlast_reg;
-        s_axi_ruser_reg <= temp_s_axi_ruser_reg;
-    end
-
-    if (store_axi_r_input_to_temp) begin
-        temp_s_axi_rid_reg   <= m_axi_rid;
-        temp_s_axi_rdata_reg <= m_axi_rdata;
-        temp_s_axi_rresp_reg <= m_axi_rresp;
-        temp_s_axi_rlast_reg <= m_axi_rlast;
-        temp_s_axi_ruser_reg <= m_axi_ruser;
-    end
-end
-
-end else if (R_REG_TYPE == 1) begin
-// simple register, inserts bubble cycles
-
-// datapath registers
-reg                   m_axi_rready_reg = 1'b0;
-
-reg [ID_WIDTH-1:0]    s_axi_rid_reg    = {ID_WIDTH{1'b0}};
-reg [DATA_WIDTH-1:0]  s_axi_rdata_reg  = {DATA_WIDTH{1'b0}};
-reg [1:0]             s_axi_rresp_reg  = 2'b0;
-reg                   s_axi_rlast_reg  = 1'b0;
-reg [RUSER_WIDTH-1:0] s_axi_ruser_reg  = {RUSER_WIDTH{1'b0}};
-reg                   s_axi_rvalid_reg = 1'b0, s_axi_rvalid_next;
-
-// datapath control
-reg store_axi_r_input_to_output;
-
-assign m_axi_rready = m_axi_rready_reg;
-
-assign s_axi_rid    = s_axi_rid_reg;
-assign s_axi_rdata  = s_axi_rdata_reg;
-assign s_axi_rresp  = s_axi_rresp_reg;
-assign s_axi_rlast  = s_axi_rlast_reg;
-assign s_axi_ruser  = RUSER_ENABLE ? s_axi_ruser_reg : {RUSER_WIDTH{1'b0}};
-assign s_axi_rvalid = s_axi_rvalid_reg;
-
-// enable ready input next cycle if output buffer will be empty
-wire m_axi_rready_early = !s_axi_rvalid_next;
-
-always @* begin
-    // transfer sink ready state to source
-    s_axi_rvalid_next = s_axi_rvalid_reg;
-
-    store_axi_r_input_to_output = 1'b0;
-
-    if (m_axi_rready_reg) begin
-        s_axi_rvalid_next = m_axi_rvalid;
-        store_axi_r_input_to_output = 1'b1;
-    end else if (s_axi_rready) begin
-        s_axi_rvalid_next = 1'b0;
-    end
-end
-
-always @(posedge clk) begin
-    if (rst) begin
-        m_axi_rready_reg <= 1'b0;
-        s_axi_rvalid_reg <= 1'b0;
-    end else begin
-        m_axi_rready_reg <= m_axi_rready_early;
-        s_axi_rvalid_reg <= s_axi_rvalid_next;
-    end
-
-    // datapath
-    if (store_axi_r_input_to_output) begin
-        s_axi_rid_reg   <= m_axi_rid;
-        s_axi_rdata_reg <= m_axi_rdata;
-        s_axi_rresp_reg <= m_axi_rresp;
-        s_axi_rlast_reg <= m_axi_rlast;
-        s_axi_ruser_reg <= m_axi_ruser;
-    end
-end
-
-end else begin
-
-    // bypass R channel
-    assign s_axi_rid = m_axi_rid;
-    assign s_axi_rdata = m_axi_rdata;
-    assign s_axi_rresp = m_axi_rresp;
-    assign s_axi_rlast = m_axi_rlast;
-    assign s_axi_ruser = RUSER_ENABLE ? m_axi_ruser : {RUSER_WIDTH{1'b0}};
-    assign s_axi_rvalid = m_axi_rvalid;
-    assign m_axi_rready = s_axi_rready;
-
-end
-
-endgenerate
+axi_register_rd#(
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .ARUSER_ENABLE                              ( ARUSER_ENABLE ),
+    .ARUSER_WIDTH                               ( ARUSER_WIDTH ),
+    .RUSER_ENABLE                               ( RUSER_ENABLE ),
+    .RUSER_WIDTH                                ( RUSER_WIDTH ),
+    .AR_REG_TYPE                                ( AR_REG_TYPE ),
+    .R_REG_TYPE                                 ( R_REG_TYPE )
+)u_axi_register_rd_tmr2(
+    .clk                                        ( clk ),
+    .rst                                        ( rst ),
+    .s_axi_arid                                 ( s_axi_arid_tmr2 ),
+    .s_axi_araddr                               ( s_axi_araddr_tmr2 ),
+    .s_axi_arlen                                ( s_axi_arlen_tmr2 ),
+    .s_axi_arsize                               ( s_axi_arsize_tmr2 ),
+    .s_axi_arburst                              ( s_axi_arburst_tmr2 ),
+    .s_axi_arlock                               ( s_axi_arlock_tmr2 ),
+    .s_axi_arcache                              ( s_axi_arcache_tmr2 ),
+    .s_axi_arprot                               ( s_axi_arprot_tmr2 ),
+    .s_axi_arqos                                ( s_axi_arqos_tmr2 ),
+    .s_axi_arregion                             ( s_axi_arregion_tmr2 ),
+    .s_axi_aruser                               ( s_axi_aruser_tmr2 ),
+    .s_axi_arvalid                              ( s_axi_arvalid_tmr2 ),
+    .s_axi_arready                              ( s_axi_arready_tmr2 ),
+    .s_axi_rid                                  ( s_axi_rid_tmr2 ),
+    .s_axi_rdata                                ( s_axi_rdata_tmr2 ),
+    .s_axi_rresp                                ( s_axi_rresp_tmr2 ),
+    .s_axi_rlast                                ( s_axi_rlast_tmr2 ),
+    .s_axi_ruser                                ( s_axi_ruser_tmr2 ),
+    .s_axi_rvalid                               ( s_axi_rvalid_tmr2 ),
+    .s_axi_rready                               ( s_axi_rready_tmr2 ),
+    .m_axi_arid                                 ( m_axi_arid_tmr2 ),
+    .m_axi_araddr                               ( m_axi_araddr_tmr2 ),
+    .m_axi_arlen                                ( m_axi_arlen_tmr2 ),
+    .m_axi_arsize                               ( m_axi_arsize_tmr2 ),
+    .m_axi_arburst                              ( m_axi_arburst_tmr2 ),
+    .m_axi_arlock                               ( m_axi_arlock_tmr2 ),
+    .m_axi_arcache                              ( m_axi_arcache_tmr2 ),
+    .m_axi_arprot                               ( m_axi_arprot_tmr2 ),
+    .m_axi_arqos                                ( m_axi_arqos_tmr2 ),
+    .m_axi_arregion                             ( m_axi_arregion_tmr2 ),
+    .m_axi_aruser                               ( m_axi_aruser_tmr2 ),
+    .m_axi_arvalid                              ( m_axi_arvalid_tmr2 ),
+    .m_axi_arready                              ( m_axi_arready_tmr2 ),
+    .m_axi_rid                                  ( m_axi_rid_tmr2 ),
+    .m_axi_rdata                                ( m_axi_rdata_tmr2 ),
+    .m_axi_rresp                                ( m_axi_rresp_tmr2 ),
+    .m_axi_rlast                                ( m_axi_rlast_tmr2 ),
+    .m_axi_ruser                                ( m_axi_ruser_tmr2 ),
+    .m_axi_rvalid                               ( m_axi_rvalid_tmr2 ),
+    .m_axi_rready                               ( m_axi_rready_tmr2 )
+);
 
 endmodule
 

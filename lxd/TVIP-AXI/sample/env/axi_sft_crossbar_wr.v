@@ -31,7 +31,7 @@ THE SOFTWARE.
 /*
  * AXI4 crossbar (write)
  */
-module axi_crossbar_wr #
+module axi_sft_crossbar_wr #
 (
     // Number of AXI inputs (slave interfaces)
     parameter S_COUNT = 4,
@@ -417,7 +417,7 @@ generate
         assign s_cpl_valid = m_axi_bvalid_mux && m_axi_bready_mux;
 
         // S side register
-        axi_register_wr #(
+        axi_sft_register_wr #(
             .DATA_WIDTH(DATA_WIDTH),
             .ADDR_WIDTH(ADDR_WIDTH),
             .STRB_WIDTH(STRB_WIDTH),
@@ -602,7 +602,7 @@ generate
         assign trans_complete = int_m_axi_bvalid[n] && int_m_axi_bready[n];
 
         // M side register
-        axi_register_wr #(
+        axi_sft_register_wr #(
             .DATA_WIDTH(DATA_WIDTH),
             .ADDR_WIDTH(ADDR_WIDTH),
             .STRB_WIDTH(STRB_WIDTH),
