@@ -213,7 +213,7 @@ generate
         wire [S_ID_WIDTH-1:0] s_cpl_id;
         wire s_cpl_valid;
 
-        axi_crossbar_addr #(
+        axi_sft_crossbar_addr #(
             .S(m),
             .S_COUNT(S_COUNT),
             .M_COUNT(M_COUNT),
@@ -228,7 +228,7 @@ generate
             .M_SECURE(M_SECURE),
             .WC_OUTPUT(0)
         )
-        addr_inst (
+        sft_addr_inst (
             .clk(clk),
             .rst(rst),
 
@@ -328,14 +328,14 @@ generate
         wire r_grant_valid;
         wire [CL_M_COUNT_P1-1:0] r_grant_encoded;
 
-        arbiter #(
+        sft_arbiter #(
             .PORTS(M_COUNT_P1),
             .ARB_TYPE_ROUND_ROBIN(1),
             .ARB_BLOCK(1),
             .ARB_BLOCK_ACK(1),
             .ARB_LSB_HIGH_PRIORITY(1)
         )
-        r_arb_inst (
+        r_sft_arb_inst (
             .clk(clk),
             .rst(rst),
             .request(r_request),
@@ -454,14 +454,14 @@ generate
         wire a_grant_valid;
         wire [CL_S_COUNT-1:0] a_grant_encoded;
 
-        arbiter #(
+        sft_arbiter #(
             .PORTS(S_COUNT),
             .ARB_TYPE_ROUND_ROBIN(1),
             .ARB_BLOCK(1),
             .ARB_BLOCK_ACK(1),
             .ARB_LSB_HIGH_PRIORITY(1)
         )
-        a_arb_inst (
+        a_sft_arb_inst (
             .clk(clk),
             .rst(rst),
             .request(a_request),

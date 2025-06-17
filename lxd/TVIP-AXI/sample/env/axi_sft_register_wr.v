@@ -81,8 +81,15 @@ module axi_sft_register_wr #
     input  wire [3:0]               s_axi_awqos,
     input  wire [3:0]               s_axi_awregion,
     input  wire [AWUSER_WIDTH-1:0]  s_axi_awuser,
-    input  wire                     s_axi_awvalid,
-    output wire                     s_axi_awready,
+    //input  wire                     s_axi_awvalid,
+    input  wire                     s_axi_awvalid_tmr0,
+    input  wire                     s_axi_awvalid_tmr1,
+    input  wire                     s_axi_awvalid_tmr2,
+    //output wire                     s_axi_awready,
+    output wire                     s_axi_awready_tmr0,
+    output wire                     s_axi_awready_tmr1,
+    output wire                     s_axi_awready_tmr2,
+
     input  wire [DATA_WIDTH-1:0]    s_axi_wdata,
     input  wire [STRB_WIDTH-1:0]    s_axi_wstrb,
     input  wire                     s_axi_wlast,
@@ -109,8 +116,14 @@ module axi_sft_register_wr #
     output wire [3:0]               m_axi_awqos,
     output wire [3:0]               m_axi_awregion,
     output wire [AWUSER_WIDTH-1:0]  m_axi_awuser,
-    output wire                     m_axi_awvalid,
-    input  wire                     m_axi_awready,
+    //output wire                     m_axi_awvalid,
+    output wire                     m_axi_awvalid_tmr0,
+    output wire                     m_axi_awvalid_tmr1,
+    output wire                     m_axi_awvalid_tmr2,
+    //input  wire                     m_axi_awready,
+    output wire                     m_axi_awready_tmr0,
+    output wire                     m_axi_awready_tmr1,
+    output wire                     m_axi_awready_tmr2,
     output wire [DATA_WIDTH-1:0]    m_axi_wdata,
     output wire [STRB_WIDTH-1:0]    m_axi_wstrb,
     output wire                     m_axi_wlast,
@@ -135,8 +148,6 @@ module axi_sft_register_wr #
     wire [3:0]               s_axi_awqos_tmr0;
     wire [3:0]               s_axi_awregion_tmr0;
     wire [AWUSER_WIDTH-1:0]  s_axi_awuser_tmr0;
-    wire                     s_axi_awvalid_tmr0;
-    wire                     s_axi_awready_tmr0;
     wire [DATA_WIDTH-1:0]    s_axi_wdata_tmr0;
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr0;
     wire                     s_axi_wlast_tmr0;
@@ -160,8 +171,6 @@ module axi_sft_register_wr #
     wire [3:0]               m_axi_awqos_tmr0;
     wire [3:0]               m_axi_awregion_tmr0;
     wire [AWUSER_WIDTH-1:0]  m_axi_awuser_tmr0;
-    wire                     m_axi_awvalid_tmr0;
-    wire                     m_axi_awready_tmr0;
     wire [DATA_WIDTH-1:0]    m_axi_wdata_tmr0;
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr0;
     wire                     m_axi_wlast_tmr0;
@@ -185,8 +194,6 @@ module axi_sft_register_wr #
     wire [3:0]               s_axi_awqos_tmr1;
     wire [3:0]               s_axi_awregion_tmr1;
     wire [AWUSER_WIDTH-1:0]  s_axi_awuser_tmr1;
-    wire                     s_axi_awvalid_tmr1;
-    wire                     s_axi_awready_tmr1;
     wire [DATA_WIDTH-1:0]    s_axi_wdata_tmr1;
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr1;
     wire                     s_axi_wlast_tmr1;
@@ -210,8 +217,6 @@ module axi_sft_register_wr #
     wire [3:0]               m_axi_awqos_tmr1;
     wire [3:0]               m_axi_awregion_tmr1;
     wire [AWUSER_WIDTH-1:0]  m_axi_awuser_tmr1;
-    wire                     m_axi_awvalid_tmr1;
-    wire                     m_axi_awready_tmr1;
     wire [DATA_WIDTH-1:0]    m_axi_wdata_tmr1;
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr1;
     wire                     m_axi_wlast_tmr1;
@@ -235,8 +240,6 @@ module axi_sft_register_wr #
     wire [3:0]               s_axi_awqos_tmr2;
     wire [3:0]               s_axi_awregion_tmr2;
     wire [AWUSER_WIDTH-1:0]  s_axi_awuser_tmr2;
-    wire                     s_axi_awvalid_tmr2;
-    wire                     s_axi_awready_tmr2;
     wire [DATA_WIDTH-1:0]    s_axi_wdata_tmr2;
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr2;
     wire                     s_axi_wlast_tmr2;
@@ -260,8 +263,6 @@ module axi_sft_register_wr #
     wire [3:0]               m_axi_awqos_tmr2;
     wire [3:0]               m_axi_awregion_tmr2;
     wire [AWUSER_WIDTH-1:0]  m_axi_awuser_tmr2;
-    wire                     m_axi_awvalid_tmr2;
-    wire                     m_axi_awready_tmr2;
     wire [DATA_WIDTH-1:0]    m_axi_wdata_tmr2;
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr2;
     wire                     m_axi_wlast_tmr2;
@@ -307,10 +308,6 @@ module axi_sft_register_wr #
     assign s_axi_awuser_tmr0 = s_axi_awuser;
     assign s_axi_awuser_tmr1 = s_axi_awuser;
     assign s_axi_awuser_tmr2 = s_axi_awuser;
-    assign s_axi_awvalid_tmr0 = s_axi_awvalid;
-    assign s_axi_awvalid_tmr1 = s_axi_awvalid;
-    assign s_axi_awvalid_tmr2 = s_axi_awvalid;  
-    axi_tmr_simple_voter #(1) (.d0(s_axi_awready_tmr0),.d1(s_axi_awready_tmr1),.d2(s_axi_awready_tmr2),.q(s_axi_awready));
 
     assign s_axi_wdata_tmr0 = s_axi_wdata;
     assign s_axi_wdata_tmr1 = s_axi_wdata;
@@ -339,10 +336,6 @@ module axi_sft_register_wr #
 
     // M Side
     axi_tmr_simple_voter #(ID_WIDTH) (.d0(m_axi_awid_tmr0),.d1(m_axi_awid_tmr1),.d2(m_axi_awid_tmr2),.q(m_axi_awid));
-    axi_tmr_simple_voter #(1) (.d0(m_axi_awvalid_tmr0),.d1(m_axi_awvalid_tmr1),.d2(m_axi_awvalid_tmr2),.q(m_axi_awvalid));  
-    assign m_axi_awready_tmr0 = m_axi_awready;
-    assign m_axi_awready_tmr1 = m_axi_awready;
-    assign m_axi_awready_tmr2 = m_axi_awready;
     axi_tmr_simple_voter #(ADDR_WIDTH) (.d0(m_axi_awaddr_tmr0),.d1(m_axi_awaddr_tmr1),.d2(m_axi_awaddr_tmr2),.q(m_axi_awaddr));
     axi_tmr_simple_voter #(8) (.d0(m_axi_awlen_tmr0),.d1(m_axi_awlen_tmr1),.d2(m_axi_awlen_tmr2),.q(m_axi_awlen));
     axi_tmr_simple_voter #(3) (.d0(m_axi_awsize_tmr0),.d1(m_axi_awsize_tmr1),.d2(m_axi_awsize_tmr2),.q(m_axi_awsize));
@@ -378,19 +371,20 @@ module axi_sft_register_wr #
     axi_tmr_simple_voter #(1) (.d0(m_axi_bready_tmr0),.d1(m_axi_bready_tmr1),.d2(m_axi_bready_tmr2),.q(m_axi_bready));
 
 axi_register_wr#(
-    .DATA_WIDTH                                 ( 32 ),
-    .ADDR_WIDTH                                 ( 32 ),
-    .STRB_WIDTH                                 ( (DATA_WIDTH/8) ),
-    .ID_WIDTH                                   ( 8 ),
-    .AWUSER_ENABLE                              ( 0 ),
-    .AWUSER_WIDTH                               ( 1 ),
-    .WUSER_ENABLE                               ( 0 ),
-    .WUSER_WIDTH                                ( 1 ),
-    .BUSER_ENABLE                               ( 0 ),
-    .BUSER_WIDTH                                ( 1 ),
-    .AW_REG_TYPE                                ( 1 ),
-    .W_REG_TYPE                                 ( 2 ),
-    .B_REG_TYPE                                 ( 1 )
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .AWUSER_ENABLE                              ( AWUSER_ENABLE ),
+    .AWUSER_WIDTH                               ( AWUSER_WIDTH ),
+    .WUSER_ENABLE                               ( WUSER_ENABLE ),
+    .WUSER_WIDTH                                ( WUSER_WIDTH ),
+    .BUSER_ENABLE                               ( BUSER_ENABLE ),
+    .BUSER_WIDTH                                ( BUSER_WIDTH ),
+    .AW_REG_TYPE                                ( AW_REG_TYPE ),
+    .W_REG_TYPE                                 ( W_REG_TYPE ),
+    .B_REG_TYPE                                 ( B_REG_TYPE )
 )u_axi_register_wr_tmr0(
     .clk                                        ( clk                                        ),
     .rst                                        ( rst                                        ),
@@ -446,19 +440,19 @@ axi_register_wr#(
 );
 
 axi_register_wr#(
-    .DATA_WIDTH                                 ( 32 ),
-    .ADDR_WIDTH                                 ( 32 ),
-    .STRB_WIDTH                                 ( (DATA_WIDTH/8) ),
-    .ID_WIDTH                                   ( 8 ),
-    .AWUSER_ENABLE                              ( 0 ),
-    .AWUSER_WIDTH                               ( 1 ),
-    .WUSER_ENABLE                               ( 0 ),
-    .WUSER_WIDTH                                ( 1 ),
-    .BUSER_ENABLE                               ( 0 ),
-    .BUSER_WIDTH                                ( 1 ),
-    .AW_REG_TYPE                                ( 1 ),
-    .W_REG_TYPE                                 ( 2 ),
-    .B_REG_TYPE                                 ( 1 )
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .AWUSER_ENABLE                              ( AWUSER_ENABLE ),
+    .AWUSER_WIDTH                               ( AWUSER_WIDTH ),
+    .WUSER_ENABLE                               ( WUSER_ENABLE ),
+    .WUSER_WIDTH                                ( WUSER_WIDTH ),
+    .BUSER_ENABLE                               ( BUSER_ENABLE ),
+    .BUSER_WIDTH                                ( BUSER_WIDTH ),
+    .AW_REG_TYPE                                ( AW_REG_TYPE ),
+    .W_REG_TYPE                                 ( W_REG_TYPE ),
+    .B_REG_TYPE                                 ( B_REG_TYPE )
 )u_axi_register_wr_tmr1(
     .clk                                        ( clk                                        ),
     .rst                                        ( rst                                        ),
@@ -514,19 +508,20 @@ axi_register_wr#(
 );
 
 axi_register_wr#(
-    .DATA_WIDTH                                 ( 32 ),
-    .ADDR_WIDTH                                 ( 32 ),
-    .STRB_WIDTH                                 ( (DATA_WIDTH/8) ),
-    .ID_WIDTH                                   ( 8 ),
-    .AWUSER_ENABLE                              ( 0 ),
-    .AWUSER_WIDTH                               ( 1 ),
-    .WUSER_ENABLE                               ( 0 ),
-    .WUSER_WIDTH                                ( 1 ),
-    .BUSER_ENABLE                               ( 0 ),
-    .BUSER_WIDTH                                ( 1 ),
-    .AW_REG_TYPE                                ( 1 ),
-    .W_REG_TYPE                                 ( 2 ),
-    .B_REG_TYPE                                 ( 1 )
+    .DATA_WIDTH                                 ( DATA_WIDTH ),
+    .ADDR_WIDTH                                 ( ADDR_WIDTH ),
+    .STRB_WIDTH                                 ( STRB_WIDTH ),
+    .ID_WIDTH                                   ( ID_WIDTH ),
+    .AWUSER_ENABLE                              ( AWUSER_ENABLE ),
+    .AWUSER_WIDTH                               ( AWUSER_WIDTH ),
+    .WUSER_ENABLE                               ( WUSER_ENABLE ),
+    .WUSER_WIDTH                                ( WUSER_WIDTH ),
+    .BUSER_ENABLE                               ( BUSER_ENABLE ),
+    .BUSER_WIDTH                                ( BUSER_WIDTH ),
+    .AW_REG_TYPE                                ( AW_REG_TYPE ),
+    .W_REG_TYPE                                 ( W_REG_TYPE ),
+    .B_REG_TYPE                                 ( B_REG_TYPE )
+
 )u_axi_register_wr_tmr2(
     .clk                                        ( clk                                        ),
     .rst                                        ( rst                                        ),

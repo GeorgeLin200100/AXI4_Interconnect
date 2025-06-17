@@ -185,6 +185,15 @@ initial begin
     end
 end
 
+wire [M_COUNT-1:0] m_axi_awvalid_tmr0, m_axi_awvalid_tmr1, m_axi_awvalid_tmr2;
+axi_tmr_simple_voter #(1) (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
+wire [S_COUNT-1:0] s_axi_awvalid_tmr0, s_axi_awvalid_tmr1, s_axi_awvalid_tmr2;
+assign s_axi_awvalid_tmr0 = s_axi_awvalid;
+assign s_axi_awvalid_tmr1 = s_axi_awvalid;
+assign s_axi_awvalid_tmr2 = s_axi_awvalid;
+
+
+
 wire [S_COUNT*S_ID_WIDTH-1:0]    int_s_axi_awid;
 wire [S_COUNT*ADDR_WIDTH-1:0]    int_s_axi_awaddr;
 wire [S_COUNT*8-1:0]             int_s_axi_awlen;
@@ -196,10 +205,17 @@ wire [S_COUNT*3-1:0]             int_s_axi_awprot;
 wire [S_COUNT*4-1:0]             int_s_axi_awqos;
 wire [S_COUNT*4-1:0]             int_s_axi_awregion;
 wire [S_COUNT*AWUSER_WIDTH-1:0]  int_s_axi_awuser;
-wire [S_COUNT-1:0]               int_s_axi_awvalid;
+//wire [S_COUNT-1:0]               int_s_axi_awvalid;
+wire [S_COUNT-1:0]               int_s_axi_awvalid_tmr0;
+wire [S_COUNT-1:0]               int_s_axi_awvalid_tmr1;
+wire [S_COUNT-1:0]               int_s_axi_awvalid_tmr2;
 wire [S_COUNT-1:0]               int_s_axi_awready;
 
 wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid;
+wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr0;
+wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr1;
+wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr2;
+axi_tmr_simple_voter #(S_COUNT*M_COUNT) (.d0(int_axi_awvalid_tmr0), .d1(int_axi_awvalid_tmr1), .d2(int_axi_awvalid_tmr2), .q(int_axi_awvalid));
 wire [M_COUNT*S_COUNT-1:0]       int_axi_awready;
 
 wire [S_COUNT*DATA_WIDTH-1:0]    int_s_axi_wdata;
@@ -244,7 +260,42 @@ generate
         wire [S_ID_WIDTH-1:0] s_cpl_id;
         wire s_cpl_valid;
 
-        axi_crossbar_addr #(
+        wire [CL_M_COUNT-1:0] a_select_tmr0;
+        wire [CL_M_COUNT-1:0] a_select_tmr1;
+        wire [CL_M_COUNT-1:0] a_select_tmr2;
+
+        wire m_axi_avalid_tmr0;
+        wire m_axi_avalid_tmr1;
+        wire m_axi_avalid_tmr2;
+
+        wire m_axi_aready_tmr0;
+        wire m_axi_aready_tmr1;
+        wire m_axi_aready_tmr2;
+
+        wire [CL_M_COUNT-1:0] m_wc_select_tmr0;
+        wire [CL_M_COUNT-1:0] m_wc_select_tmr1;
+        wire [CL_M_COUNT-1:0] m_wc_select_tmr2;
+        wire m_wc_decerr_tmr0;
+        wire m_wc_decerr_tmr1;
+        wire m_wc_decerr_tmr2;
+        wire m_wc_valid_tmr0;
+        wire m_wc_valid_tmr1;
+        wire m_wc_valid_tmr2;
+        wire m_wc_ready_tmr0;
+        wire m_wc_ready_tmr1;
+        wire m_wc_ready_tmr2;
+
+        wire m_rc_decerr_tmr0;
+        wire m_rc_decerr_tmr1;
+        wire m_rc_decerr_tmr2;
+        wire m_rc_valid_tmr0;
+        wire m_rc_valid_tmr1;
+        wire m_rc_valid_tmr2;
+        wire m_rc_ready_tmr0;
+        wire m_rc_ready_tmr1;
+        wire m_rc_ready_tmr2;
+
+        axi_sft_tmr_crossbar_addr #(
             .S(m),
             .S_COUNT(S_COUNT),
             .M_COUNT(M_COUNT),
@@ -259,7 +310,7 @@ generate
             .M_SECURE(M_SECURE),
             .WC_OUTPUT(1)
         )
-        addr_inst (
+        sft_tmr_addr_inst (
             .clk(clk),
             .rst(rst),
 
@@ -270,31 +321,65 @@ generate
             .s_axi_aaddr(int_s_axi_awaddr[m*ADDR_WIDTH +: ADDR_WIDTH]),
             .s_axi_aprot(int_s_axi_awprot[m*3 +: 3]),
             .s_axi_aqos(int_s_axi_awqos[m*4 +: 4]),
-            .s_axi_avalid(int_s_axi_awvalid[m]),
+            //.s_axi_avalid(int_s_axi_awvalid[m]),
+            .s_axi_avalid_tmr0(int_s_axi_awvalid_tmr0[m]),
+            .s_axi_avalid_tmr1(int_s_axi_awvalid_tmr1[m]),
+            .s_axi_avalid_tmr2(int_s_axi_awvalid_tmr2[m]),
             .s_axi_aready(int_s_axi_awready[m]),
 
             /*
              * Address output
              */
             .m_axi_aregion(int_s_axi_awregion[m*4 +: 4]),
-            .m_select(a_select),
-            .m_axi_avalid(m_axi_avalid),
-            .m_axi_aready(m_axi_aready),
+            // .m_select(a_select),
+            // .m_axi_avalid(m_axi_avalid),
+            // .m_axi_aready(m_axi_aready),
+            .m_select_tmr0(a_select_tmr0),
+            .m_select_tmr1(a_select_tmr1),
+            .m_select_tmr2(a_select_tmr2),
+            .m_axi_avalid_tmr0(m_axi_avalid_tmr0),
+            .m_axi_avalid_tmr1(m_axi_avalid_tmr1),
+            .m_axi_avalid_tmr2(m_axi_avalid_tmr2),
+            .m_axi_aready_tmr0(m_axi_aready_tmr0),
+            .m_axi_aready_tmr1(m_axi_aready_tmr1),
+            .m_axi_aready_tmr2(m_axi_aready_tmr2),
 
             /*
              * Write command output
              */
-            .m_wc_select(m_wc_select),
-            .m_wc_decerr(m_wc_decerr),
-            .m_wc_valid(m_wc_valid),
-            .m_wc_ready(m_wc_ready),
+            // .m_wc_select(m_wc_select),
+            // .m_wc_decerr(m_wc_decerr),
+            // .m_wc_valid(m_wc_valid),
+            // .m_wc_ready(m_wc_ready),
+            .m_wc_select_tmr0(m_wc_select_tmr0),
+            .m_wc_select_tmr1(m_wc_select_tmr1),
+            .m_wc_select_tmr2(m_wc_select_tmr2),
+            .m_wc_decerr_tmr0(m_wc_decerr_tmr0),
+            .m_wc_decerr_tmr1(m_wc_decerr_tmr1),
+            .m_wc_decerr_tmr2(m_wc_decerr_tmr2),
+            .m_wc_valid_tmr0(m_wc_valid_tmr0),
+            .m_wc_valid_tmr1(m_wc_valid_tmr1),
+            .m_wc_valid_tmr2(m_wc_valid_tmr2),
+            .m_wc_ready_tmr0(m_wc_ready_tmr0),
+            .m_wc_ready_tmr1(m_wc_ready_tmr1),
+            .m_wc_ready_tmr2(m_wc_ready_tmr2),
 
             /*
              * Response command output
              */
-            .m_rc_decerr(m_rc_decerr),
-            .m_rc_valid(m_rc_valid),
-            .m_rc_ready(m_rc_ready),
+            // .m_rc_decerr(m_rc_decerr),
+            // .m_rc_valid(m_rc_valid),
+            // .m_rc_ready(m_rc_ready),
+            .m_rc_decerr_tmr0(m_rc_decerr_tmr0),
+            .m_rc_decerr_tmr1(m_rc_decerr_tmr1),
+            .m_rc_decerr_tmr2(m_rc_decerr_tmr2),
+            .m_rc_valid_tmr0(m_rc_valid_tmr0),
+            .m_rc_valid_tmr1(m_rc_valid_tmr1),
+            .m_rc_valid_tmr2(m_rc_valid_tmr2),
+            .m_rc_ready_tmr0(m_rc_ready_tmr0),
+            .m_rc_ready_tmr1(m_rc_ready_tmr1),
+            .m_rc_ready_tmr2(m_rc_ready_tmr2),
+
 
             /*
              * Completion input
@@ -303,8 +388,15 @@ generate
             .s_cpl_valid(s_cpl_valid)
         );
 
-        assign int_axi_awvalid[m*M_COUNT +: M_COUNT] = m_axi_avalid << a_select;
-        assign m_axi_aready = int_axi_awready[a_select*S_COUNT+m];
+        //assign int_axi_awvalid[m*M_COUNT +: M_COUNT] = m_axi_avalid << a_select;
+        assign int_axi_awvalid_tmr0[m*M_COUNT +: M_COUNT] = m_axi_avalid_tmr0 << a_select_tmr0;
+        assign int_axi_awvalid_tmr1[m*M_COUNT +: M_COUNT] = m_axi_avalid_tmr1 << a_select_tmr1;
+        assign int_axi_awvalid_tmr2[m*M_COUNT +: M_COUNT] = m_axi_avalid_tmr2 << a_select_tmr2;
+        //assign m_axi_aready = int_axi_awready[a_select*S_COUNT+m];
+        assign m_axi_aready_tmr0 = int_axi_awready[a_select_tmr0*S_COUNT+m];
+        assign m_axi_aready_tmr1 = int_axi_awready[a_select_tmr1*S_COUNT+m];
+        assign m_axi_aready_tmr2 = int_axi_awready[a_select_tmr2*S_COUNT+m];
+
 
         // write command handling
         reg [CL_M_COUNT-1:0] w_select_reg = 0, w_select_next;
@@ -378,14 +470,14 @@ generate
         wire b_grant_valid;
         wire [CL_M_COUNT_P1-1:0] b_grant_encoded;
 
-        arbiter #(
+        sft_arbiter #(
             .PORTS(M_COUNT_P1),
             .ARB_TYPE_ROUND_ROBIN(1),
             .ARB_BLOCK(1),
             .ARB_BLOCK_ACK(1),
             .ARB_LSB_HIGH_PRIORITY(1)
         )
-        b_arb_inst (
+        b_sft_arb_inst (
             .clk(clk),
             .rst(rst),
             .request(b_request),
@@ -446,7 +538,10 @@ generate
             .s_axi_awqos(s_axi_awqos[m*4 +: 4]),
             .s_axi_awregion(4'd0),
             .s_axi_awuser(s_axi_awuser[m*AWUSER_WIDTH +: AWUSER_WIDTH]),
-            .s_axi_awvalid(s_axi_awvalid[m]),
+            //.s_axi_awvalid(s_axi_awvalid[m]),
+            .s_axi_awvalid_tmr0(s_axi_awvalid_tmr0[m]),
+            .s_axi_awvalid_tmr1(s_axi_awvalid_tmr1[m]),
+            .s_axi_awvalid_tmr2(s_axi_awvalid_tmr2[m]),
             .s_axi_awready(s_axi_awready[m]),
             .s_axi_wdata(s_axi_wdata[m*DATA_WIDTH +: DATA_WIDTH]),
             .s_axi_wstrb(s_axi_wstrb[m*STRB_WIDTH +: STRB_WIDTH]),
@@ -470,7 +565,10 @@ generate
             .m_axi_awqos(int_s_axi_awqos[m*4 +: 4]),
             .m_axi_awregion(),
             .m_axi_awuser(int_s_axi_awuser[m*AWUSER_WIDTH +: AWUSER_WIDTH]),
-            .m_axi_awvalid(int_s_axi_awvalid[m]),
+            //.m_axi_awvalid(int_s_axi_awvalid[m]),
+            .m_axi_awvalid_tmr0(int_s_axi_awvalid_tmr0[m]),
+            .m_axi_awvalid_tmr1(int_s_axi_awvalid_tmr1[m]),
+            .m_axi_awvalid_tmr2(int_s_axi_awvalid_tmr2[m]),
             .m_axi_awready(int_s_axi_awready[m]),
             .m_axi_wdata(int_s_axi_wdata[m*DATA_WIDTH +: DATA_WIDTH]),
             .m_axi_wstrb(int_s_axi_wstrb[m*STRB_WIDTH +: STRB_WIDTH]),
@@ -517,14 +615,14 @@ generate
         wire a_grant_valid;
         wire [CL_S_COUNT-1:0] a_grant_encoded;
 
-        arbiter #(
+        sft_arbiter #(
             .PORTS(S_COUNT),
             .ARB_TYPE_ROUND_ROBIN(1),
             .ARB_BLOCK(1),
             .ARB_BLOCK_ACK(1),
             .ARB_LSB_HIGH_PRIORITY(1)
         )
-        a_arb_inst (
+        a_sft_arb_inst (
             .clk(clk),
             .rst(rst),
             .request(a_request),
@@ -546,7 +644,14 @@ generate
         wire [3:0]              s_axi_awqos_mux    = int_s_axi_awqos[a_grant_encoded*4 +: 4];
         wire [3:0]              s_axi_awregion_mux = int_s_axi_awregion[a_grant_encoded*4 +: 4];
         wire [AWUSER_WIDTH-1:0] s_axi_awuser_mux   = int_s_axi_awuser[a_grant_encoded*AWUSER_WIDTH +: AWUSER_WIDTH];
-        wire                    s_axi_awvalid_mux  = int_axi_awvalid[a_grant_encoded*M_COUNT+n] && a_grant_valid;
+        //wire                    s_axi_awvalid_mux  = int_axi_awvalid[a_grant_encoded*M_COUNT+n] && a_grant_valid;
+        wire                      s_axi_awvalid_mux;
+        wire                      s_axi_awvalid_mux_tmr0  = int_axi_awvalid_tmr0[a_grant_encoded*M_COUNT+n] && a_grant_valid;
+        wire                      s_axi_awvalid_mux_tmr1  = int_axi_awvalid_tmr1[a_grant_encoded*M_COUNT+n] && a_grant_valid;
+        wire                      s_axi_awvalid_mux_tmr2  = int_axi_awvalid_tmr2[a_grant_encoded*M_COUNT+n] && a_grant_valid;
+
+        axi_tmr_simple_voter #(1) (.d0(s_axi_awvalid_mux_tmr0), .d1(s_axi_awvalid_mux_tmr1), .d2(s_axi_awvalid_mux_tmr2), .q(s_axi_awvalid_mux));
+
         wire                    s_axi_awready_mux;
 
         assign int_axi_awready[n*S_COUNT +: S_COUNT] = (a_grant_valid && s_axi_awready_mux) << a_grant_encoded;
@@ -631,8 +736,14 @@ generate
             .s_axi_awqos(s_axi_awqos_mux),
             .s_axi_awregion(s_axi_awregion_mux),
             .s_axi_awuser(s_axi_awuser_mux),
-            .s_axi_awvalid(s_axi_awvalid_mux),
-            .s_axi_awready(s_axi_awready_mux),
+            //.s_axi_awvalid(s_axi_awvalid_mux),
+            .s_axi_awvalid_tmr0(s_axi_awvalid_mux_tmr0),
+            .s_axi_awvalid_tmr1(s_axi_awvalid_mux_tmr1),
+            .s_axi_awvalid_tmr2(s_axi_awvalid_mux_tmr2),
+            //.s_axi_awready(s_axi_awready_mux),
+            .s_axi_awready_tmr0(s_axi_awready_mux_tmr0),
+            .s_axi_awready_tmr1(s_axi_awready_mux_tmr1),
+            .s_axi_awready_tmr2(s_axi_awready_mux_tmr2),
             .s_axi_wdata(s_axi_wdata_mux),
             .s_axi_wstrb(s_axi_wstrb_mux),
             .s_axi_wlast(s_axi_wlast_mux),
@@ -655,8 +766,14 @@ generate
             .m_axi_awqos(m_axi_awqos[n*4 +: 4]),
             .m_axi_awregion(m_axi_awregion[n*4 +: 4]),
             .m_axi_awuser(m_axi_awuser[n*AWUSER_WIDTH +: AWUSER_WIDTH]),
-            .m_axi_awvalid(m_axi_awvalid[n]),
-            .m_axi_awready(m_axi_awready[n]),
+            //.m_axi_awvalid(m_axi_awvalid[n]),
+            .m_axi_awvalid_tmr0(m_axi_awvalid_tmr0[n]),
+            .m_axi_awvalid_tmr1(m_axi_awvalid_tmr1[n]),
+            .m_axi_awvalid_tmr2(m_axi_awvalid_tmr2[n]),
+            //.m_axi_awready(m_axi_awready[n]),
+            .m_axi_awready_tmr0(m_axi_awready_tmr0[n]),
+            .m_axi_awready_tmr1(m_axi_awready_tmr1[n]),
+            .m_axi_awready_tmr2(m_axi_awready_tmr2[n]),
             .m_axi_wdata(m_axi_wdata[n*DATA_WIDTH +: DATA_WIDTH]),
             .m_axi_wstrb(m_axi_wstrb[n*STRB_WIDTH +: STRB_WIDTH]),
             .m_axi_wlast(m_axi_wlast[n]),
