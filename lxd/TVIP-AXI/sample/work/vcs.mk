@@ -156,7 +156,7 @@ ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us.v
 #ZOIX_SIM_ARGS += +fsdb+verify
 .PHONY: zoix_all zoix_clean zoix_compile zoix_sim zoix_fmsh
 
-zoix_all: zoix_clean zoix_compile zoix_fmsh
+zoix_all: zoix_clean zoix_compile zoix_fmsh zoix_get_report
 
 zoix_clean:
 	cd zoix_work && \
@@ -173,3 +173,8 @@ zoix_sim:
 zoix_fmsh:
 	cd zoix_work && \
 	$(ZOIXHOME)/bin/fmsh -load axi_connector.fmsh
+
+zoix_get_report:
+	cd zoix_work && \
+	tail -n 35 axi_connector_coverage.rpt > zoix_report.txt &&\
+	cat zoix_report.txt

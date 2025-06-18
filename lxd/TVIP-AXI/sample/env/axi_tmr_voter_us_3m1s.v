@@ -872,7 +872,6 @@ always@(*) begin
     end
 end
 
-`begin_faultfree
 integer compare_result; 
 always@(posedge clk) begin
     if (rst) begin
@@ -887,7 +886,6 @@ always@(posedge clk) begin
         $fs_set_status("OD");
     end
 end
-`end_faultfree
 
 //
 function [5:0] encode64_6;

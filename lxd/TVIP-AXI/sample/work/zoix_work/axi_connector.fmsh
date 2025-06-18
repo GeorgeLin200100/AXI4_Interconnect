@@ -15,7 +15,6 @@ set(var=[fdef], method=[fr], fr.fr=[axi_connector.sff], abort=[error])
 
 design()
 
-deltst(test=[axi_connector_test1])
 
 addtst(test=[axi_connector_test1],
       stim=[zoix_axi_connector.vcd],
@@ -23,6 +22,13 @@ addtst(test=[axi_connector_test1],
       stim_options=[ +vcd+dut+axi_tmr_safety_connector+top.u_connector.u_connector],
       addstrobe=[100, 10, strobe_list.txt]
       )
+
+addtst(test=[axi_connector_test_2], 
+      stim=[zoix_axi_connector_1.vcd],
+      stimtype=[vcd], 
+      stim_options=[ +vcd+dut+axi_tmr_safety_connector+top.u_connector.u_connector ], 
+      addstrobe=[100, 10, strobe_list.txt] 
+)
 
 
 fsim()

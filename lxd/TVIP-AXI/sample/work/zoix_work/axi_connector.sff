@@ -10,6 +10,7 @@ StatusDefinitions
     # Redefine built-in statuses to free up their names for custom use.
     Redefine ND NX "Not Detected"
     Redefine DD DX "Redefine DD";
+    Redefine NC NF "Not Observed Fault Corrected";
 
     # Define custom functional safety statuses.
     NN "Not Observed Not Diagnosed";
@@ -19,6 +20,7 @@ StatusDefinitions
     OP "Observed Potentially Diagnosed";
     ON "Observed Not Diagnosed";
     OD "Observed Diagnosed";
+    NC "Not Observed Corrected";
 
     # Set default status for faults.
     DefaultStatus (NN)
@@ -29,27 +31,28 @@ StatusDefinitions
     # Define how fault statuses are promoted across multiple tests.
     PromotionTable
     {
-        StatusLabels (NN,NP,ND,PN,OP,ON,OD)
-        #   NN  NP  ND  PN  OP  ON  OD
+        StatusLabels (NN,NP,ND,PN,OP,ON,OD,NC)
+        #   NN  NP  ND  PN  OP  ON  OD  NC
         [
-            -   NP  ND  ON  OP  ON  OD ; # NN
-            -   -   ND  OP  OP  ON  OD ; # NP
-            -   -   -   OD  OD  OD  OD ; # ND
-            -   -   -   -   ON  ON  OD ; # PN
-            -   -   -   -   -   ON  OD ; # OP
-            -   -   -   -   -   -   OD ; # ON
-            -   -   -   -   -   -   -  ; # OD
-        ]
+            -   NP  ND  ON  OP  ON  OD  OD ; # NN
+            -   -   ND  OP  OP  ON  OD  OD ; # NP
+            -   -   -   OD  OD  OD  OD  OD ; # ND
+            -   -   -   -   ON  ON  OD  OD ; # PN
+            -   -   -   -   -   ON  OD  OD ; # OP
+            -   -   -   -   -   -   OD  OD ; # ON
+            -   -   -   -   -   -   -   -  ; # OD
+            -   -   -   -   -   -   OD  OD ; # NC
+        ] 
     }
 
     # Group statuses into categories for reporting.
     StatusGroups
     {
         SA "Safe" (UT, UB, UR, UU);
-        SU "Dangerous Unobserved" (NN, NC, NO, NT);
+        SU "Dangerous Unobserved" (NO, NT);
         DA "Dangerous Assumed" (HA, HM, HT, OA, OZ, IA, IP, IF, IX);
         DN "Dangerous Not Diagnosed" (PN, ON, OP);
-        DD "Dangerous Diagnosed" (NP, ND, OD);
+        DD "Dangerous Diagnosed" (NN, NC, NP, ND, OD);
     }
 }
 

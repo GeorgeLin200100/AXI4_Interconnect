@@ -1484,6 +1484,7 @@ module axi_tmr_safety_connector #
     wire                                       s02_vd3_axi_rready         ;
 
 
+`suppress_faults
 axi_tmr_voter_us#(
    .DATA_WIDTH     (64             ),
    .ADDR_WIDTH     (32             ),
@@ -2090,6 +2091,7 @@ axi_tmr_voter_us#(
     .m02_vu2_axi_rvalid                 (m02_vu2_axi_rvalid        ),
     .m02_vu2_axi_rready                 (m02_vu2_axi_rready        )
 );
+`nosuppress_faults
 
 axi_crossbar #(
     .S_COUNT(S_COUNT),
@@ -2478,6 +2480,7 @@ axi_crossbar_inst2 (
     .m_axi_rready({ s02_vd3_axi_rready, s02_vd2_axi_rready, s02_vd1_axi_rready, s02_vd0_axi_rready })
 );
 
+`suppress_faults
 axi_tmr_voter_ds#(
    .DATA_WIDTH     (64             ),
    .ADDR_WIDTH     (32             ),
@@ -3277,5 +3280,6 @@ axi_tmr_voter_ds#(
     .m03_axi_rvalid                     (m03_axi_rvalid            ),
     .m03_axi_rready                     (m03_axi_rready            )
 );
+`nosuppress_faults
 
 endmodule
