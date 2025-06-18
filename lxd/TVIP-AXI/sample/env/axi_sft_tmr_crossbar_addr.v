@@ -45,7 +45,10 @@ module axi_sft_tmr_crossbar_addr #
     input  wire                       s_axi_avalid_tmr1,
     input  wire                       s_axi_avalid_tmr2,
 
-    output wire                       s_axi_aready,
+    //output wire                     s_axi_aready,
+    output wire                       s_axi_aready_tmr0,
+    output wire                       s_axi_aready_tmr1,
+    output wire                       s_axi_aready_tmr2,
 
     output wire [3:0]                 m_axi_aregion,
     output wire [$clog2(M_COUNT)-1:0] m_select_tmr0,
@@ -58,29 +61,14 @@ module axi_sft_tmr_crossbar_addr #
     input  wire                       m_axi_aready_tmr1,
     input  wire                       m_axi_aready_tmr2,
 
+    output wire [$clog2(M_COUNT)-1:0] m_wc_select,
+    output wire                       m_wc_decerr,
+    output wire                       m_wc_valid,
+    input wire                        m_wc_ready,
 
-    output wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr0,
-    output wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr1,
-    output wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr2,
-    output wire                       m_wc_decerr_tmr0,
-    output wire                       m_wc_decerr_tmr1,
-    output wire                       m_wc_decerr_tmr2,
-    output wire                       m_wc_valid_tmr0,
-    output wire                       m_wc_valid_tmr1,
-    output wire                       m_wc_valid_tmr2,
-    input  wire                       m_wc_ready_tmr0,
-    input  wire                       m_wc_ready_tmr1,
-    input  wire                       m_wc_ready_tmr2,
-
-    output wire                       m_rc_decerr_tmr0,
-    output wire                       m_rc_decerr_tmr1,
-    output wire                       m_rc_decerr_tmr2,
-    output wire                       m_rc_valid_tmr0,
-    output wire                       m_rc_valid_tmr1,
-    output wire                       m_rc_valid_tmr2,
-    input  wire                       m_rc_ready_tmr0,
-    input  wire                       m_rc_ready_tmr1,
-    input  wire                       m_rc_ready_tmr2,
+    output wire                       m_rc_decerr,
+    output wire                       m_rc_valid,
+    input wire                        m_rc_ready,
 
     input  wire [ID_WIDTH-1:0]        s_cpl_id,
     input  wire                       s_cpl_valid
@@ -91,7 +79,6 @@ module axi_sft_tmr_crossbar_addr #
     wire [ADDR_WIDTH-1:0]      s_axi_aaddr_tmr0;
     wire [2:0]                 s_axi_aprot_tmr0;
     wire [3:0]                 s_axi_aqos_tmr0;
-    wire                       s_axi_aready_tmr0;
 
     wire [3:0]                 m_axi_aregion_tmr0;
 
@@ -103,7 +90,7 @@ module axi_sft_tmr_crossbar_addr #
     wire [ADDR_WIDTH-1:0]      s_axi_aaddr_tmr1;
     wire [2:0]                 s_axi_aprot_tmr1;
     wire [3:0]                 s_axi_aqos_tmr1;
-    wire                       s_axi_aready_tmr1;
+
 
     wire [3:0]                 m_axi_aregion_tmr1;
 
@@ -115,12 +102,51 @@ module axi_sft_tmr_crossbar_addr #
     wire [ADDR_WIDTH-1:0]      s_axi_aaddr_tmr2;
     wire [2:0]                 s_axi_aprot_tmr2;
     wire [3:0]                 s_axi_aqos_tmr2;
-    wire                       s_axi_aready_tmr2;
 
     wire [3:0]                 m_axi_aregion_tmr2;
 
     wire [ID_WIDTH-1:0]        s_cpl_id_tmr2;
     wire                       s_cpl_valid_tmr2;
+
+    wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr0;
+    wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr1;
+    wire [$clog2(M_COUNT)-1:0] m_wc_select_tmr2;
+    wire                       m_wc_decerr_tmr0;
+    wire                       m_wc_decerr_tmr1;
+    wire                       m_wc_decerr_tmr2;
+    wire                       m_wc_valid_tmr0;
+    wire                       m_wc_valid_tmr1;
+    wire                       m_wc_valid_tmr2;
+    wire                       m_wc_ready_tmr0;
+    wire                       m_wc_ready_tmr1;
+    wire                       m_wc_ready_tmr2;
+
+    wire                       m_rc_decerr_tmr0;
+    wire                       m_rc_decerr_tmr1;
+    wire                       m_rc_decerr_tmr2;
+    wire                       m_rc_valid_tmr0;
+    wire                       m_rc_valid_tmr1;
+    wire                       m_rc_valid_tmr2;
+    wire                       m_rc_ready_tmr0;
+    wire                       m_rc_ready_tmr1;
+    wire                       m_rc_ready_tmr2;
+
+    axi_tmr_simple_voter #($clog2(M_COUNT)) (.d0(m_wc_select_tmr0), .d1(m_wc_select_tmr1), .d2(m_wc_select_tmr2), .q(m_wc_select));
+    axi_tmr_simple_voter #(1) (.d0(m_wc_decerr_tmr0), .d1(m_wc_decerr_tmr1), .d2(m_wc_decerr_tmr2), .q(m_wc_decerr));
+    axi_tmr_simple_voter #(1) (.d0(m_wc_valid_tmr0), .d1(m_wc_valid_tmr1), .d2(m_wc_valid_tmr2), .q(m_wc_valid));
+
+    assign m_wc_ready_tmr0 = m_wc_ready;
+    assign m_wc_ready_tmr1 = m_wc_ready;
+    assign m_wc_ready_tmr2 = m_wc_ready;
+
+    axi_tmr_simple_voter #(1) (.d0(m_rc_decerr_tmr0), .d1(m_rc_decerr_tmr1), .d2(m_rc_decerr_tmr2), .q(m_rc_decerr));
+    axi_tmr_simple_voter #(1) (.d0(m_rc_valid_tmr0), .d1(m_rc_valid_tmr1), .d2(m_rc_valid_tmr2), .q(m_rc_valid));
+
+    assign m_rc_ready_tmr0 = m_rc_ready;
+    assign m_rc_ready_tmr1 = m_rc_ready;
+    assign m_rc_ready_tmr2 = m_rc_ready;
+
+
 
     assign s_axi_aid_tmr0 = s_axi_aid;
     assign s_axi_aid_tmr1 = s_axi_aid;
@@ -137,8 +163,6 @@ module axi_sft_tmr_crossbar_addr #
     assign s_axi_aqos_tmr0 = s_axi_aqos;
     assign s_axi_aqos_tmr1 = s_axi_aqos;
     assign s_axi_aqos_tmr2 = s_axi_aqos;
-
-    axi_tmr_simple_voter #(1) (.d0(s_axi_aready), .d1(s_axi_aready_tmr1), .d2(s_axi_aready_tmr2), .q(s_axi_aready));
 
     axi_tmr_simple_voter #(4) (.d0(m_axi_aregion_tmr0), .d1(m_axi_aregion_tmr1), .d2(m_axi_aregion_tmr2), .q(m_axi_aregion));
 
