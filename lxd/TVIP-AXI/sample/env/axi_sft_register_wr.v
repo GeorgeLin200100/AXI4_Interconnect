@@ -94,8 +94,14 @@ module axi_sft_register_wr #
     input  wire [STRB_WIDTH-1:0]    s_axi_wstrb,
     input  wire                     s_axi_wlast,
     input  wire [WUSER_WIDTH-1:0]   s_axi_wuser,
-    input  wire                     s_axi_wvalid,
-    output wire                     s_axi_wready,
+    //input  wire                     s_axi_wvalid,
+    input  wire                     s_axi_wvalid_tmr0,
+    input  wire                     s_axi_wvalid_tmr1,
+    input  wire                     s_axi_wvalid_tmr2,
+    //output wire                     s_axi_wready,
+    output wire                     s_axi_wready_tmr0,
+    output wire                     s_axi_wready_tmr1,
+    output wire                     s_axi_wready_tmr2,
     output wire [ID_WIDTH-1:0]      s_axi_bid,
     output wire [1:0]               s_axi_bresp,
     output wire [BUSER_WIDTH-1:0]   s_axi_buser,
@@ -128,8 +134,14 @@ module axi_sft_register_wr #
     output wire [STRB_WIDTH-1:0]    m_axi_wstrb,
     output wire                     m_axi_wlast,
     output wire [WUSER_WIDTH-1:0]   m_axi_wuser,
-    output wire                     m_axi_wvalid,
-    input  wire                     m_axi_wready,
+    //output wire                     m_axi_wvalid,
+    output wire                     m_axi_wvalid_tmr0,
+    output wire                     m_axi_wvalid_tmr1,
+    output wire                     m_axi_wvalid_tmr2,
+    //output wire                     m_axi_wready,
+    output wire                     m_axi_wready_tmr0,
+    output wire                     m_axi_wready_tmr1,
+    output wire                     m_axi_wready_tmr2,
     input  wire [ID_WIDTH-1:0]      m_axi_bid,
     input  wire [1:0]               m_axi_bresp,
     input  wire [BUSER_WIDTH-1:0]   m_axi_buser,
@@ -152,8 +164,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr0;
     wire                     s_axi_wlast_tmr0;
     wire [WUSER_WIDTH-1:0]   s_axi_wuser_tmr0;
-    wire                     s_axi_wvalid_tmr0;
-    wire                     s_axi_wready_tmr0;
     wire [ID_WIDTH-1:0]      s_axi_bid_tmr0;
     wire [1:0]               s_axi_bresp_tmr0;
     wire [BUSER_WIDTH-1:0]   s_axi_buser_tmr0;
@@ -175,8 +185,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr0;
     wire                     m_axi_wlast_tmr0;
     wire [WUSER_WIDTH-1:0]   m_axi_wuser_tmr0;
-    wire                     m_axi_wvalid_tmr0;
-    wire                     m_axi_wready_tmr0;
     wire [ID_WIDTH-1:0]      m_axi_bid_tmr0;
     wire [1:0]               m_axi_bresp_tmr0;
     wire [BUSER_WIDTH-1:0]   m_axi_buser_tmr0;
@@ -198,8 +206,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr1;
     wire                     s_axi_wlast_tmr1;
     wire [WUSER_WIDTH-1:0]   s_axi_wuser_tmr1;
-    wire                     s_axi_wvalid_tmr1;
-    wire                     s_axi_wready_tmr1;
     wire [ID_WIDTH-1:0]      s_axi_bid_tmr1;
     wire [1:0]               s_axi_bresp_tmr1;
     wire [BUSER_WIDTH-1:0]   s_axi_buser_tmr1;
@@ -221,8 +227,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr1;
     wire                     m_axi_wlast_tmr1;
     wire [WUSER_WIDTH-1:0]   m_axi_wuser_tmr1;
-    wire                     m_axi_wvalid_tmr1;
-    wire                     m_axi_wready_tmr1;
     wire [ID_WIDTH-1:0]      m_axi_bid_tmr1;
     wire [1:0]               m_axi_bresp_tmr1;
     wire [BUSER_WIDTH-1:0]   m_axi_buser_tmr1;
@@ -244,8 +248,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    s_axi_wstrb_tmr2;
     wire                     s_axi_wlast_tmr2;
     wire [WUSER_WIDTH-1:0]   s_axi_wuser_tmr2;
-    wire                     s_axi_wvalid_tmr2;
-    wire                     s_axi_wready_tmr2;
     wire [ID_WIDTH-1:0]      s_axi_bid_tmr2;
     wire [1:0]               s_axi_bresp_tmr2;
     wire [BUSER_WIDTH-1:0]   s_axi_buser_tmr2;
@@ -267,8 +269,6 @@ module axi_sft_register_wr #
     wire [STRB_WIDTH-1:0]    m_axi_wstrb_tmr2;
     wire                     m_axi_wlast_tmr2;
     wire [WUSER_WIDTH-1:0]   m_axi_wuser_tmr2;
-    wire                     m_axi_wvalid_tmr2;
-    wire                     m_axi_wready_tmr2;
     wire [ID_WIDTH-1:0]      m_axi_bid_tmr2;
     wire [1:0]               m_axi_bresp_tmr2;
     wire [BUSER_WIDTH-1:0]   m_axi_buser_tmr2;
@@ -321,40 +321,32 @@ module axi_sft_register_wr #
     assign s_axi_wuser_tmr0 = s_axi_wuser;
     assign s_axi_wuser_tmr1 = s_axi_wuser;
     assign s_axi_wuser_tmr2 = s_axi_wuser;
-    assign s_axi_wvalid_tmr0 = s_axi_wvalid;
-    assign s_axi_wvalid_tmr1 = s_axi_wvalid;
-    assign s_axi_wvalid_tmr2 = s_axi_wvalid;
-    axi_tmr_simple_voter #(1) (.d0(s_axi_wready_tmr0),.d1(s_axi_wready_tmr1),.d2(s_axi_wready_tmr2),.q(s_axi_wready));
 
-    axi_tmr_simple_voter #(1) (.d0(s_axi_bvalid_tmr0),.d1(s_axi_bvalid_tmr1),.d2(s_axi_bvalid_tmr2),.q(s_axi_bvalid));
-    axi_tmr_simple_voter #(2) (.d0(s_axi_bresp_tmr0),.d1(s_axi_bresp_tmr1),.d2(s_axi_bresp_tmr2),.q(s_axi_bresp));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_bvalid (.d0(s_axi_bvalid_tmr0),.d1(s_axi_bvalid_tmr1),.d2(s_axi_bvalid_tmr2),.q(s_axi_bvalid));
+    axi_tmr_simple_voter #(2) axi_tmr_simple_voter_s_axi_bresp (.d0(s_axi_bresp_tmr0),.d1(s_axi_bresp_tmr1),.d2(s_axi_bresp_tmr2),.q(s_axi_bresp));
     assign s_axi_bready_tmr0 = s_axi_bready;
     assign s_axi_bready_tmr1 = s_axi_bready;
     assign s_axi_bready_tmr2 = s_axi_bready;
-    axi_tmr_simple_voter #(ID_WIDTH) (.d0(s_axi_bid_tmr0),.d1(s_axi_bid_tmr1),.d2(s_axi_bid_tmr2),.q(s_axi_bid));
-    axi_tmr_simple_voter #(BUSER_WIDTH) (.d0(s_axi_buser_tmr0),.d1(s_axi_buser_tmr1),.d2(s_axi_buser_tmr2),.q(s_axi_buser));
+    axi_tmr_simple_voter #(ID_WIDTH) axi_tmr_simple_voter_s_axi_bid (.d0(s_axi_bid_tmr0),.d1(s_axi_bid_tmr1),.d2(s_axi_bid_tmr2),.q(s_axi_bid));
+    axi_tmr_simple_voter #(BUSER_WIDTH) axi_tmr_simple_voter_s_axi_buser (.d0(s_axi_buser_tmr0),.d1(s_axi_buser_tmr1),.d2(s_axi_buser_tmr2),.q(s_axi_buser));
 
     // M Side
-    axi_tmr_simple_voter #(ID_WIDTH) (.d0(m_axi_awid_tmr0),.d1(m_axi_awid_tmr1),.d2(m_axi_awid_tmr2),.q(m_axi_awid));
-    axi_tmr_simple_voter #(ADDR_WIDTH) (.d0(m_axi_awaddr_tmr0),.d1(m_axi_awaddr_tmr1),.d2(m_axi_awaddr_tmr2),.q(m_axi_awaddr));
-    axi_tmr_simple_voter #(8) (.d0(m_axi_awlen_tmr0),.d1(m_axi_awlen_tmr1),.d2(m_axi_awlen_tmr2),.q(m_axi_awlen));
-    axi_tmr_simple_voter #(3) (.d0(m_axi_awsize_tmr0),.d1(m_axi_awsize_tmr1),.d2(m_axi_awsize_tmr2),.q(m_axi_awsize));
-    axi_tmr_simple_voter #(2) (.d0(m_axi_awburst_tmr0),.d1(m_axi_awburst_tmr1),.d2(m_axi_awburst_tmr2),.q(m_axi_awburst));
-    axi_tmr_simple_voter #(1) (.d0(m_axi_awlock_tmr0),.d1(m_axi_awlock_tmr1),.d2(m_axi_awlock_tmr2),.q(m_axi_awlock));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_awcache_tmr0),.d1(m_axi_awcache_tmr1),.d2(m_axi_awcache_tmr2),.q(m_axi_awcache));
-    axi_tmr_simple_voter #(3) (.d0(m_axi_awprot_tmr0),.d1(m_axi_awprot_tmr1),.d2(m_axi_awprot_tmr2),.q(m_axi_awprot));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_awqos_tmr0),.d1(m_axi_awqos_tmr1),.d2(m_axi_awqos_tmr2),.q(m_axi_awqos));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_awregion_tmr0),.d1(m_axi_awregion_tmr1),.d2(m_axi_awregion_tmr2),.q(m_axi_awregion));
-    axi_tmr_simple_voter #(AWUSER_WIDTH) (.d0(m_axi_awuser_tmr0),.d1(m_axi_awuser_tmr1),.d2(m_axi_awuser_tmr2),.q(m_axi_awuser));
+    axi_tmr_simple_voter #(ID_WIDTH) axi_tmr_simple_voter_m_axi_awid (.d0(m_axi_awid_tmr0),.d1(m_axi_awid_tmr1),.d2(m_axi_awid_tmr2),.q(m_axi_awid));
+    axi_tmr_simple_voter #(ADDR_WIDTH) axi_tmr_simple_voter_m_axi_awaddr (.d0(m_axi_awaddr_tmr0),.d1(m_axi_awaddr_tmr1),.d2(m_axi_awaddr_tmr2),.q(m_axi_awaddr));
+    axi_tmr_simple_voter #(8) axi_tmr_simple_voter_m_axi_awlen (.d0(m_axi_awlen_tmr0),.d1(m_axi_awlen_tmr1),.d2(m_axi_awlen_tmr2),.q(m_axi_awlen));
+    axi_tmr_simple_voter #(3) axi_tmr_simple_voter_m_axi_awsize (.d0(m_axi_awsize_tmr0),.d1(m_axi_awsize_tmr1),.d2(m_axi_awsize_tmr2),.q(m_axi_awsize));
+    axi_tmr_simple_voter #(2) axi_tmr_simple_voter_m_axi_awburst (.d0(m_axi_awburst_tmr0),.d1(m_axi_awburst_tmr1),.d2(m_axi_awburst_tmr2),.q(m_axi_awburst));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_awlock (.d0(m_axi_awlock_tmr0),.d1(m_axi_awlock_tmr1),.d2(m_axi_awlock_tmr2),.q(m_axi_awlock));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_awcache (.d0(m_axi_awcache_tmr0),.d1(m_axi_awcache_tmr1),.d2(m_axi_awcache_tmr2),.q(m_axi_awcache));
+    axi_tmr_simple_voter #(3) axi_tmr_simple_voter_m_axi_awprot (.d0(m_axi_awprot_tmr0),.d1(m_axi_awprot_tmr1),.d2(m_axi_awprot_tmr2),.q(m_axi_awprot));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_awqos (.d0(m_axi_awqos_tmr0),.d1(m_axi_awqos_tmr1),.d2(m_axi_awqos_tmr2),.q(m_axi_awqos));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_awregion (.d0(m_axi_awregion_tmr0),.d1(m_axi_awregion_tmr1),.d2(m_axi_awregion_tmr2),.q(m_axi_awregion));
+    axi_tmr_simple_voter #(AWUSER_WIDTH) axi_tmr_simple_voter_m_axi_awuser (.d0(m_axi_awuser_tmr0),.d1(m_axi_awuser_tmr1),.d2(m_axi_awuser_tmr2),.q(m_axi_awuser));
 
-    axi_tmr_simple_voter #(1) (.d0(m_axi_wvalid_tmr0),.d1(m_axi_wvalid_tmr1),.d2(m_axi_wvalid_tmr2),.q(m_axi_wvalid));
-    assign m_axi_wready_tmr0 = m_axi_wready;
-    assign m_axi_wready_tmr1 = m_axi_wready;
-    assign m_axi_wready_tmr2 = m_axi_wready;
-    axi_tmr_simple_voter #(DATA_WIDTH) (.d0(m_axi_wdata_tmr0),.d1(m_axi_wdata_tmr1),.d2(m_axi_wdata_tmr2),.q(m_axi_wdata));
-    axi_tmr_simple_voter #(STRB_WIDTH) (.d0(m_axi_wstrb_tmr0),.d1(m_axi_wstrb_tmr1),.d2(m_axi_wstrb_tmr2),.q(m_axi_wstrb));
-    axi_tmr_simple_voter #(1) (.d0(m_axi_wlast_tmr0),.d1(m_axi_wlast_tmr1),.d2(m_axi_wlast_tmr2),.q(m_axi_wlast));
-    axi_tmr_simple_voter #(WUSER_WIDTH) (.d0(m_axi_wuser_tmr0),.d1(m_axi_wuser_tmr1),.d2(m_axi_wuser_tmr2),.q(m_axi_wuser));
+    axi_tmr_simple_voter #(DATA_WIDTH) axi_tmr_simple_voter_m_axi_wdata (.d0(m_axi_wdata_tmr0),.d1(m_axi_wdata_tmr1),.d2(m_axi_wdata_tmr2),.q(m_axi_wdata));
+    axi_tmr_simple_voter #(STRB_WIDTH) axi_tmr_simple_voter_m_axi_wstrb (.d0(m_axi_wstrb_tmr0),.d1(m_axi_wstrb_tmr1),.d2(m_axi_wstrb_tmr2),.q(m_axi_wstrb));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_wlast (.d0(m_axi_wlast_tmr0),.d1(m_axi_wlast_tmr1),.d2(m_axi_wlast_tmr2),.q(m_axi_wlast));
+    axi_tmr_simple_voter #(WUSER_WIDTH) axi_tmr_simple_voter_m_axi_wuser (.d0(m_axi_wuser_tmr0),.d1(m_axi_wuser_tmr1),.d2(m_axi_wuser_tmr2),.q(m_axi_wuser));
 
     assign m_axi_bid_tmr0 = m_axi_bid;
     assign m_axi_bid_tmr1 = m_axi_bid;
@@ -368,7 +360,7 @@ module axi_sft_register_wr #
     assign m_axi_buser_tmr0 = m_axi_buser;
     assign m_axi_buser_tmr1 = m_axi_buser;
     assign m_axi_buser_tmr2 = m_axi_buser;
-    axi_tmr_simple_voter #(1) (.d0(m_axi_bready_tmr0),.d1(m_axi_bready_tmr1),.d2(m_axi_bready_tmr2),.q(m_axi_bready));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_bready (.d0(m_axi_bready_tmr0),.d1(m_axi_bready_tmr1),.d2(m_axi_bready_tmr2),.q(m_axi_bready));
 
 axi_register_wr#(
     .DATA_WIDTH                                 ( DATA_WIDTH ),
@@ -435,8 +427,7 @@ axi_register_wr#(
     .m_axi_bresp                                ( m_axi_bresp_tmr0                             ),
     .m_axi_buser                                ( m_axi_buser_tmr0                             ),
     .m_axi_bvalid                               ( m_axi_bvalid_tmr0                            ),
-    .m_axi_bready                               ( m_axi_bready_tmr0                            ),
-    .s_axi_bready                               ( s_axi_bready_tmr0                            )
+    .m_axi_bready                               ( m_axi_bready_tmr0                            )
 );
 
 axi_register_wr#(
@@ -503,8 +494,7 @@ axi_register_wr#(
     .m_axi_bresp                                ( m_axi_bresp_tmr1                             ),
     .m_axi_buser                                ( m_axi_buser_tmr1                             ),
     .m_axi_bvalid                               ( m_axi_bvalid_tmr1                            ),
-    .m_axi_bready                               ( m_axi_bready_tmr1                            ),
-    .s_axi_bready                               ( s_axi_bready_tmr1                            )
+    .m_axi_bready                               ( m_axi_bready_tmr1                            )
 );
 
 axi_register_wr#(
@@ -572,8 +562,7 @@ axi_register_wr#(
     .m_axi_bresp                                ( m_axi_bresp_tmr2                             ),
     .m_axi_buser                                ( m_axi_buser_tmr2                             ),
     .m_axi_bvalid                               ( m_axi_bvalid_tmr2                            ),
-    .m_axi_bready                               ( m_axi_bready_tmr2                            ),
-    .s_axi_bready                               ( s_axi_bready_tmr2                            )
+    .m_axi_bready                               ( m_axi_bready_tmr2                            )
 );
 
 endmodule

@@ -186,7 +186,7 @@ initial begin
 end
 
 wire [M_COUNT-1:0] m_axi_awvalid_tmr0, m_axi_awvalid_tmr1, m_axi_awvalid_tmr2;
-axi_tmr_simple_voter #(1) (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
+axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_awvalid (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
 
 wire [S_COUNT-1:0] s_axi_awvalid_tmr0, s_axi_awvalid_tmr1, s_axi_awvalid_tmr2;
 assign s_axi_awvalid_tmr0 = s_axi_awvalid;
@@ -199,7 +199,7 @@ assign m_axi_awready_tmr1 = m_axi_awready;
 assign m_axi_awready_tmr2 = m_axi_awready;
 
 wire [S_COUNT-1:0] s_axi_awready_tmr0, s_axi_awready_tmr1, s_axi_awready_tmr2;
-axi_tmr_simple_voter #(1) (.d0(s_axi_awready_tmr0), .d1(s_axi_awready_tmr1), .d2(s_axi_awready_tmr2), .q(s_axi_awready));
+axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_awready (.d0(s_axi_awready_tmr0), .d1(s_axi_awready_tmr1), .d2(s_axi_awready_tmr2), .q(s_axi_awready));
 
 wire [S_COUNT-1:0] s_axi_wvalid_tmr0, s_axi_wvalid_tmr1, s_axi_wvalid_tmr2;
 assign s_axi_wvalid_tmr0 = s_axi_wvalid;
@@ -207,10 +207,10 @@ assign s_axi_wvalid_tmr1 = s_axi_wvalid;
 assign s_axi_wvalid_tmr2 = s_axi_wvalid;
 
 wire [S_COUNT-1:0] s_axi_wready_tmr0, s_axi_wready_tmr1, s_axi_wready_tmr2;
-axi_tmr_simple_voter #(1) (.d0(s_axi_wready_tmr0), .d1(s_axi_wready_tmr1), .d2(s_axi_wready_tmr2), .q(s_axi_wready));
+axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_wready (.d0(s_axi_wready_tmr0), .d1(s_axi_wready_tmr1), .d2(s_axi_wready_tmr2), .q(s_axi_wready));
 
 wire [M_COUNT-1:0] m_axi_wvalid_tmr0, m_axi_wvalid_tmr1, m_axi_wvalid_tmr2;
-axi_tmr_simple_voter #(1) (.d0(m_axi_wvalid_tmr0), .d1(m_axi_wvalid_tmr1), .d2(m_axi_wvalid_tmr2), .q(m_axi_wvalid));
+axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_wvalid (.d0(m_axi_wvalid_tmr0), .d1(m_axi_wvalid_tmr1), .d2(m_axi_wvalid_tmr2), .q(m_axi_wvalid));
 
 wire [M_COUNT-1:0] m_axi_wready_tmr0, m_axi_wready_tmr1, m_axi_wready_tmr2;
 assign m_axi_wready_tmr0 = m_axi_wready;
@@ -242,7 +242,7 @@ wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid;
 wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr0;
 wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr1;
 wire [S_COUNT*M_COUNT-1:0]       int_axi_awvalid_tmr2;
-axi_tmr_simple_voter #(S_COUNT*M_COUNT) (.d0(int_axi_awvalid_tmr0), .d1(int_axi_awvalid_tmr1), .d2(int_axi_awvalid_tmr2), .q(int_axi_awvalid));
+axi_tmr_simple_voter #(S_COUNT*M_COUNT) axi_tmr_simple_voter_int_axi_awvalid (.d0(int_axi_awvalid_tmr0), .d1(int_axi_awvalid_tmr1), .d2(int_axi_awvalid_tmr2), .q(int_axi_awvalid));
 //wire [M_COUNT*S_COUNT-1:0]       int_axi_awready;
 wire [M_COUNT*S_COUNT-1:0]       int_axi_awready_tmr0;
 wire [M_COUNT*S_COUNT-1:0]       int_axi_awready_tmr1;
@@ -254,10 +254,12 @@ wire [S_COUNT-1:0]               int_s_axi_wlast;
 wire [S_COUNT*WUSER_WIDTH-1:0]   int_s_axi_wuser;
 wire [S_COUNT-1:0]               int_s_axi_wvalid;
 wire [S_COUNT-1:0]               int_s_axi_wvalid_tmr0, int_s_axi_wvalid_tmr1, int_s_axi_wvalid_tmr2;
-axi_tmr_simple_voter #(S_COUNT) (.d0(int_s_axi_wvalid_tmr0), .d1(int_s_axi_wvalid_tmr1), .d2(int_s_axi_wvalid_tmr2), .q(int_s_axi_wvalid));
+axi_tmr_simple_voter #(S_COUNT)  axi_tmr_simple_voter_int_s_axi_wvalid (.d0(int_s_axi_wvalid_tmr0), .d1(int_s_axi_wvalid_tmr1), .d2(int_s_axi_wvalid_tmr2), .q(int_s_axi_wvalid));
+
 wire [S_COUNT-1:0]               int_s_axi_wready;
 wire [S_COUNT-1:0]               int_s_axi_wready_tmr0, int_s_axi_wready_tmr1, int_s_axi_wready_tmr2;
-axi_tmr_simple_voter #(S_COUNT) (.d0(int_s_axi_wready_tmr0), .d1(int_s_axi_wready_tmr1), .d2(int_s_axi_wready_tmr2), .q(int_s_axi_wready));
+axi_tmr_simple_voter #(S_COUNT) axi_tmr_simple_voter_int_s_axi_wready (.d0(int_s_axi_wready_tmr0), .d1(int_s_axi_wready_tmr1), .d2(int_s_axi_wready_tmr2), .q(int_s_axi_wready));
+
 
 //wire [S_COUNT*M_COUNT-1:0]       int_axi_wvalid;
 wire [S_COUNT*M_COUNT-1:0]       int_axi_wvalid_tmr0, int_axi_wvalid_tmr1, int_axi_wvalid_tmr2;
@@ -718,13 +720,13 @@ generate
         wire                      s_axi_awvalid_mux_tmr1  = int_axi_awvalid_tmr1[a_grant_encoded*M_COUNT+n] && a_grant_valid;
         wire                      s_axi_awvalid_mux_tmr2  = int_axi_awvalid_tmr2[a_grant_encoded*M_COUNT+n] && a_grant_valid;
 
-        axi_tmr_simple_voter #(1) (.d0(s_axi_awvalid_mux_tmr0), .d1(s_axi_awvalid_mux_tmr1), .d2(s_axi_awvalid_mux_tmr2), .q(s_axi_awvalid_mux));
+        axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_awvalid_mux (.d0(s_axi_awvalid_mux_tmr0), .d1(s_axi_awvalid_mux_tmr1), .d2(s_axi_awvalid_mux_tmr2), .q(s_axi_awvalid_mux));
 
         wire                    s_axi_awready_mux;
         wire                    s_axi_awready_mux_tmr0;
         wire                    s_axi_awready_mux_tmr1;
         wire                    s_axi_awready_mux_tmr2;
-        axi_tmr_simple_voter #(1) (.d0(s_axi_awready_mux_tmr0), .d1(s_axi_awready_mux_tmr1), .d2(s_axi_awready_mux_tmr2), .q(s_axi_awready_mux));
+        axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_awready_mux (.d0(s_axi_awready_mux_tmr0), .d1(s_axi_awready_mux_tmr1), .d2(s_axi_awready_mux_tmr2), .q(s_axi_awready_mux));
 
         //assign int_axi_awready[n*S_COUNT +: S_COUNT] = (a_grant_valid && s_axi_awready_mux) << a_grant_encoded;
         assign int_axi_awready_tmr0[n*S_COUNT +: S_COUNT] = (a_grant_valid && s_axi_awready_mux_tmr0) << a_grant_encoded;
@@ -748,10 +750,11 @@ generate
         wire                   s_axi_wvalid_mux_tmr0  = int_axi_wvalid_tmr0[w_select_reg*M_COUNT+n] && w_select_valid_reg;
         wire                   s_axi_wvalid_mux_tmr1  = int_axi_wvalid_tmr1[w_select_reg*M_COUNT+n] && w_select_valid_reg;
         wire                   s_axi_wvalid_mux_tmr2  = int_axi_wvalid_tmr2[w_select_reg*M_COUNT+n] && w_select_valid_reg;
-        axi_tmr_simple_voter #(1) (.d0(s_axi_wvalid_mux_tmr0), .d1(s_axi_wvalid_mux_tmr1), .d2(s_axi_wvalid_mux_tmr2), .q(s_axi_wvalid_mux));
+        axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_wvalid_mux (.d0(s_axi_wvalid_mux_tmr0), .d1(s_axi_wvalid_mux_tmr1), .d2(s_axi_wvalid_mux_tmr2), .q(s_axi_wvalid_mux));
         wire                   s_axi_wready_mux;
         wire                   s_axi_wready_mux_tmr0, s_axi_wready_mux_tmr1, s_axi_wready_mux_tmr2;
-        axi_tmr_simple_voter #(1) (.d0(s_axi_wready_mux_tmr0), .d1(s_axi_wready_mux_tmr1), .d2(s_axi_wready_mux_tmr2), .q(s_axi_wready_mux));
+        axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_wready_mux (.d0(s_axi_wready_mux_tmr0), .d1(s_axi_wready_mux_tmr1), .d2(s_axi_wready_mux_tmr2), .q(s_axi_wready_mux));
+
 
         //assign int_axi_wready[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux) << w_select_reg;
         assign int_axi_wready_tmr0[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux_tmr0) << w_select_reg;

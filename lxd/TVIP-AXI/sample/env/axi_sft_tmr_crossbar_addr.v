@@ -131,16 +131,16 @@ module axi_sft_tmr_crossbar_addr #
     wire                       m_rc_ready_tmr1;
     wire                       m_rc_ready_tmr2;
 
-    axi_tmr_simple_voter #($clog2(M_COUNT)) (.d0(m_wc_select_tmr0), .d1(m_wc_select_tmr1), .d2(m_wc_select_tmr2), .q(m_wc_select));
-    axi_tmr_simple_voter #(1) (.d0(m_wc_decerr_tmr0), .d1(m_wc_decerr_tmr1), .d2(m_wc_decerr_tmr2), .q(m_wc_decerr));
-    axi_tmr_simple_voter #(1) (.d0(m_wc_valid_tmr0), .d1(m_wc_valid_tmr1), .d2(m_wc_valid_tmr2), .q(m_wc_valid));
+    axi_tmr_simple_voter #($clog2(M_COUNT)) axi_tmr_simple_voter_m_wc_select (.d0(m_wc_select_tmr0), .d1(m_wc_select_tmr1), .d2(m_wc_select_tmr2), .q(m_wc_select));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_wc_decerr (.d0(m_wc_decerr_tmr0), .d1(m_wc_decerr_tmr1), .d2(m_wc_decerr_tmr2), .q(m_wc_decerr));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_wc_valid (.d0(m_wc_valid_tmr0), .d1(m_wc_valid_tmr1), .d2(m_wc_valid_tmr2), .q(m_wc_valid));
 
     assign m_wc_ready_tmr0 = m_wc_ready;
     assign m_wc_ready_tmr1 = m_wc_ready;
     assign m_wc_ready_tmr2 = m_wc_ready;
 
-    axi_tmr_simple_voter #(1) (.d0(m_rc_decerr_tmr0), .d1(m_rc_decerr_tmr1), .d2(m_rc_decerr_tmr2), .q(m_rc_decerr));
-    axi_tmr_simple_voter #(1) (.d0(m_rc_valid_tmr0), .d1(m_rc_valid_tmr1), .d2(m_rc_valid_tmr2), .q(m_rc_valid));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_rc_decerr (.d0(m_rc_decerr_tmr0), .d1(m_rc_decerr_tmr1), .d2(m_rc_decerr_tmr2), .q(m_rc_decerr));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_rc_valid (.d0(m_rc_valid_tmr0), .d1(m_rc_valid_tmr1), .d2(m_rc_valid_tmr2), .q(m_rc_valid));
 
     assign m_rc_ready_tmr0 = m_rc_ready;
     assign m_rc_ready_tmr1 = m_rc_ready;
@@ -164,7 +164,7 @@ module axi_sft_tmr_crossbar_addr #
     assign s_axi_aqos_tmr1 = s_axi_aqos;
     assign s_axi_aqos_tmr2 = s_axi_aqos;
 
-    axi_tmr_simple_voter #(4) (.d0(m_axi_aregion_tmr0), .d1(m_axi_aregion_tmr1), .d2(m_axi_aregion_tmr2), .q(m_axi_aregion));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_aregion(.d0(m_axi_aregion_tmr0), .d1(m_axi_aregion_tmr1), .d2(m_axi_aregion_tmr2), .q(m_axi_aregion));
 
     assign s_cpl_id_tmr0 = s_cpl_id;
     assign s_cpl_id_tmr1 = s_cpl_id;

@@ -271,30 +271,30 @@ module axi_sft_register_rd #
     assign s_axi_arvalid_tmr0 = s_axi_arvalid;
     assign s_axi_arvalid_tmr1 = s_axi_arvalid;
     assign s_axi_arvalid_tmr2 = s_axi_arvalid;
-    axi_tmr_simple_voter #(1) (.d0(s_axi_arready_tmr0),.d1(s_axi_arready_tmr1),.d2(s_axi_arready_tmr2),.q(s_axi_arready));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_arready (.d0(s_axi_arready_tmr0),.d1(s_axi_arready_tmr1),.d2(s_axi_arready_tmr2),.q(s_axi_arready));
 
-    axi_tmr_simple_voter #(ID_WIDTH) (.d0(s_axi_rid_tmr0),.d1(s_axi_rid_tmr1),.d2(s_axi_rid_tmr2),.q(s_axi_rid));
-    axi_tmr_simple_voter #(DATA_WIDTH) (.d0(s_axi_rdata_tmr0),.d1(s_axi_rdata_tmr1),.d2(s_axi_rdata_tmr2),.q(s_axi_rdata));
-    axi_tmr_simple_voter #(2) (.d0(s_axi_rresp_tmr0),.d1(s_axi_rresp_tmr1),.d2(s_axi_rresp_tmr2),.q(s_axi_rresp));
-    axi_tmr_simple_voter #(1) (.d0(s_axi_rlast_tmr0),.d1(s_axi_rlast_tmr1),.d2(s_axi_rlast_tmr2),.q(s_axi_rlast));
-    axi_tmr_simple_voter #(RUSER_WIDTH) (.d0(s_axi_ruser_tmr0),.d1(s_axi_ruser_tmr1),.d2(s_axi_ruser_tmr2),.q(s_axi_ruser));
-    axi_tmr_simple_voter #(1) (.d0(s_axi_rvalid_tmr0),.d1(s_axi_rvalid_tmr1),.d2(s_axi_rvalid_tmr2),.q(s_axi_rvalid));
+    axi_tmr_simple_voter #(ID_WIDTH) axi_tmr_simple_voter_s_axi_rid (.d0(s_axi_rid_tmr0),.d1(s_axi_rid_tmr1),.d2(s_axi_rid_tmr2),.q(s_axi_rid));
+    axi_tmr_simple_voter #(DATA_WIDTH) axi_tmr_simple_voter_s_axi_rdata (.d0(s_axi_rdata_tmr0),.d1(s_axi_rdata_tmr1),.d2(s_axi_rdata_tmr2),.q(s_axi_rdata));
+    axi_tmr_simple_voter #(2) axi_tmr_simple_voter_s_axi_rresp (.d0(s_axi_rresp_tmr0),.d1(s_axi_rresp_tmr1),.d2(s_axi_rresp_tmr2),.q(s_axi_rresp));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_rlast (.d0(s_axi_rlast_tmr0),.d1(s_axi_rlast_tmr1),.d2(s_axi_rlast_tmr2),.q(s_axi_rlast));
+    axi_tmr_simple_voter #(RUSER_WIDTH) axi_tmr_simple_voter_s_axi_ruser (.d0(s_axi_ruser_tmr0),.d1(s_axi_ruser_tmr1),.d2(s_axi_ruser_tmr2),.q(s_axi_ruser));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_rvalid (.d0(s_axi_rvalid_tmr0),.d1(s_axi_rvalid_tmr1),.d2(s_axi_rvalid_tmr2),.q(s_axi_rvalid));
     assign s_axi_rready_tmr0 = s_axi_rready;
     assign s_axi_rready_tmr1 = s_axi_rready;
     assign s_axi_rready_tmr2 = s_axi_rready;
 
-    axi_tmr_simple_voter #(ID_WIDTH) (.d0(m_axi_arid_tmr0),.d1(m_axi_arid_tmr1),.d2(m_axi_arid_tmr2),.q(m_axi_arid));
-    axi_tmr_simple_voter #(ADDR_WIDTH) (.d0(m_axi_araddr_tmr0),.d1(m_axi_araddr_tmr1),.d2(m_axi_araddr_tmr2),.q(m_axi_araddr));
-    axi_tmr_simple_voter #(8) (.d0(m_axi_arlen_tmr0),.d1(m_axi_arlen_tmr1),.d2(m_axi_arlen_tmr2),.q(m_axi_arlen));
-    axi_tmr_simple_voter #(3) (.d0(m_axi_arsize_tmr0),.d1(m_axi_arsize_tmr1),.d2(m_axi_arsize_tmr2),.q(m_axi_arsize));
-    axi_tmr_simple_voter #(2) (.d0(m_axi_arburst_tmr0),.d1(m_axi_arburst_tmr1),.d2(m_axi_arburst_tmr2),.q(m_axi_arburst));
-    axi_tmr_simple_voter #(1) (.d0(m_axi_arlock_tmr0),.d1(m_axi_arlock_tmr1),.d2(m_axi_arlock_tmr2),.q(m_axi_arlock));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_arcache_tmr0),.d1(m_axi_arcache_tmr1),.d2(m_axi_arcache_tmr2),.q(m_axi_arcache));
-    axi_tmr_simple_voter #(3) (.d0(m_axi_arprot_tmr0),.d1(m_axi_arprot_tmr1),.d2(m_axi_arprot_tmr2),.q(m_axi_arprot));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_arqos_tmr0),.d1(m_axi_arqos_tmr1),.d2(m_axi_arqos_tmr2),.q(m_axi_arqos));
-    axi_tmr_simple_voter #(4) (.d0(m_axi_arregion_tmr0),.d1(m_axi_arregion_tmr1),.d2(m_axi_arregion_tmr2),.q(m_axi_arregion));
-    axi_tmr_simple_voter #(ARUSER_WIDTH) (.d0(m_axi_aruser_tmr0),.d1(m_axi_aruser_tmr1),.d2(m_axi_aruser_tmr2),.q(m_axi_aruser));
-    axi_tmr_simple_voter #(1) (.d0(m_axi_arvalid_tmr0),.d1(m_axi_arvalid_tmr1),.d2(m_axi_arvalid_tmr2),.q(m_axi_arvalid));
+    axi_tmr_simple_voter #(ID_WIDTH) axi_tmr_simple_voter_m_axi_arid (.d0(m_axi_arid_tmr0),.d1(m_axi_arid_tmr1),.d2(m_axi_arid_tmr2),.q(m_axi_arid));
+    axi_tmr_simple_voter #(ADDR_WIDTH) axi_tmr_simple_voter_m_axi_araddr (.d0(m_axi_araddr_tmr0),.d1(m_axi_araddr_tmr1),.d2(m_axi_araddr_tmr2),.q(m_axi_araddr));
+    axi_tmr_simple_voter #(8) axi_tmr_simple_voter_m_axi_arlen (.d0(m_axi_arlen_tmr0),.d1(m_axi_arlen_tmr1),.d2(m_axi_arlen_tmr2),.q(m_axi_arlen));
+    axi_tmr_simple_voter #(3) axi_tmr_simple_voter_m_axi_arsize (.d0(m_axi_arsize_tmr0),.d1(m_axi_arsize_tmr1),.d2(m_axi_arsize_tmr2),.q(m_axi_arsize));
+    axi_tmr_simple_voter #(2) axi_tmr_simple_voter_m_axi_arburst (.d0(m_axi_arburst_tmr0),.d1(m_axi_arburst_tmr1),.d2(m_axi_arburst_tmr2),.q(m_axi_arburst));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_arlock (.d0(m_axi_arlock_tmr0),.d1(m_axi_arlock_tmr1),.d2(m_axi_arlock_tmr2),.q(m_axi_arlock));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_arcache (.d0(m_axi_arcache_tmr0),.d1(m_axi_arcache_tmr1),.d2(m_axi_arcache_tmr2),.q(m_axi_arcache));
+    axi_tmr_simple_voter #(3) axi_tmr_simple_voter_m_axi_arprot (.d0(m_axi_arprot_tmr0),.d1(m_axi_arprot_tmr1),.d2(m_axi_arprot_tmr2),.q(m_axi_arprot));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_arqos (.d0(m_axi_arqos_tmr0),.d1(m_axi_arqos_tmr1),.d2(m_axi_arqos_tmr2),.q(m_axi_arqos));
+    axi_tmr_simple_voter #(4) axi_tmr_simple_voter_m_axi_arregion (.d0(m_axi_arregion_tmr0),.d1(m_axi_arregion_tmr1),.d2(m_axi_arregion_tmr2),.q(m_axi_arregion));
+    axi_tmr_simple_voter #(ARUSER_WIDTH) axi_tmr_simple_voter_m_axi_aruser (.d0(m_axi_aruser_tmr0),.d1(m_axi_aruser_tmr1),.d2(m_axi_aruser_tmr2),.q(m_axi_aruser));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_arvalid (.d0(m_axi_arvalid_tmr0),.d1(m_axi_arvalid_tmr1),.d2(m_axi_arvalid_tmr2),.q(m_axi_arvalid));
     assign m_axi_arready_tmr0 = m_axi_arready;
     assign m_axi_arready_tmr1 = m_axi_arready;
     assign m_axi_arready_tmr2 = m_axi_arready;
@@ -317,7 +317,7 @@ module axi_sft_register_rd #
     assign m_axi_rvalid_tmr0 = m_axi_rvalid;
     assign m_axi_rvalid_tmr1 = m_axi_rvalid;
     assign m_axi_rvalid_tmr2 = m_axi_rvalid;
-    axi_tmr_simple_voter #(1) (.d0(m_axi_rready_tmr0),.d1(m_axi_rready_tmr1),.d2(m_axi_rready_tmr2),.q(m_axi_rready));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_rready (.d0(m_axi_rready_tmr0),.d1(m_axi_rready_tmr1),.d2(m_axi_rready_tmr2),.q(m_axi_rready));
 
 axi_register_rd#(
     .DATA_WIDTH                                 ( DATA_WIDTH ),

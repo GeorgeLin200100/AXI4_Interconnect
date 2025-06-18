@@ -73,9 +73,9 @@ module sft_arbiter #
     wire [PORTS-1:0] grant_valid_tmr2;
     wire [$clog2(PORTS)-1:0] grant_encoded_tmr2;
 
-    axi_tmr_simple_voter #(PORTS) (.d0(grant_tmr0), .d1(grant_tmr1), .d2(grant_tmr2), .q(grant));
-    axi_tmr_simple_voter #(1) (.d0(grant_valid_tmr0), .d1(grant_valid_tmr1), .d2(grant_valid_tmr2), .q(grant_valid));
-    axi_tmr_simple_voter #($clog2(PORTS)) (.d0(grant_encoded_tmr0), .d1(grant_encoded_tmr1), .d2(grant_encoded_tmr2), .q(grant_encoded));
+    axi_tmr_simple_voter #(PORTS) axi_tmr_simple_voter_grant (.d0(grant_tmr0), .d1(grant_tmr1), .d2(grant_tmr2), .q(grant));
+    axi_tmr_simple_voter #(1) axi_tmr_simple_voter_grant_valid (.d0(grant_valid_tmr0), .d1(grant_valid_tmr1), .d2(grant_valid_tmr2), .q(grant_valid));
+    axi_tmr_simple_voter #($clog2(PORTS)) axi_tmr_simple_voter_grant_encoded (.d0(grant_encoded_tmr0), .d1(grant_encoded_tmr1), .d2(grant_encoded_tmr2), .q(grant_encoded));
 
     assign request_tmr0 = request;
     assign request_tmr1 = request;
