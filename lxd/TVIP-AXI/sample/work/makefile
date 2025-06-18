@@ -32,7 +32,16 @@ SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_ds.v
 SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_unit.v
 SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us_3m1s.v
 SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us.v
-
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_crossbar_wr.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_crossbar_rd.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_crossbar_addr.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_register_wr.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_register_rd.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_sft_tmr_crossbar_addr.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/ecc_d64b_p7_func.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/sft_arbiter.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/sft_priority_encoder.v
+SOURCE_FILES	+= $(TVIP_AXI_HOME)/sample/env/axi_tmr_simple_voter.v
 
 SIMULATOR	?= vcs
 RANDOM_SEED	?= auto
