@@ -126,8 +126,7 @@ ZOIX_ARGS += +fault+var -w
 ZOIX_ARGS += -sverilog 
 ZOIX_ARGS += -timescale=1ns/1ps
 ZOIX_ARGS += +incdir+$(TVIP_AXI_HOME)/sample/env
-ZOIX_ARGS += -fsdb_reader
-#ZOIX_ARGS += -top top
+ZOIX_ARGS += -top axi_tmr_safety_connector
 #ZOIX_ARGS += -full64
 #ZOIX_ARGS += -lca
 #ZOIX_ARGS += +incdir+$(UVM_HOME)/src $(UVM_HOME)/src/uvm.sv
@@ -155,6 +154,13 @@ ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us_3m1s.v
 ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us.v
 
 #ZOIX_SIM_ARGS += +fsdb+verify
+.PHONY: zoix_all zoix_clean zoix_compile zoix_sim zoix_fmsh
+
+zoix_all: zoix_clean zoix_compile zoix_fmsh
+
+zoix_clean:
+	cd zoix_work && \
+	./clean.csh
 
 zoix_compile:
 	cd zoix_work && \

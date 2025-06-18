@@ -2,16 +2,16 @@
 set(var=[resources], messages=[all])
 
 
-set(var=[fdef], method=[fgen])
-# 在以下位置生成 stuck-at 0 和 stuck-at 1 故障
-set(var=[fdef], model.stuck=[port,net,assign,array,var])
+# 方法1：生成 stuck-at 0 和 stuck-at 1 故障
+#set(var=[fdef], method=[fgen])
+#set(var=[fdef], model.stuck=[port,net,assign,array,var])
+
+# 方法2：根据axi_connector.sff文件生成故障
+set(var=[defines], format=[standard])
+set(var=[fdef], method=[fr], fr.fr=[axi_connector.sff], abort=[error])
 
 # 从生成的总故障中，随机采样10%进行仿真，可以大大缩短仿真时间
 #set(var=[fdef], sample.percent=[10])
-
-# 如果您选择此方法，请注释掉上面的“方法A”中的所有"set(var=[fdef],...)"行
-# set(var=[fdef], method=[fr], fr.fr=[/path/to/your/fault_list.sff])
-
 
 design()
 
@@ -20,7 +20,8 @@ deltst(test=[axi_connector_test1])
 addtst(test=[axi_connector_test1],
       stim=[zoix_axi_connector.vcd],
       stimtype=[vcd], 
-      stim_options=[ +vcd+dut+top.u_connector.u_connector]
+      stim_options=[ +vcd+dut+axi_tmr_safety_connector+top.u_connector.u_connector],
+      addstrobe=[100, 10, strobe_list.txt]
       )
 
 
