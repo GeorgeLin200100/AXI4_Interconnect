@@ -186,7 +186,7 @@ initial begin
 end
 
 wire [M_COUNT-1:0] m_axi_awvalid_tmr0, m_axi_awvalid_tmr1, m_axi_awvalid_tmr2;
-axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_awvalid (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
+axi_tmr_simple_voter #(M_COUNT) axi_tmr_simple_voter_m_axi_awvalid (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
 
 wire [S_COUNT-1:0] s_axi_awvalid_tmr0, s_axi_awvalid_tmr1, s_axi_awvalid_tmr2;
 assign s_axi_awvalid_tmr0 = s_axi_awvalid;
@@ -199,7 +199,7 @@ assign m_axi_awready_tmr1 = m_axi_awready;
 assign m_axi_awready_tmr2 = m_axi_awready;
 
 wire [S_COUNT-1:0] s_axi_awready_tmr0, s_axi_awready_tmr1, s_axi_awready_tmr2;
-axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_awready (.d0(s_axi_awready_tmr0), .d1(s_axi_awready_tmr1), .d2(s_axi_awready_tmr2), .q(s_axi_awready));
+axi_tmr_simple_voter #(S_COUNT) axi_tmr_simple_voter_s_axi_awready (.d0(s_axi_awready_tmr0), .d1(s_axi_awready_tmr1), .d2(s_axi_awready_tmr2), .q(s_axi_awready));
 
 wire [S_COUNT-1:0] s_axi_wvalid_tmr0, s_axi_wvalid_tmr1, s_axi_wvalid_tmr2;
 assign s_axi_wvalid_tmr0 = s_axi_wvalid;
@@ -207,10 +207,10 @@ assign s_axi_wvalid_tmr1 = s_axi_wvalid;
 assign s_axi_wvalid_tmr2 = s_axi_wvalid;
 
 wire [S_COUNT-1:0] s_axi_wready_tmr0, s_axi_wready_tmr1, s_axi_wready_tmr2;
-axi_tmr_simple_voter #(1) axi_tmr_simple_voter_s_axi_wready (.d0(s_axi_wready_tmr0), .d1(s_axi_wready_tmr1), .d2(s_axi_wready_tmr2), .q(s_axi_wready));
+axi_tmr_simple_voter #(S_COUNT) axi_tmr_simple_voter_s_axi_wready (.d0(s_axi_wready_tmr0), .d1(s_axi_wready_tmr1), .d2(s_axi_wready_tmr2), .q(s_axi_wready));
 
 wire [M_COUNT-1:0] m_axi_wvalid_tmr0, m_axi_wvalid_tmr1, m_axi_wvalid_tmr2;
-axi_tmr_simple_voter #(1) axi_tmr_simple_voter_m_axi_wvalid (.d0(m_axi_wvalid_tmr0), .d1(m_axi_wvalid_tmr1), .d2(m_axi_wvalid_tmr2), .q(m_axi_wvalid));
+axi_tmr_simple_voter #(M_COUNT) axi_tmr_simple_voter_m_axi_wvalid (.d0(m_axi_wvalid_tmr0), .d1(m_axi_wvalid_tmr1), .d2(m_axi_wvalid_tmr2), .q(m_axi_wvalid));
 
 wire [M_COUNT-1:0] m_axi_wready_tmr0, m_axi_wready_tmr1, m_axi_wready_tmr2;
 assign m_axi_wready_tmr0 = m_axi_wready;

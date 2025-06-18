@@ -58,19 +58,19 @@ module sft_arbiter #
     wire [PORTS-1:0] request_tmr0;
     wire [PORTS-1:0] acknowledge_tmr0;
     wire [PORTS-1:0] grant_tmr0;
-    wire [PORTS-1:0] grant_valid_tmr0;
+    wire grant_valid_tmr0;
     wire [$clog2(PORTS)-1:0] grant_encoded_tmr0;
 
     wire [PORTS-1:0] request_tmr1;
     wire [PORTS-1:0] acknowledge_tmr1;
     wire [PORTS-1:0] grant_tmr1;
-    wire [PORTS-1:0] grant_valid_tmr1;
+    wire grant_valid_tmr1;
     wire [$clog2(PORTS)-1:0] grant_encoded_tmr1;
 
     wire [PORTS-1:0] request_tmr2;
     wire [PORTS-1:0] acknowledge_tmr2;
     wire [PORTS-1:0] grant_tmr2;
-    wire [PORTS-1:0] grant_valid_tmr2;
+    wire grant_valid_tmr2;
     wire [$clog2(PORTS)-1:0] grant_encoded_tmr2;
 
     axi_tmr_simple_voter #(PORTS) axi_tmr_simple_voter_grant (.d0(grant_tmr0), .d1(grant_tmr1), .d2(grant_tmr2), .q(grant));
