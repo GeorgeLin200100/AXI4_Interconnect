@@ -187,6 +187,7 @@ end
 
 wire [M_COUNT-1:0] m_axi_awvalid_tmr0, m_axi_awvalid_tmr1, m_axi_awvalid_tmr2;
 axi_tmr_simple_voter #(1) (.d0(m_axi_awvalid_tmr0), .d1(m_axi_awvalid_tmr1), .d2(m_axi_awvalid_tmr2), .q(m_axi_awvalid));
+
 wire [S_COUNT-1:0] s_axi_awvalid_tmr0, s_axi_awvalid_tmr1, s_axi_awvalid_tmr2;
 assign s_axi_awvalid_tmr0 = s_axi_awvalid;
 assign s_axi_awvalid_tmr1 = s_axi_awvalid;
@@ -199,6 +200,22 @@ assign m_axi_awready_tmr2 = m_axi_awready;
 
 wire [S_COUNT-1:0] s_axi_awready_tmr0, s_axi_awready_tmr1, s_axi_awready_tmr2;
 axi_tmr_simple_voter #(1) (.d0(s_axi_awready_tmr0), .d1(s_axi_awready_tmr1), .d2(s_axi_awready_tmr2), .q(s_axi_awready));
+
+wire [S_COUNT-1:0] s_axi_wvalid_tmr0, s_axi_wvalid_tmr1, s_axi_wvalid_tmr2;
+assign s_axi_wvalid_tmr0 = s_axi_wvalid;
+assign s_axi_wvalid_tmr1 = s_axi_wvalid;
+assign s_axi_wvalid_tmr2 = s_axi_wvalid;
+
+wire [S_COUNT-1:0] s_axi_wready_tmr0, s_axi_wready_tmr1, s_axi_wready_tmr2;
+axi_tmr_simple_voter #(1) (.d0(s_axi_wready_tmr0), .d1(s_axi_wready_tmr1), .d2(s_axi_wready_tmr2), .q(s_axi_wready));
+
+wire [M_COUNT-1:0] m_axi_wvalid_tmr0, m_axi_wvalid_tmr1, m_axi_wvalid_tmr2;
+axi_tmr_simple_voter #(1) (.d0(m_axi_wvalid_tmr0), .d1(m_axi_wvalid_tmr1), .d2(m_axi_wvalid_tmr2), .q(m_axi_wvalid));
+
+wire [M_COUNT-1:0] m_axi_wready_tmr0, m_axi_wready_tmr1, m_axi_wready_tmr2;
+assign m_axi_wready_tmr0 = m_axi_wready;
+assign m_axi_wready_tmr1 = m_axi_wready;
+assign m_axi_wready_tmr2 = m_axi_wready;
 
 wire [S_COUNT*S_ID_WIDTH-1:0]    int_s_axi_awid;
 wire [S_COUNT*ADDR_WIDTH-1:0]    int_s_axi_awaddr;
@@ -236,10 +253,17 @@ wire [S_COUNT*STRB_WIDTH-1:0]    int_s_axi_wstrb;
 wire [S_COUNT-1:0]               int_s_axi_wlast;
 wire [S_COUNT*WUSER_WIDTH-1:0]   int_s_axi_wuser;
 wire [S_COUNT-1:0]               int_s_axi_wvalid;
+wire [S_COUNT-1:0]               int_s_axi_wvalid_tmr0, int_s_axi_wvalid_tmr1, int_s_axi_wvalid_tmr2;
+axi_tmr_simple_voter #(S_COUNT) (.d0(int_s_axi_wvalid_tmr0), .d1(int_s_axi_wvalid_tmr1), .d2(int_s_axi_wvalid_tmr2), .q(int_s_axi_wvalid));
 wire [S_COUNT-1:0]               int_s_axi_wready;
+wire [S_COUNT-1:0]               int_s_axi_wready_tmr0, int_s_axi_wready_tmr1, int_s_axi_wready_tmr2;
+axi_tmr_simple_voter #(S_COUNT) (.d0(int_s_axi_wready_tmr0), .d1(int_s_axi_wready_tmr1), .d2(int_s_axi_wready_tmr2), .q(int_s_axi_wready));
 
-wire [S_COUNT*M_COUNT-1:0]       int_axi_wvalid;
-wire [M_COUNT*S_COUNT-1:0]       int_axi_wready;
+//wire [S_COUNT*M_COUNT-1:0]       int_axi_wvalid;
+wire [S_COUNT*M_COUNT-1:0]       int_axi_wvalid_tmr0, int_axi_wvalid_tmr1, int_axi_wvalid_tmr2;
+//wire [M_COUNT*S_COUNT-1:0]       int_axi_wready;
+wire [M_COUNT*S_COUNT-1:0]       int_axi_wready_tmr0, int_axi_wready_tmr1, int_axi_wready_tmr2;
+
 
 wire [M_COUNT*M_ID_WIDTH-1:0]    int_m_axi_bid;
 wire [M_COUNT*2-1:0]             int_m_axi_bresp;
@@ -447,8 +471,16 @@ generate
         end
 
         // write data forwarding
-        assign int_axi_wvalid[m*M_COUNT +: M_COUNT] = (int_s_axi_wvalid[m] && w_select_valid_reg && !w_drop_reg) << w_select_reg;
-        assign int_s_axi_wready[m] = int_axi_wready[w_select_reg*S_COUNT+m] || w_drop_reg;
+        //assign int_axi_wvalid[m*M_COUNT +: M_COUNT] = (int_s_axi_wvalid[m] && w_select_valid_reg && !w_drop_reg) << w_select_reg;
+        assign int_axi_wvalid_tmr0[m*M_COUNT +: M_COUNT] = (int_s_axi_wvalid_tmr0[m] && w_select_valid_reg && !w_drop_reg) << w_select_reg;
+        assign int_axi_wvalid_tmr1[m*M_COUNT +: M_COUNT] = (int_s_axi_wvalid_tmr1[m] && w_select_valid_reg && !w_drop_reg) << w_select_reg;
+        assign int_axi_wvalid_tmr2[m*M_COUNT +: M_COUNT] = (int_s_axi_wvalid_tmr2[m] && w_select_valid_reg && !w_drop_reg) << w_select_reg;
+
+        //assign int_s_axi_wready[m] = int_axi_wready[w_select_reg*S_COUNT+m] || w_drop_reg;
+        assign int_s_axi_wready_tmr0[m] = int_axi_wready_tmr0[w_select_reg*S_COUNT+m] || w_drop_reg;
+        assign int_s_axi_wready_tmr1[m] = int_axi_wready_tmr1[w_select_reg*S_COUNT+m] || w_drop_reg;
+        assign int_s_axi_wready_tmr2[m] = int_axi_wready_tmr2[w_select_reg*S_COUNT+m] || w_drop_reg;
+
 
         // decode error handling
         reg [S_ID_WIDTH-1:0]  decerr_m_axi_bid_reg = {S_ID_WIDTH{1'b0}}, decerr_m_axi_bid_next;
@@ -568,8 +600,14 @@ generate
             .s_axi_wstrb(s_axi_wstrb[m*STRB_WIDTH +: STRB_WIDTH]),
             .s_axi_wlast(s_axi_wlast[m]),
             .s_axi_wuser(s_axi_wuser[m*WUSER_WIDTH +: WUSER_WIDTH]),
-            .s_axi_wvalid(s_axi_wvalid[m]),
-            .s_axi_wready(s_axi_wready[m]),
+            //.s_axi_wvalid(s_axi_wvalid[m]),
+            .s_axi_wvalid_tmr0(s_axi_wvalid_tmr0[m]),
+            .s_axi_wvalid_tmr1(s_axi_wvalid_tmr1[m]),
+            .s_axi_wvalid_tmr2(s_axi_wvalid_tmr2[m]),
+            //.s_axi_wready(s_axi_wready[m]),
+            .s_axi_wready_tmr0(s_axi_wready_tmr0[m]),
+            .s_axi_wready_tmr1(s_axi_wready_tmr1[m]),
+            .s_axi_wready_tmr2(s_axi_wready_tmr2[m]),
             .s_axi_bid(s_axi_bid[m*S_ID_WIDTH +: S_ID_WIDTH]),
             .s_axi_bresp(s_axi_bresp[m*2 +: 2]),
             .s_axi_buser(s_axi_buser[m*BUSER_WIDTH +: BUSER_WIDTH]),
@@ -598,8 +636,14 @@ generate
             .m_axi_wstrb(int_s_axi_wstrb[m*STRB_WIDTH +: STRB_WIDTH]),
             .m_axi_wlast(int_s_axi_wlast[m]),
             .m_axi_wuser(int_s_axi_wuser[m*WUSER_WIDTH +: WUSER_WIDTH]),
-            .m_axi_wvalid(int_s_axi_wvalid[m]),
-            .m_axi_wready(int_s_axi_wready[m]),
+            //.m_axi_wvalid(int_s_axi_wvalid[m]),
+            .m_axi_wvalid_tmr0(int_s_axi_wvalid_tmr0[m]),
+            .m_axi_wvalid_tmr1(int_s_axi_wvalid_tmr1[m]),
+            .m_axi_wvalid_tmr2(int_s_axi_wvalid_tmr2[m]),
+            //.m_axi_wready(int_s_axi_wready[m]),
+            .m_axi_wready_tmr0(int_s_axi_wready_tmr0[m]),
+            .m_axi_wready_tmr1(int_s_axi_wready_tmr1[m]),
+            .m_axi_wready_tmr2(int_s_axi_wready_tmr2[m]),
             .m_axi_bid(m_axi_bid_mux),
             .m_axi_bresp(m_axi_bresp_mux),
             .m_axi_buser(m_axi_buser_mux),
@@ -699,10 +743,20 @@ generate
         wire [STRB_WIDTH-1:0]  s_axi_wstrb_mux   = int_s_axi_wstrb[w_select_reg*STRB_WIDTH +: STRB_WIDTH];
         wire                   s_axi_wlast_mux   = int_s_axi_wlast[w_select_reg];
         wire [WUSER_WIDTH-1:0] s_axi_wuser_mux   = int_s_axi_wuser[w_select_reg*WUSER_WIDTH +: WUSER_WIDTH];
-        wire                   s_axi_wvalid_mux  = int_axi_wvalid[w_select_reg*M_COUNT+n] && w_select_valid_reg;
+        //wire                   s_axi_wvalid_mux  = int_axi_wvalid[w_select_reg*M_COUNT+n] && w_select_valid_reg;
+        wire                   s_axi_wvalid_mux;
+        wire                   s_axi_wvalid_mux_tmr0  = int_axi_wvalid_tmr0[w_select_reg*M_COUNT+n] && w_select_valid_reg;
+        wire                   s_axi_wvalid_mux_tmr1  = int_axi_wvalid_tmr1[w_select_reg*M_COUNT+n] && w_select_valid_reg;
+        wire                   s_axi_wvalid_mux_tmr2  = int_axi_wvalid_tmr2[w_select_reg*M_COUNT+n] && w_select_valid_reg;
+        axi_tmr_simple_voter #(1) (.d0(s_axi_wvalid_mux_tmr0), .d1(s_axi_wvalid_mux_tmr1), .d2(s_axi_wvalid_mux_tmr2), .q(s_axi_wvalid_mux));
         wire                   s_axi_wready_mux;
+        wire                   s_axi_wready_mux_tmr0, s_axi_wready_mux_tmr1, s_axi_wready_mux_tmr2;
+        axi_tmr_simple_voter #(1) (.d0(s_axi_wready_mux_tmr0), .d1(s_axi_wready_mux_tmr1), .d2(s_axi_wready_mux_tmr2), .q(s_axi_wready_mux));
 
-        assign int_axi_wready[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux) << w_select_reg;
+        //assign int_axi_wready[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux) << w_select_reg;
+        assign int_axi_wready_tmr0[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux_tmr0) << w_select_reg;
+        assign int_axi_wready_tmr1[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux_tmr1) << w_select_reg;
+        assign int_axi_wready_tmr2[n*S_COUNT +: S_COUNT] = (w_select_valid_reg && s_axi_wready_mux_tmr2) << w_select_reg;
 
         // write data routing
         always @* begin
@@ -779,8 +833,14 @@ generate
             .s_axi_wstrb(s_axi_wstrb_mux),
             .s_axi_wlast(s_axi_wlast_mux),
             .s_axi_wuser(s_axi_wuser_mux),
-            .s_axi_wvalid(s_axi_wvalid_mux),
-            .s_axi_wready(s_axi_wready_mux),
+            //.s_axi_wvalid(s_axi_wvalid_mux),
+            .s_axi_wvalid_tmr0(s_axi_wvalid_mux_tmr0),
+            .s_axi_wvalid_tmr1(s_axi_wvalid_mux_tmr1),
+            .s_axi_wvalid_tmr2(s_axi_wvalid_mux_tmr2),
+            //.s_axi_wready(s_axi_wready_mux),
+            .s_axi_wready_tmr0(s_axi_wready_mux_tmr0),
+            .s_axi_wready_tmr1(s_axi_wready_mux_tmr1),
+            .s_axi_wready_tmr2(s_axi_wready_mux_tmr2),
             .s_axi_bid(int_m_axi_bid[n*M_ID_WIDTH +: M_ID_WIDTH]),
             .s_axi_bresp(int_m_axi_bresp[n*2 +: 2]),
             .s_axi_buser(int_m_axi_buser[n*BUSER_WIDTH +: BUSER_WIDTH]),
@@ -809,8 +869,14 @@ generate
             .m_axi_wstrb(m_axi_wstrb[n*STRB_WIDTH +: STRB_WIDTH]),
             .m_axi_wlast(m_axi_wlast[n]),
             .m_axi_wuser(m_axi_wuser[n*WUSER_WIDTH +: WUSER_WIDTH]),
-            .m_axi_wvalid(m_axi_wvalid[n]),
-            .m_axi_wready(m_axi_wready[n]),
+            //.m_axi_wvalid(m_axi_wvalid[n]),
+            .m_axi_wvalid_tmr0(m_axi_wvalid_tmr0[n]),
+            .m_axi_wvalid_tmr1(m_axi_wvalid_tmr1[n]),
+            .m_axi_wvalid_tmr2(m_axi_wvalid_tmr2[n]),
+            //.m_axi_wready(m_axi_wready[n]),
+            .m_axi_wready_tmr0(m_axi_wready_tmr0[n]),
+            .m_axi_wready_tmr1(m_axi_wready_tmr1[n]),
+            .m_axi_wready_tmr2(m_axi_wready_tmr2[n]),
             .m_axi_bid(m_axi_bid[n*M_ID_WIDTH +: M_ID_WIDTH]),
             .m_axi_bresp(m_axi_bresp[n*2 +: 2]),
             .m_axi_buser(m_axi_buser[n*BUSER_WIDTH +: BUSER_WIDTH]),
