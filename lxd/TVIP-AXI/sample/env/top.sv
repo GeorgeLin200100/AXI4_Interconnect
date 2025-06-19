@@ -65,4 +65,19 @@ module top();
     uvm_config_db #(tvip_axi_vif)::set(null, "", "vif[6]", axi_if[6]);
     run_test("tvip_axi_sample_test");
   end
+
+  //dump fsdb for zoix stimulus
+  /*
+  initial begin
+    $fsdbDumpfile("zoix_axi_connector.fsdb");
+    $fsdbDumpvars(1, top.u_connector.u_connector);
+  end
+  */
+
+  //dump vcd for zoix stimulus
+  initial begin
+    $dumpfile("zoix_axi_connector.vcd");
+    $dumpvars(1, top.u_connector.u_connector);
+  end
+
 endmodule

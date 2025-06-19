@@ -12,6 +12,7 @@ class tvip_axi_sample_test extends tue_test #(
   tvip_axi_sequence_launcher launcher;
   string seq_name;
   tvip_axi_sequence_type_e seq_type;
+  fault_injector injector;
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) master_imp[3];
   // uvm_analysis_imp #(tvip_axi_item, tvip_axi_scoreboard) slave_imp[4];
   uvm_analysis_imp_m0 #(tvip_axi_item, tvip_axi_scoreboard) master_imp_m0;
@@ -63,6 +64,9 @@ class tvip_axi_sample_test extends tue_test #(
         slave_agents[j-3].set_configuration(configuration.axi_cfg[j]);
       end
     end
+
+    // Create fault injector
+    injector = fault_injector::type_id::create("injector", this);
   endfunction
 
   function void connect_phase(uvm_phase phase);
@@ -152,6 +156,15 @@ class tvip_axi_sample_test extends tue_test #(
       //end
     end
   endfunction
+
+  //touched fault_injector
+  /*
+  virtual task run_phase(uvm_phase phase);
+    super.run_phase(phase); // 调用父类的 run_phase（如果存在）
+    // 启动故障注入组件的 run_phase
+    injector.run_phase(phase);
+  endtask
+  */
 
   `uvm_component_utils(tvip_axi_sample_test)
 endclass

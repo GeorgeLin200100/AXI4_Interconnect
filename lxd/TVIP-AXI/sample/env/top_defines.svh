@@ -7,4 +7,7 @@
     `define SLAVE_2_BASE_ADDR       32'h0200_0000
     `define SLAVE_3_BASE_ADDR       32'h0300_0000
 
+    `define BASIC_CONNECTOR
+    `define WITH_PROTECTION
+
 `endif

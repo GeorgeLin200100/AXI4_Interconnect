@@ -285,10 +285,15 @@ generate
             thread_count_reg[n] <= 0;
         end
 
+        // thread has ongoing operations
         assign thread_active[n] = thread_count_reg[n] != 0;
+        // thread has ongoing operations and the id matches
         assign thread_match[n] = thread_active[n] && thread_id_reg[n] == s_axi_aid;
+        // thread has ongoing operations and the id matches and the destination matches (means in the same thread)
         assign thread_match_dest[n] = thread_match[n] && thread_m_reg[n] == m_select_next && (M_REGIONS < 2 || thread_region_reg[n] == m_axi_aregion_next);
+        // thread has ongoing operations and the completion id matches
         assign thread_cpl_match[n] = thread_active[n] && thread_id_reg[n] == s_cpl_id;
+        // either match & use existing thread or start a new thread
         assign thread_trans_start[n] = (thread_match[n] || (!thread_active[n] && !thread_match && !(thread_trans_start & ({S_INT_THREADS{1'b1}} >> (S_INT_THREADS-n))))) && trans_start;
         assign thread_trans_complete[n] = thread_cpl_match[n] && trans_complete;
 

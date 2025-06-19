@@ -224,8 +224,13 @@ module axi_crossbar #
     input  wire [M_COUNT-1:0]               m_axi_rvalid,
     output wire [M_COUNT-1:0]               m_axi_rready
 );
-
+`ifdef NO_PROTECTION
 axi_crossbar_wr #(
+`elsif WITH_PROTECTION
+axi_sft_crossbar_wr #(
+`else 
+axi_sft_crossbar_wr #(
+`endif
     .S_COUNT(S_COUNT),
     .M_COUNT(M_COUNT),
     .DATA_WIDTH(DATA_WIDTH),
@@ -311,7 +316,13 @@ axi_crossbar_wr_inst (
     .m_axi_bready(m_axi_bready)
 );
 
+`ifdef NO_PROTECTION
 axi_crossbar_rd #(
+`elsif WITH_PROTECTION
+axi_sft_crossbar_rd #(
+`else 
+axi_sft_crossbar_rd #(
+`endif
     .S_COUNT(S_COUNT),
     .M_COUNT(M_COUNT),
     .DATA_WIDTH(DATA_WIDTH),

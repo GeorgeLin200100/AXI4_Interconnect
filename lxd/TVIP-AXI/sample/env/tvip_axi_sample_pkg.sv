@@ -25,6 +25,7 @@ package tvip_axi_sample_pkg;
   `include "tvip_axi_scoreboard.svh"
   //`include "tvip_axi_sample_write_read_sequence.svh"
   // `include "tvip_axi_sequences/tvip_axi_sequence_pkg.svh"
+  `include "tvip_axi_fault.svh"
   `include "tvip_axi_sample_test.svh"
 
 endpackage
