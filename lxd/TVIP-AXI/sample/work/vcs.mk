@@ -11,6 +11,7 @@ VCS_ARGS	+= -top top
 VCS_ARGS	+= -debug_acc+all -debug_region+cell+encrypt
 
 
+
 SIMV_ARGS	+= -l simv.log
 SIMV_ARGS	+= -f test.f
 SIMV_ARGS   += -cm line+cond+fsm+branch+tgl+assert
@@ -39,6 +40,20 @@ ifeq ($(strip $(DUMP)), fsdb)
 	VCS_ARGS	+= -kdb
 	VCS_ARGS	+= +vcs+fsdbon
 	SIMV_ARGS	+= +fsdbfile+dump.fsdb
+endif
+
+ifeq ($(strip $(DUMP)), fsdb_zoix)
+	VCS_ARGS	+= -debug_access
+	VCS_ARGS	+= -kdb
+	VCS_ARGS	+= +vcs+fsdbon
+#	SIMV_ARGS	+= +fsdbfile+dump.fsdb
+endif
+
+ifeq ($(strip $(DUMP)), vcd_zoix)
+	VCS_ARGS	+= -debug_access
+	VCS_ARGS	+= -kdb
+	VCS_ARGS	+= +vcs+fsdbon
+#	SIMV_ARGS	+= +fsdbfile+dump.fsdb
 endif
 
 ifeq ($(strip $(GUI)), dve)
@@ -104,3 +119,64 @@ sim_get_signal:
 
 verdi:
 	verdi -ssf "${DIR_NAME}/dump.fsdb" -f compile.f
+
+
+	
+#export UVM_HOME=/home/ICer/uvm/uvm-1.2
+ZOIX_ARGS += -l zoix.log
+ZOIX_ARGS += +fault+var -w 
+ZOIX_ARGS += -sverilog 
+ZOIX_ARGS += -timescale=1ns/1ps
+ZOIX_ARGS += +incdir+$(TVIP_AXI_HOME)/sample/env
+ZOIX_ARGS += -top axi_tmr_safety_connector
+#ZOIX_ARGS += -full64
+#ZOIX_ARGS += -lca
+#ZOIX_ARGS += +incdir+$(UVM_HOME)/src $(UVM_HOME)/src/uvm.sv
+#ZOIX_ARGS += $(UVM_HOME)/src/dpi/uvm_dpi.cc
+#ZOIX_ARGS += -CFLAGS -DVCS
+#ZOIX_ARGS += -ntb_opts uvm-$(UVM_VERSION)
+#ZOIX_ARGS += +define+UVM_NO_DEPRECATED+UVM_OBJECT_MUST_HAVE_CONSTRUCTO
+#ZOIX_ARGS += +define+UVM_VERDI_COMPWAVE
+#ZOIX_ARGS += -debug_acc+all -debug_region+cell+encrypt
+
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/priority_encoder.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/arbiter.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_addr.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_register_wr.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_register_rd.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_wr.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_crossbar_rd.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_crossbar.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi4_safety_connector.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_safety_connector.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_ds_1m3s.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_ds.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_unit.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us_3m1s.v
+ZOIX_SRC += $(TVIP_AXI_HOME)/sample/env/axi_tmr_voter_us.v
+
+#ZOIX_SIM_ARGS += +fsdb+verify
+.PHONY: zoix_all zoix_clean zoix_compile zoix_sim zoix_fmsh
+
+zoix_all: zoix_clean zoix_compile zoix_fmsh zoix_get_report
+
+zoix_clean:
+	cd zoix_work && \
+	./clean.csh
+
+zoix_compile:
+	cd zoix_work && \
+	$(ZOIXHOME)/bin/zoix $(ZOIX_ARGS) $(ZOIX_SRC)
+
+zoix_sim:
+	cd zoix_work && \
+	./zoix.sim +fsdb+dut+top.u_connector.u_connector +fsdb+file+zoix_axi_connector.fsdb $(ZOIX_SIM_ARGS)
+
+zoix_fmsh:
+	cd zoix_work && \
+	$(ZOIXHOME)/bin/fmsh -load axi_connector.fmsh
+
+zoix_get_report:
+	cd zoix_work && \
+	tail -n 35 axi_connector_coverage.rpt > zoix_report.txt &&\
+	cat zoix_report.txt

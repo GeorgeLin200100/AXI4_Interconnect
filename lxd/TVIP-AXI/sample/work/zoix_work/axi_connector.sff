@@ -1,0 +1,97 @@
+#*******************************************************************************
+# user.sff - Fault Simulation Control File
+# Based on the proven 2018 demo file structure.
+#*******************************************************************************
+
+# Section 1: StatusDefinitions Block
+# This section is taken directly from your working demo file.
+StatusDefinitions
+{
+    # Redefine built-in statuses to free up their names for custom use.
+    Redefine ND NX "Not Detected"
+    Redefine DD DX "Redefine DD";
+    Redefine NC NF "Not Observed Fault Corrected";
+
+    # Define custom functional safety statuses.
+    NN "Not Observed Not Diagnosed";
+    NP "Not Observed Potential Diagnosed";
+    ND "Not Observed Diagnosed";
+    PN "Potential Observed Not Diagnosed";
+    OP "Observed Potentially Diagnosed";
+    ON "Observed Not Diagnosed";
+    OD "Observed Diagnosed";
+    NC "Not Observed Corrected";
+
+    # Set default status for faults.
+    DefaultStatus (NN)
+
+    # Select which fault statuses to inject for simulation.
+    Selected (NA, NN)
+
+    # Define how fault statuses are promoted across multiple tests.
+    PromotionTable
+    {
+        StatusLabels (NN,NP,ND,PN,OP,ON,OD,NC)
+        #   NN  NP  ND  PN  OP  ON  OD  NC
+        [
+            -   NP  ND  ON  OP  ON  OD  OD ; # NN
+            -   -   ND  OP  OP  ON  OD  OD ; # NP
+            -   -   -   OD  OD  OD  OD  OD ; # ND
+            -   -   -   -   ON  ON  OD  OD ; # PN
+            -   -   -   -   -   ON  OD  OD ; # OP
+            -   -   -   -   -   -   OD  OD ; # ON
+            -   -   -   -   -   -   -   -  ; # OD
+            -   -   -   -   -   -   OD  OD ; # NC
+        ] 
+    }
+
+    # Group statuses into categories for reporting.
+    StatusGroups
+    {
+        SA "Safe" (UT, UB, UR, UU);
+        SU "Dangerous Unobserved" (NO, NT);
+        DA "Dangerous Assumed" (HA, HM, HT, OA, OZ, IA, IP, IF, IX);
+        DN "Dangerous Not Diagnosed" (PN, ON, OP);
+        DD "Dangerous Diagnosed" (NN, NC, NP, ND, OD);
+    }
+}
+
+
+# *******************************************************************************
+# Section 2: FaultGenerate Block
+# This section is modified to target your specific DUT sub-modules.
+# *******************************************************************************
+FaultGenerate
+{
+    # Inject stuck-at 0/1 faults on all PORTs in specified sub-modules.
+    # The "?" wildcard matches inst0, inst1, inst2.
+    NA [0,1] { PORT "axi_tmr_safety_connector.axi_crossbar_inst0.**" }
+    NA [0,1] { PORT "axi_tmr_safety_connector.axi_crossbar_inst1.**" }
+    NA [0,1] { PORT "axi_tmr_safety_connector.axi_crossbar_inst2.**" }
+
+    # Inject stuck-at 0/1 faults on all VARIs (registers/variables).
+    NA [0,1] { VARI "axi_tmr_safety_connector.axi_crossbar_inst0.**" }
+    NA [0,1] { VARI "axi_tmr_safety_connector.axi_crossbar_inst1.**" }
+    NA [0,1] { VARI "axi_tmr_safety_connector.axi_crossbar_inst2.**" }
+    
+    # Inject stuck-at 0/1 faults on all WIREs.
+    NA [0,1] { WIRE "axi_tmr_safety_connector.axi_crossbar_inst0.**" }
+    NA [0,1] { WIRE "axi_tmr_safety_connector.axi_crossbar_inst1.**" }
+    NA [0,1] { WIRE "axi_tmr_safety_connector.axi_crossbar_inst2.**" }
+    
+    # Inject stuck-at 0/1 faults on all ASSIGNs (continuous assignments).
+    NA [0,1] { ASGN "axi_tmr_safety_connector.axi_crossbar_inst0.**" }
+    NA [0,1] { ASGN "axi_tmr_safety_connector.axi_crossbar_inst1.**" }
+    NA [0,1] { ASGN "axi_tmr_safety_connector.axi_crossbar_inst2.**" }
+}
+
+
+# *******************************************************************************
+# Section 3: Coverage Block
+# This section is taken directly from your working demo file.
+# *******************************************************************************
+Coverage
+{
+    # Define Diagnostic Coverage (DC) formula for reporting.
+    "Diagnostic Coverage" = "DD/(SA+SU+DA+DN+DD)";
+}

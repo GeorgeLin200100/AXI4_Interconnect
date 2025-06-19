@@ -872,7 +872,8 @@ always@(*) begin
     end
 end
 
-always@(posedge clk, posedge rst) begin
+integer compare_result; 
+always@(posedge clk) begin
     if (rst) begin
         err_signal <= 0;
         err_bit_index <= 0;
@@ -881,6 +882,8 @@ always@(posedge clk, posedge rst) begin
         err_signal <= err_signal_next;
         err_bit_index <= err_bit_index_next;
         err_axi_connector <= err_axi_connector_next;
+        compare_result=$fs_compare(err_signal);
+        $fs_set_status("OD");
     end
 end
 

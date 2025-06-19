@@ -66,5 +66,18 @@ module top();
     run_test("tvip_axi_sample_test");
   end
 
+  //dump fsdb for zoix stimulus
+  /*
+  initial begin
+    $fsdbDumpfile("zoix_axi_connector.fsdb");
+    $fsdbDumpvars(1, top.u_connector.u_connector);
+  end
+  */
+
+  //dump vcd for zoix stimulus
+  initial begin
+    $dumpfile("zoix_axi_connector.vcd");
+    $dumpvars(1, top.u_connector.u_connector);
+  end
 
 endmodule
