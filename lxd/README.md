@@ -1,9 +1,13 @@
 ## AXI Safety Connector
+### Enviroment
+VCS & Verdi 2018.02
+Z01X 2018.01
 ### Capability
  - Read/Write Burst
  - Outstanding Write/Read
  - Out-of-order Single-Slave Response
  - Out-of-order Multi-Slave Response
+ - Safety Mechanism
  
 ## Get Started
 ```
@@ -30,6 +34,47 @@ cd ../..
 ./open_verdi.sh $(TEST)
 ```
 
-## Results
-##### Outstanding Write Waveform
-![outstanding_write](assets/outstanding_write.png)
+Remember to modify top_define.svh!
+
+## Fault Simulation Flow
+### UVM Backdoor Fault Simulation
+#### 1 Compile the Design
+
+make compile_vcs
+
+
+#### 2 Generate Signal List for Fault Injection
+Please wait for the signal extraction to complete. If the terminal remains in the UCLI interactive environment, type run and press Enter to allow the simulation to finish.
+
+make sim_get_signal TEST=outstanding_access SEQ=OUTSTANDING_WRITE SCENARIO=1MnS
+
+
+#### 3 Prepare the Fault List
+
+cp outstanding_access/all_signal.txt ./all_signal.txt
+
+
+#### 4 Run Batch Fault Simulation
+
+make batch_fault_sim TEST=outstanding_access SEQ=OUTSTANDING_WRITE SCENARIO=1MnS FORCE_VALUE=1 FAULT_TYPE=1 SIGNAL_FILE=all_signal.txt -j12
+
+
+#### 5 Analyze Results
+This script requires Python 3 to be installed and available in your environment.
+
+./analyze_all.sh && cat fault_test_result.log
+
+
+### Z01X Fault Simulation
+#### Option 1: Run Full Campaign
+make zoix_all
+
+
+#### Option 2: Run Step-by-Step
+make zoix_clean
+
+make zoix_compile
+
+make zoix_fmsh
+
+make zoix_get_report
