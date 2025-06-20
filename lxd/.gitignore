@@ -1,5 +1,4 @@
 *.log
-*.fsdb
 *.rc
 *.key
 *.conf
