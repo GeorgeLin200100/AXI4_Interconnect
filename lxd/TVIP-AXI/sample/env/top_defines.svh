@@ -8,6 +8,6 @@
     `define SLAVE_3_BASE_ADDR       32'h0300_0000
 
     `define BASIC_CONNECTOR
-    `define WITH_PROTECTION
+    `define NO_PROTECTION
 
 `endif

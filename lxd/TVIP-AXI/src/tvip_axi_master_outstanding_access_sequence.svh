@@ -6,15 +6,32 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
   tvip_axi_master_item responses[int];
   int ids[10];
   rand tvip_axi_address addr_new[10];
+  rand tvip_axi_burst_length burst_length_new[10];
   rand      tvip_axi_data         data_new[][];
   rand tvip_axi_id id_new[10];
 
+  constraint c_valid_burst_length_new {
+    foreach(burst_length_new[i]) {
+      if (this.configuration.protocol == TVIP_AXI4) {
+        burst_length_new[i] inside {[1:this.configuration.max_burst_length]};
+      }
+      else {
+        burst_length_new[i] == 1;
+      }
+    }
+  }
+
+  constraint c_valid_id_new {
+    foreach(id_new[i]) {
+      (id_new[i] - ((id_new[i] >> 6)<<6)) == 0;
+    }
+  }
   constraint c_valid_data_new {
     solve access_type  before data_new;
-    solve burst_length before data_new;
+    solve burst_length_new before data_new;
     data_new.size() == 10;
     foreach(data_new[j]) {
-      (access_type == TVIP_AXI_WRITE_ACCESS) -> data_new[j].size() == burst_length;
+      (access_type == TVIP_AXI_WRITE_ACCESS) -> data_new[j].size() == burst_length_new[j];
       (access_type == TVIP_AXI_READ_ACCESS ) -> data_new[j].size() == 0;
       foreach (data_new[j][i]) {
         (data_new[j][i] >> this.configuration.data_width) == 0;
@@ -73,7 +90,7 @@ class tvip_axi_master_outstanding_access_sequence extends tvip_axi_master_access
     //requests[i].address              = address;
     requests[i].address              = addr_new[i];
     `uvm_info("[ADDRESS_DEBUG]", $sformatf("requests[%0d].address=%0h, addr_new[%0d]=%0h",i, requests[i].address, i, addr_new[i]), UVM_LOW)
-    requests[i].burst_length         = burst_length;
+    requests[i].burst_length         = burst_length_new[i];
     requests[i].burst_size           = burst_size;
     requests[i].burst_type           = burst_type;
     requests[i].memory_type          = memory_type;

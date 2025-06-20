@@ -93,7 +93,7 @@ module axi4_safety_connector #
     // Number of concurrent operations for each master interface
     parameter M00_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
-    parameter M00_SECURE = 1, //Slave 0 is secure
+    parameter M00_SECURE = 0, //Slave 0 is secure
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
     parameter M01_BASE_ADDR = 0, // enable default mapping
@@ -125,7 +125,7 @@ module axi4_safety_connector #
     // Number of concurrent operations for each master interface
     parameter M02_ISSUE = 8,
     // Secure master (fail operations based on awprot/arprot)
-    parameter M02_SECURE = 1,
+    parameter M02_SECURE = 0,
     // Master interface base addresses
     // M_REGIONS concatenated fields of ADDR_WIDTH bits
     parameter M03_BASE_ADDR = 0,
